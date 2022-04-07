@@ -62,4 +62,4 @@ class CertificateGenerator
         fs.writeFileSync(this.keyFile, key, { encoding: 'utf8'});
     }
 }
-module.exports.CertificateGenerator = CertificateGenerator;
+module.exports = new CertificateGenerator();

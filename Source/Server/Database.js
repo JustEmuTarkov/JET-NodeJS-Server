@@ -9,6 +9,11 @@ class Database {
     }
 
 
+    async LoadDatabaseFiles(){
 
+    }
+    LoadItems() {
+        
+    }
 }
 module.exports = new Database();

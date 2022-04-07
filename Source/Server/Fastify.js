@@ -1,8 +1,9 @@
 
-class FastifyServer {
+class FastifyServer 
+{
     constructor()
     {
-        const CertificateGenerator = new (require('./CertificateGenerator.js')).CertificateGenerator();
+        const CertificateGenerator = require('./CertificateGenerator.js');
 
         this.Server = require('fastify')({
             logger: true,
@@ -15,18 +16,24 @@ class FastifyServer {
         });
         this.Server.register(require("fastify-ws"));
         this.SetWebSocketServer();
-        this.Request_Decorators();
-        this.Response_Decorators();
+        this.DefaultDecorators();
+    }
+    async AddRequestDecorator(FunctionName, Function){
+        this.Server.decorateRequest(FunctionName, Function);
+    }
+    async AddResponseDecorator(FunctionName, Function){
+        this.Server.decorateReply(FunctionName, Function);
+    }
+    async AddGlobalDecorator(FunctionName, Function){
+        this.Server.decorate(FunctionName, Function);
     }
 
-    async Request_Decorators(){
-        this.Server.decorateRequest('Req_Body2Json', require("./decorators/Request_BodyToJson.js"));
-        this.Server.decorateRequest('Req_Decompress', require("./decorators/Request_Decompress.js"));
-    }
-    async Response_Decorators(){
-        this.Server.decorateReply('ResponseHeader', require("./decorators/Response_Header.js"));
-        this.Server.decorateReply('Res_BSG', require("./decorators/Response_BSG.js"));
-        this.Server.decorateReply('Res_Compress', require("./decorators/Response_Compress.js"));
+    async DefaultDecorators(){
+        this.AddRequestDecorator('Req_Body2Json', require("./decorators/Request_BodyToJson.js"));
+        this.AddRequestDecorator('Req_Decompress', require("./decorators/Request_Decompress.js"));
+        this.AddResponseDecorator('ResponseHeader', require("./decorators/Response_Header.js"));
+        this.AddResponseDecorator('Res_BSG', require("./decorators/Response_BSG.js"));
+        this.AddResponseDecorator('Res_Compress', require("./decorators/Response_Compress.js"));
     }
 
     async SetWebSocketServer(){
