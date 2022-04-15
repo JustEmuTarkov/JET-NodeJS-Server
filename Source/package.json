@@ -5,7 +5,9 @@
   },
   "version": "0.0.0",
   "dependencies": {
+    "fastify": "^1.7.0",
     "fastify-ws": "^1.0.3",
+    "selfsigned": "^2.0.1",
     "uuid": "^8.3.2"
   }
 }
