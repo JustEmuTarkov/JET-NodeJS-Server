@@ -1,3 +1,5 @@
+const accountUtils = require("../Core/UserData/Account.js").AccountUtils;
+
 
 
 class Routes {
@@ -11,6 +13,16 @@ class Routes {
         Routes.addRoute(fastify, "/test", testHandler, "GET");
         Routes.addRoute(fastify, "/testBSG", testHandlerBSG, "GET");
         Routes.addRoute(fastify, "/testBSGCompress", testHandlerBSGCompress, "GET");
+
+        // launcher routes
+        // Routes.addRoute(fastify, "/launcher/profile/change/email", handler, "GET&POST");
+        // Routes.addRoute(fastify, "/launcher/profile/change/password", handler, "GET&POST");
+        // Routes.addRoute(fastify, "/launcher/profile/change/wipe", handler, "GET&POST");
+        // Routes.addRoute(fastify, "/launcher/profile/get", handler, "GET&POST");
+        Routes.addRoute(fastify, "/launcher/profile/login", accountUtils.loginAccount, ["GET", "POST"]);
+        // Routes.addRoute(fastify, "/launcher/profile/register", handler, "GET&POST");
+        // Routes.addRoute(fastify, "/launcher/profile/remove", handler, "GET&POST");
+        // Routes.addRoute(fastify, "/launcher/server/connect", handler, "GET&POST");
     }
 
     /**

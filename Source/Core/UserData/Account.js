@@ -57,4 +57,39 @@ class Account {
         return false;
     }
 }
-module.exports = Account;
+
+class AccountUtils {
+    /**
+     * Retrieve every existing accounts from the disk
+     * @returns {object} - Dict made of Accounts IDS & Accounts infos
+     */
+     static loadAccounts() {
+        let accountsData = {};
+        for (let profileID of fs.readdir('./User/Profiles')) {
+            if (fs.stat("./User/Profiles/" + profileID + "/account.json")) {
+                accountsData[profileID] = JSON.parse(fs.readFileSync("./User/Profiles/" + profileID + "/account.json"));
+            }
+
+        }
+        return accountsData
+    }
+
+    /**
+     * Find matching account
+     * @param {object} accounts - Dict made of Accounts IDS & Accounts infos
+     * @param {object} loginInfos - username and password combo
+     * @returns accountID or false
+     */
+    static loginAccount(accounts, loginInfos) {
+        for (let [accountID, accountInfos] of Object.entries(accounts)){
+            if (accountInfos.login == loginInfos.login && accountInfos.password == loginInfos.password) {
+                return accountID;
+            }
+        }
+
+        return false;
+    }
+}
+
+module.exports.AccountUtils = AccountUtils;
+module.exports.Account = Account;
