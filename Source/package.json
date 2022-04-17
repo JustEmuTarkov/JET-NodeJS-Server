@@ -1,7 +1,8 @@
 {
   "name": "JetNodeServer",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "test": "jest"
   },
   "version": "0.0.0",
   "dependencies": {
@@ -9,5 +10,8 @@
     "fastify-ws": "^1.0.3",
     "selfsigned": "^2.0.1",
     "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "jest": "^27.5.1"
   }
 }
