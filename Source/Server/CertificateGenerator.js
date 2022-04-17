@@ -2,11 +2,9 @@ const fs = require('fs');
 const path = require('path');
 const selfsigned = require('selfsigned');
 
-class CertificateGenerator 
-{
+class CertificateGenerator {
     
-    constructor()
-    {
+    constructor(){
         this.allowUnauthorized();
 
         this.certDir = path.join(__dirname, '..', 'Local', 'Cert');
@@ -23,12 +21,10 @@ class CertificateGenerator
         }
     }
 
-    allowUnauthorized()
-    {
+    allowUnauthorized(){
         process.env.NODE_TLS_REJECT_UNAUTHORIZED='0';
     }
-    regenerate()
-    {
+    regenerate(){
         if (!fs.existsSync(this.certDir)) {
             fs.mkdir(this.certDir, (err) => {
                 if (err) {

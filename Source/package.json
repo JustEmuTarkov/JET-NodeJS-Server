@@ -2,16 +2,18 @@
   "name": "JetNodeServer",
   "scripts": {
     "start": "node index.js",
-    "test": "jest"
+    "test": "tap --reporter=list --watch"
   },
   "version": "0.0.0",
   "dependencies": {
     "fastify": "^1.7.0",
+    "fastify-compress": "^4.0.1",
     "fastify-ws": "^1.0.3",
     "selfsigned": "^2.0.1",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "jest": "^27.5.1"
+    "pino-pretty": "^7.6.1",
+    "tap": "^16.0.1"
   }
 }

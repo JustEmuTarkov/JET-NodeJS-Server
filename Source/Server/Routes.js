@@ -114,7 +114,9 @@ class Routes {
         //"/singleplayer/settings/raid/menu": this.singleplayerSettingsRaidMenu,
         //"/singleplayer/settings/bot/difficulty": this.singleplayerSettingsBotDifficulty,
 
-        Routes.addRoute(fastify, "", handler, ["GET", "POST"]);
+        Routes.addRoute(fastify, "/", async function (request, reply) {
+            return { hello: 'world' }
+          }, "GET");
     }
 
     /**

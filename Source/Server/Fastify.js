@@ -1,22 +1,24 @@
+const certificateGenerator = require('./CertificateGenerator.js');
+const routes = require("./Routes.js");
+const fastifyWS = require("fastify-ws");
+const fastify = require('fastify')
 
-class FastifyServer 
-{
-    constructor()
-    {
-        const CertificateGenerator = require('./CertificateGenerator.js');
-
-        this.Server = require('fastify')({
+class FastifyServer {
+    constructor(){
+        this.Server = fastify({
             logger: true,
             http2: true,
+            prettyPrint: true,
             https: {
                 allowHTTP1: true, // fallback support for HTTP1
-                key: CertificateGenerator.KEY,
-                cert: CertificateGenerator.CERT
+                key: certificateGenerator.KEY,
+                cert: certificateGenerator.CERT
             }
         });
-        this.Server.register(require("fastify-ws"));
+        this.Server.register(fastifyWS);
         this.SetWebSocketServer();
         this.DefaultDecorators();
+        routes.initializeRoutes(this.Server);
     }
     async AddRequestDecorator(FunctionName, Function){
         this.Server.decorateRequest(FunctionName, Function);
@@ -27,7 +29,6 @@ class FastifyServer
     async AddGlobalDecorator(FunctionName, Function){
         this.Server.decorate(FunctionName, Function);
     }
-
     async DefaultDecorators(){
         this.AddRequestDecorator('Req_Body2Json', require("./decorators/Request_BodyToJson.js"));
         this.AddRequestDecorator('Req_Decompress', require("./decorators/Request_Decompress.js"));
@@ -35,7 +36,6 @@ class FastifyServer
         this.AddResponseDecorator('Res_BSG', require("./decorators/Response_BSG.js"));
         this.AddResponseDecorator('Res_Compress', require("./decorators/Response_Compress.js"));
     }
-
     async SetWebSocketServer(){
         this.Server.ready(err => {
             if(err) throw err;
@@ -46,7 +46,6 @@ class FastifyServer
             })
         });
     }
-
     async AddRoute(path, func, type = "get"){
         switch(type){
             case "get": 
@@ -64,9 +63,7 @@ class FastifyServer
                 return;
         }
     }
-
-    async StartServer()
-    {
+    async StartServer(){
         try
         {
             await this.Server.listen(443);
@@ -76,4 +73,5 @@ class FastifyServer
         }
     }
 }
+
 module.exports = new FastifyServer();
