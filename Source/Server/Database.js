@@ -1,5 +1,4 @@
 
-
 class Database {
     constructor() {
         this.core;
@@ -8,11 +7,16 @@ class Database {
         this.templates;
         this.configs;
         this.bots;
+        this.profiles;
     }
 
+    /**
+     * Load all database component in parallel using promise.
+     * It call each loading function in parallel, which in their turn call readFileAsync in parallel to retrieve every needed data.
+     * No data is losed as we use await keywords to avoid completing execution without a read instruction done.
+     */
     async loadDatabase(){
-        //[this.core, this.items, this.languages, this.templates, this.configs, this.bots] =
-        console.time("loadDatabase")
+        console.time("loadDatabase");
         // load database in parallel, ms goes brrrrrrr
         await Promise.all([
             this.loadCore(),
@@ -21,10 +25,11 @@ class Database {
             this.loadTemplates(),
             this.loadConfigs(),
             this.loadBots(),
-        ])
+            this.loadProfiles(),
+        ]);
 
-        console.timeEnd("loadDatabase")
-        console.log(this.core);
+        console.timeEnd("loadDatabase");
+        console.log(typeof this.core);
         console.log(this.items);
         console.log(this.languages);
         console.log(this.templates);
@@ -35,7 +40,6 @@ class Database {
 
     async loadCore() {
         console.log("### Database: Loading core");
-        console.log(process.cwd())
         const [botBase, botCore, fleaOffer, matchMetrics] = await Promise.all([
             global.JET.Utils.FileIO.readFileAsync('./Server/db/base/botBase.json'),
             global.JET.Utils.FileIO.readFileAsync('./Server/db/base/botCore.json'),
@@ -75,6 +79,11 @@ class Database {
     async loadBots() {
         console.log("Loaded bots");
         this.bots = "bots";
+    }
+
+    async loadProfiles() {
+        console.log("### Database: Loading profiles");
+        const profilesKeys = global.JET.Utils.FileIO.getDirectories('./Server/db/profiles');
     }
 }
 
