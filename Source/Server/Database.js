@@ -14,7 +14,7 @@ class Database {
         //[this.core, this.items, this.languages, this.templates, this.configs, this.bots] =
         console.time("loadDatabase")
         // load database in parallel, ms goes brrrrrrr
-        Promise.all([
+        await Promise.all([
             this.loadCore(),
             this.loadItems(),
             this.loadLanguage(),
