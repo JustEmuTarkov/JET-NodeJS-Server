@@ -4,7 +4,8 @@ const process = require("process");
 const { v4: uuidv4 } = require('uuid');
 
 class Tools {
-    GetIsoDateString = (useFormatted = false) => {
+
+    static getIsoDateString(useFormatted = false) {
         if(useFormatted){
             return new Date().toISOString().
                     replace(/T/, ' ').
@@ -14,18 +15,22 @@ class Tools {
                 replace(/T/, ' ').
                 replace(/\..+/, '');
     }
-    UtilFormat = (data) => {
+
+    static utilFormat(data){
         return util.format(data);
     }
 
-    ClearString = (s) => s.replace(/[\b]/g, '').replace(/[\f]/g, '').replace(/[\n]/g, '').replace(/[\r]/g, '').replace(/[\t]/g, '').replace(/[\\]/g, '');
+    static clearString(s){
+        s.replace(/[\b]/g, '').replace(/[\f]/g, '').replace(/[\n]/g, '').replace(/[\r]/g, '').replace(/[\t]/g, '').replace(/[\\]/g, '');
+    }
 
     // Invisible in console.log
-    ToRawType(value) {
+    static toRawType(value) {
         return Object.prototype.toString.call(value).slice(8,-1);
     }
+
     // Invisible in console.log
-    ForEach(array, iteratee){
+    static forEach(array, iteratee){
         let index = -1;
         const length = array.length;
         while (++index < length) {
@@ -33,17 +38,18 @@ class Tools {
         }
         return array;
     }
+
     // Invisible in console.log
-    CloneSymbol(target){ return Object(Symbol.prototype.valueOf.call(target)); }
+    static cloneSymbol(target){ return Object(Symbol.prototype.valueOf.call(target)); }
     // Invisible in console.log
-    CloneReg(target) {
+    static cloneReg(target) {
         const regexFlags = /\w*$/;
         const result = new target.constructor(targe.source, regexFlags.exec(target));
         result.lastIndex = target.lastIndex;
         return result;
     }
     // Invisible in console.log
-    CloneOtherType (target) {
+    static cloneOtherType (target) {
         //const targetConstructor = target.constructor;
         switch (this.ToRawType(target)) {
             case "Boolean":
@@ -68,7 +74,7 @@ class Tools {
      * @param {* | null} map 
      * @returns 
      */
-    DeepCopy = (target, map = new WeakMap()) => {
+    static deepCopy(target, map = new WeakMap()){
         // clone primitive types
         if (typeof target != "object" || target == null) {
             return target;
@@ -124,25 +130,38 @@ class Tools {
     /**
      * @returns Server uptime in seconds
      */
-    GetServerUptimeInSeconds = () => ~~(process.uptime());
+    static getServerUptimeInSeconds(){
+        ~~(process.uptime());
+    }
     /**
      * @returns Current Date timestamp in seconds
      */
-    GetCurrentTimestamp = () => ~~(new Date().getTime() / 1000);
+    static getCurrentTimestamp(){
+        ~~(new Date().getTime() / 1000);
+    }
     /**
      * @param {Date} date 
      * @returns returns formated date to "hours-minutes-seconds" format
      */
-    FormatTime = (date) => `${("0" + date.getHours()).substr(-2)}-${("0" + date.getMinutes()).substr(-2)}-${("0" + date.getSeconds()).substr(-2)}`;
+    static formatTime(date){
+        `${("0" + date.getHours()).substr(-2)}-${("0" + date.getMinutes()).substr(-2)}-${("0" + date.getSeconds()).substr(-2)}`;
+    }
+
     /** Generate Unique ID used in the server by using uuid-v4
      * @param {string} prefix 
      * @returns Unique ID as string
      */
-    GenerateUniqueId = (prefix = "") => `${prefix}${uuidv4()}`;
+    static generateUniqueId(prefix = ""){
+        `${prefix}${uuidv4()}`;
+    }
+
     /**
      * 
      * @param {Array} array 
      */
-    GetRandomValueFromArray = (array) => JET.Utils.Math.getRandomFromArray(array)
+    static getRandomValueFromArray(array){
+        JET.Utils.Math.getRandomFromArray(array)
+    }
 }
-module.exports = new Tools();
+
+module.exports = Tools;
