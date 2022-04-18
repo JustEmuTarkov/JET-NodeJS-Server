@@ -1,6 +1,5 @@
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
+
+
 class Database {
     constructor() {
         this.core;
@@ -35,8 +34,22 @@ class Database {
     }
 
     async loadCore() {
-        console.log("Loaded core");
-        this.core = "core";
+        console.log("### Database: Loading core");
+        console.log(process.cwd())
+        const [botBase, botCore, fleaOffer, matchMetrics] = await Promise.all([
+            global.JET.Utils.FileIO.readFileAsync('./Server/db/base/botBase.json'),
+            global.JET.Utils.FileIO.readFileAsync('./Server/db/base/botCore.json'),
+            global.JET.Utils.FileIO.readFileAsync('./Server/db/base/fleaOffer.json'),
+            global.JET.Utils.FileIO.readFileAsync('./Server/db/base/matchMetrics.json'),
+        ])
+
+        this.core = {
+            botBase: JSON.parse(botBase),
+            botCore: JSON.parse(botCore),
+            fleaOffer: JSON.parse(fleaOffer),
+            matchMetric: JSON.parse(matchMetrics),
+        };
+        console.log("### Database: Loaded core");
     }
 
     async loadItems() {
