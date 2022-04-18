@@ -18,6 +18,17 @@ class FileIO {
     static readFileAsync(file){
         return fsPromises.readFile(file, 'utf-8');
     }
+
+    /**
+     * Retrieve all directories present at a given path.
+     * @param {string} path 
+     * @returns {Array}
+     */
+    static getDirectories(path){
+        return fs.readdirSync(path).filter(function (file) {
+            return fs.statSync(path+'/'+file).isDirectory();
+        });
+    }
     
 }
 module.exports = FileIO;
