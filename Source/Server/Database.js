@@ -57,8 +57,22 @@ class Database {
     }
 
     async loadItems() {
+        console.log("### Database: Loading core");
+        const itemsDump = JSON.parse(global.JET.Utils.FileIO.readFile('./Server/dumps/items.json'));
+
+        const itemsAsArray = Object.entries(itemsDump.data);
+        
+        // retrieve nodes
+        console.time("loadnodes");
+        const nodesAsArray = itemsAsArray.filter(([key, value]) => value._type === 'Node');
+        const nodes = Object.fromEntries(nodesAsArray);
+        console.timeEnd("loadnodes");
+
+        this.items = {
+            "fullData":  itemsDump.data,
+            "nodes": nodes
+        };
         console.log("Loaded items");
-        this.items = "items";
     }
 
     async loadLanguage() {
