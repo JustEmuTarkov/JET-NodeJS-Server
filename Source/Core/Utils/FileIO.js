@@ -1,13 +1,17 @@
 const fs = require("fs");
+const fsPromises = require('fs').promises
 class FileIO {
-    constructor(){}
-    ReadFile = (FileName) =>
-    {
+    static readFile(FileName) {
         return fs.readFileSync(FileName);
     }
-    CreateFileWriteStream = (file) =>
-    {
+
+    static createFileWriteStream(file){
         return fs.createWriteStream(file, { flags: 'w' });
     }
+
+    static readFileAsync(file){
+        return  fsPromises.readFile(file, 'utf-8');
+    }
+    
 }
-module.exports = new FileIO();
+module.exports = FileIO;

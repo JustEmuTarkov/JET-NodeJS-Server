@@ -6,4 +6,5 @@ class Utils {
         this.Tools = require("./Utils/Tools");
     }
 }
+
 module.exports = new Utils();
