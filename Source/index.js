@@ -9,7 +9,8 @@ global.JET.Utils = require('./Core/Utils');
 
 console.log(JET.Utils);
 
-const database = require("./Server/Database.js");
+const database = require("./Server/database.js");
+database.loadDatabase();
 global.JET.Database = database;
 
 
