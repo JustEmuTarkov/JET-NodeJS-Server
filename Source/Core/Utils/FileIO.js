@@ -9,8 +9,14 @@ class FileIO {
         return fs.createWriteStream(file, { flags: 'w' });
     }
 
+    /**
+     * Async read function mean to be used in an async function.
+     * Used for database loading  mainly, in a promise.all closure.
+     * @param {string} file path of the file to  be read
+     * @returns {Promise}
+     */
     static readFileAsync(file){
-        return  fsPromises.readFile(file, 'utf-8');
+        return fsPromises.readFile(file, 'utf-8');
     }
     
 }

@@ -3,13 +3,13 @@
 const fs = require("fs");
 const path = require("path");
 const fastify = require("./Server/Fastify.js");
+const database = require("./Server/database.js");
 
 global.JET = { ExecutionPath: __dirname, UserList: [], UserDataList: [], Utils: {} }
 global.JET.Utils = require('./Core/Utils');
 
 console.log(JET.Utils);
 
-const database = require("./Server/database.js");
 database.loadDatabase();
 global.JET.Database = database;
 
