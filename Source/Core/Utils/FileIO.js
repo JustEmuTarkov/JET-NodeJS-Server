@@ -29,6 +29,17 @@ class FileIO {
             return fs.statSync(path+'/'+file).isDirectory();
         });
     }
+
+    /**
+     * Retrieve all files present at a given path.
+     * @param {string} path 
+     * @returns {Array}
+     */
+    static getFilesInDirectory(path){
+        return fs.readdirSync(path).filter(function (file) {
+            return fs.statSync(path+'/'+file).isFile();
+        });
+    }
     
 }
 module.exports = FileIO;
