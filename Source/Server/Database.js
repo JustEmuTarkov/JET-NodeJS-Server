@@ -66,7 +66,7 @@ class Database {
 
     async loadItems() {
         console.log("### Database: Loading core");
-        const itemsDump = JSON.parse(utils.FileIO.readFile('./Server/dumps/items/items.json'));
+        const itemsDump = JSON.parse(utils.FileIO.readFile('./Server/dumps/items.json'));
 
         const itemsAsArray = Object.entries(itemsDump.data);
         
@@ -105,7 +105,7 @@ class Database {
 
     async loadWeather() {
         console.log("### Database: Loading weather");
-        this.weather = JSON.parse(fs.readFileSync('./Server/dumps/weather/weather.json', 'utf8')).data;
+        this.weather = JSON.parse(fs.readFileSync('./Server/dumps/weather.json', 'utf8')).data;
         console.log("### Database: Loaded weather");
     }
 
