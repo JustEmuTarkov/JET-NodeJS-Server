@@ -1,9 +1,12 @@
+const utils = require('../Core/Utils.js');
+const fs = require('fs')
 
 class Database {
     constructor() {
         this.core;
         this.items;
         this.hideout;
+        this.weather;
         this.languages;
         this.templates;
         this.configs;
@@ -23,6 +26,7 @@ class Database {
             this.loadCore(),
             this.loadItems(),
             this.loadHideout(),
+            this.loadWeather(),
             this.loadLanguage(),
             this.loadTemplates(),
             this.loadConfigs(),
@@ -33,6 +37,8 @@ class Database {
         console.timeEnd("loadDatabase");
         console.log(typeof this.core);
         console.log(typeof this.items);
+        console.log(typeof this.hideout);
+        console.log(typeof this.weather);
         console.log(typeof this.languages);
         console.log(typeof this.templates);
         console.log(typeof this.configs);
@@ -43,10 +49,10 @@ class Database {
     async loadCore() {
         console.log("### Database: Loading core");
         const [botBase, botCore, fleaOffer, matchMetrics] = await Promise.all([
-            global.JET.Utils.FileIO.readFileAsync('./Server/db/base/botBase.json'),
-            global.JET.Utils.FileIO.readFileAsync('./Server/db/base/botCore.json'),
-            global.JET.Utils.FileIO.readFileAsync('./Server/db/base/fleaOffer.json'),
-            global.JET.Utils.FileIO.readFileAsync('./Server/db/base/matchMetrics.json'),
+            utils.FileIO.readFileAsync('./Server/db/base/botBase.json'),
+            utils.FileIO.readFileAsync('./Server/db/base/botCore.json'),
+            utils.FileIO.readFileAsync('./Server/db/base/fleaOffer.json'),
+            utils.FileIO.readFileAsync('./Server/db/base/matchMetrics.json'),
         ])
 
         this.core = {
@@ -60,7 +66,7 @@ class Database {
 
     async loadItems() {
         console.log("### Database: Loading core");
-        const itemsDump = JSON.parse(global.JET.Utils.FileIO.readFile('./Server/dumps/items/items.json'));
+        const itemsDump = JSON.parse(utils.FileIO.readFile('./Server/dumps/items/items.json'));
 
         const itemsAsArray = Object.entries(itemsDump.data);
         
@@ -78,13 +84,13 @@ class Database {
     }
 
     async loadHideout() {
-        console.log("### Database: Loading core");
+        console.log("### Database: Loading hideout");
         console.time("loadHideout");
         const [areas, productions, scavcase, settings] = await Promise.all([
-            global.JET.Utils.FileIO.readFileAsync('./Server/dumps/hideout/areas.json'),
-            global.JET.Utils.FileIO.readFileAsync('./Server/dumps/hideout/productions.json'),
-            global.JET.Utils.FileIO.readFileAsync('./Server/dumps/hideout/scavcase.json'),
-            global.JET.Utils.FileIO.readFileAsync('./Server/dumps/hideout/settings.json'),
+            utils.FileIO.readFileAsync('./Server/dumps/hideout/areas.json'),
+            utils.FileIO.readFileAsync('./Server/dumps/hideout/productions.json'),
+            utils.FileIO.readFileAsync('./Server/dumps/hideout/scavcase.json'),
+            utils.FileIO.readFileAsync('./Server/dumps/hideout/settings.json'),
         ]);
 
         this.hideout = {
@@ -94,7 +100,13 @@ class Database {
             settings: JSON.parse(settings).data,
         };
         console.timeEnd("loadHideout");
-        console.log("### Database: Loaded items");
+        console.log("### Database: Loaded hideout");
+    }
+
+    async loadWeather() {
+        console.log("### Database: Loading weather");
+        this.weather = JSON.parse(fs.readFileSync('./Server/dumps/weather/weather.json', 'utf8')).data;
+        console.log("### Database: Loaded weather");
     }
 
     async loadLanguage() {
@@ -119,7 +131,7 @@ class Database {
 
     async loadProfiles() {
         console.log("### Database: Loading profiles");
-        const profilesKeys = global.JET.Utils.FileIO.getDirectories('./Server/db/profiles');
+        const profilesKeys = utils.FileIO.getDirectories('./Server/db/profiles');
     }
 }
 
