@@ -21,7 +21,7 @@ class Database {
      * No data is losed as we use await keywords to avoid completing execution without a read instruction done.
      */
     async loadDatabase(){
-        console.time("loadDatabase");
+        JET.Utils.Logger.LogDebug("# Database: Loading...", 1)
         // load database in parallel, ms goes brrrrrrr
         await Promise.all([
             this.loadCore(),
@@ -36,20 +36,26 @@ class Database {
 
         // TODO: apply user settings (Server/settings/{}.json) for each database component
         // for example, hideout production times for each area, scav cases production times...
-        console.timeEnd("loadDatabase");
-        console.log(typeof this.core);
-        console.log(typeof this.items);
-        console.log(typeof this.hideout);
-        console.log(typeof this.weather);
-        console.log(typeof this.languages);
-        //console.log(typeof this.templates);
-        //console.log(typeof this.bots);
+        JET.Utils.Logger.LogDebug("# Database: Loading...", 2)
+        // console.log(typeof this.core);
+        // console.log(typeof this.items);
+        // console.log(typeof this.hideout);
+        // console.log(typeof this.weather);
+        // console.log(typeof this.languages);
+        // console.log(typeof this.templates);
+        // console.log(typeof this.bots);
 
     }
 
     async loadCore() {
-        console.log("### Database: Loading core");
-        console.time("loadCore");
+        JET.Utils.Logger.LogDebug("# Database: Loading core", 1)
+        //const [botBase, botCore, fleaOffer, matchMetrics] = await Promise.all([
+        //    utils.FileIO.readFileAsync(),
+        //    utils.FileIO.readFileAsync(),
+        //    utils.FileIO.readFileAsync(),
+        //    utils.FileIO.readFileAsync(),
+        //])
+
         this.core = {
             botBase: utils.FileIO.readParsed('./Server/db/base/botBase.json'),
             botCore: utils.FileIO.readParsed('./Server/db/base/botCore.json'),
@@ -62,25 +68,28 @@ class Database {
     }
 
     async loadItems() {
-        console.log("### Database: Loading items");
-        console.time("loadItems");
+        JET.Utils.Logger.LogDebug("# Database: Loading items", 1)
         const itemsDump = utils.FileIO.readParsed('./Server/dumps/items.json');
         this.items = itemsDump.data;
-        console.timeEnd("loadItems");
-        console.log("### Database: Loaded items");
+        JET.Utils.Logger.LogDebug("# Database: Loading items", 2)
     }
 
     async loadHideout() {
-        console.log("### Database: Loading hideout");
-        console.time("loadHideout");
+        JET.Utils.Logger.LogDebug("# Database: Loading hideout", 1)
+        //const [areas, productions, scavcase, settings] = await Promise.all([
+        //    utils.FileIO.readFileAsync(),
+        //    utils.FileIO.readFileAsync(),
+        //    utils.FileIO.readFileAsync(),
+        //    utils.FileIO.readFileAsync(),
+        //]);
+
         this.hideout = {
             areas: utils.FileIO.readParsed('./Server/dumps/hideout/areas.json').data,
             productions: utils.FileIO.readParsed('./Server/dumps/hideout/productions.json').data,
             scavcase: utils.FileIO.readParsed('./Server/dumps/hideout/scavcase.json').data,
             settings: utils.FileIO.readParsed('./Server/dumps/hideout/settings.json').data,
         };
-        console.timeEnd("loadHideout");
-        console.log("### Database: Loaded hideout");
+        JET.Utils.Logger.LogDebug("# Database: Loading hideout", 2)
     }
 
     async loadWeather() {
@@ -92,9 +101,8 @@ class Database {
     }
 
     async loadLanguage() {
-        console.log("### Database: Loading languages");
-        console.time("loadLanguage");
-        const allLangs = utils.FileIO.readParsed('./Server/dumps/locales/all_locales.json').data;
+        JET.Utils.Logger.LogDebug("# Database: Loading languages", 1)
+        const allLangs = JSON.parse(fs.readFileSync('./Server/dumps/locales/all_locales.json', 'utf8')).data;
         this.languages = {"all_locales": allLangs};
         for (const locale of allLangs) {
             const currentLocalePath = "./Server/dumps/locales/" + locale.ShortName + "/";
@@ -105,8 +113,7 @@ class Database {
                 };       
             }
         }
-        console.timeEnd("loadLanguage");
-        console.log("### Database: Loaded languages");
+        JET.Utils.Logger.LogDebug("# Database: Loading languages", 2)
     }
 
     async loadTemplates() {
@@ -131,8 +138,10 @@ class Database {
     }
 
     async loadProfiles() {
-        console.log("### Database: Loading profiles");
+        JET.Utils.Logger.LogDebug("# Database: Loading profiles", 1)
         const profilesKeys = utils.FileIO.getDirectories('./Server/db/profiles');
+
+        JET.Utils.Logger.LogDebug("# Database: Loading profiles", 2)
     }
 }
 

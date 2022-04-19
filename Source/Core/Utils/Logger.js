@@ -30,7 +30,7 @@ class Logger {
   /** Returns the Filename for Logs
    * @returns string - Logs file name
    */
-  GetFileName = () => `${0}_${0}.log`;
+  GetFileName = () => `${JET.Utils.Tools.getIsoDateString(true)}.log`;
 
   /** Returns the path to the Logs folder with / at the end
    * @param {boolean} useRelative 
@@ -68,28 +68,31 @@ class Logger {
   Log(type, data, colorAtFront, colorAtBack){
     const FrontColor = this.GetConsoleColor("Front", colorAtFront);
     const BackColor = this.GetConsoleColor("Back", colorAtBack);
-    const Time = JET.Utils.Tools.GetIsoDateString(true);
-
+    const Time = JET.Utils.Tools.getIsoDateString(true);
 
     const LogString = `${FrontColor}${BackColor}${type}${this.ConsoleColor.Reset}${Time}`;
     const FileString = `${type}${Time}`;
 
-    if(this.LogFileStream == undefined){
-      this.LogFileStream = JET.Utils.FileIO.CreateFileWriteStream( GetLogsFolderPath() + GetFileName() );
-    }
-
-    if(typeof data == "string"){
-      this.LogConsole(LogString + data);
-
-      this.LogFileStream.write(JET.Utils.Tools.UtilFormat(FileString + data + "\n"));
-    } else {
-      this.LogConsole(LogString);
-      this.LogConsole(data);
-
-      this.LogFileStream.write(JET.Utils.Tools.UtilFormat(FileString));
-      this.LogFileStream.write(JET.Utils.Tools.UtilFormat(data));
-      this.LogFileStream.write(JET.Utils.Tools.UtilFormat("\n"));
-    }
+    try{
+      if(this.LogFileStream == undefined){
+        // somehow this shit is crashing...
+        //this.LogFileStream = JET.Utils.FileIO.createFileWriteStream( this.GetLogsFolderPath() + this.GetFileName() );
+      }
+    } catch{} 
+      if(typeof data == "string"){
+        this.LogConsole(LogString + data);
+        if(this.LogFileStream != undefined){
+          this.LogFileStream.write(JET.Utils.Tools.utilFormat(FileString + data + "\n"));
+        }
+      } else {
+        this.LogConsole(LogString);
+        this.LogConsole(data);
+        if(this.LogFileStream != undefined){
+          this.LogFileStream.write(JET.Utils.Tools.utilFormat(FileString));
+          this.LogFileStream.write(JET.Utils.Tools.utilFormat(data));
+          this.LogFileStream.write(JET.Utils.Tools.utilFormat("\n"));
+        }
+      }
   }
 
   LogInfo(text) {
@@ -104,8 +107,18 @@ class Logger {
   LogError(text) {
     this.Log("[INFO]", text, "white", "red");
   }
-  LogDebug(text) {
-    this.Log("[INFO]", text, "white");
+  /**
+   * 
+   * @param {*} text 
+   * @param {number} mode 0 -> only draw log, 1 -> draw log and start timer, 2 -> end timer (default: 0)
+   * @returns 
+   */
+  LogDebug(text, mode = 0) {
+    switch (mode){
+      case 0: this.Log("[DEBUG]", text, "white"); return;
+      case 1: this.Log("[DEBUG]", text, "white"); console.time(text); return;
+      case 2: console.timeEnd(text); return;
+    }    
   }
   LogRequest(text, data = "") {
     if(data == ""){
