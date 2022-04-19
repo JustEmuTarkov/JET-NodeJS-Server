@@ -1,4 +1,5 @@
 const utils = require('../Core/Utils.js');
+
 const fs = require('fs')
 
 class Database {
@@ -28,7 +29,7 @@ class Database {
             this.loadHideout(),
             this.loadWeather(),
             this.loadLanguage(),
-            //this.loadTemplates(),
+            this.loadTemplates(),
             //this.loadBots(),
             //this.loadProfiles(),
         ]);
@@ -48,34 +49,23 @@ class Database {
 
     async loadCore() {
         console.log("### Database: Loading core");
-        //const [botBase, botCore, fleaOffer, matchMetrics] = await Promise.all([
-        //    utils.FileIO.readFileAsync(),
-        //    utils.FileIO.readFileAsync(),
-        //    utils.FileIO.readFileAsync(),
-        //    utils.FileIO.readFileAsync(),
-        //])
-
+        console.time("loadCore");
         this.core = {
-            botBase: JSON.parse(fs.readFileSync('./Server/db/base/botBase.json', 'utf8')),
-            botCore: JSON.parse(fs.readFileSync('./Server/db/base/botCore.json', 'utf8')),
-            fleaOffer: JSON.parse(fs.readFileSync('./Server/db/base/fleaOffer.json', 'utf8')),
-            matchMetric: JSON.parse(fs.readFileSync('./Server/db/base/matchMetrics.json', 'utf8')),
+            botBase: utils.FileIO.readParsed('./Server/db/base/botBase.json'),
+            botCore: utils.FileIO.readParsed('./Server/db/base/botCore.json'),
+            fleaOffer: utils.FileIO.readParsed('./Server/db/base/fleaOffer.json'),
+            matchMetric: utils.FileIO.readParsed('./Server/db/base/matchMetrics.json'),
+            globals: utils.FileIO.readParsed('./Server/dumps/globals.json').data,
         };
+        console.timeEnd("loadCore");
         console.log("### Database: Loaded core");
     }
 
     async loadItems() {
         console.log("### Database: Loading items");
         console.time("loadItems");
-        const itemsDump = JSON.parse(fs.readFileSync('./Server/dumps/items.json', 'utf8'));
-
-        //const itemsAsArray = Object.entries(itemsDump.data);
-        
-        // retrieve nodes
-        //const nodesAsArray = itemsAsArray.filter(([key, value]) => value._type === 'Node');
-        //const nodes = Object.fromEntries(nodesAsArray);
-
-        this.items = {fullData: itemsDump.data}
+        const itemsDump = utils.FileIO.readParsed('./Server/dumps/items.json');
+        this.items = itemsDump.data;
         console.timeEnd("loadItems");
         console.log("### Database: Loaded items");
     }
@@ -83,18 +73,11 @@ class Database {
     async loadHideout() {
         console.log("### Database: Loading hideout");
         console.time("loadHideout");
-        //const [areas, productions, scavcase, settings] = await Promise.all([
-        //    utils.FileIO.readFileAsync(),
-        //    utils.FileIO.readFileAsync(),
-        //    utils.FileIO.readFileAsync(),
-        //    utils.FileIO.readFileAsync(),
-        //]);
-
         this.hideout = {
-            areas: JSON.parse(fs.readFileSync('./Server/dumps/hideout/areas.json', 'utf8')).data,
-            productions: JSON.parse(fs.readFileSync('./Server/dumps/hideout/productions.json', 'utf8')).data,
-            scavcase: JSON.parse(fs.readFileSync('./Server/dumps/hideout/scavcase.json', 'utf8')).data,
-            settings: JSON.parse(fs.readFileSync('./Server/dumps/hideout/settings.json', 'utf8')).data,
+            areas: utils.FileIO.readParsed('./Server/dumps/hideout/areas.json').data,
+            productions: utils.FileIO.readParsed('./Server/dumps/hideout/productions.json').data,
+            scavcase: utils.FileIO.readParsed('./Server/dumps/hideout/scavcase.json').data,
+            settings: utils.FileIO.readParsed('./Server/dumps/hideout/settings.json').data,
         };
         console.timeEnd("loadHideout");
         console.log("### Database: Loaded hideout");
@@ -103,7 +86,7 @@ class Database {
     async loadWeather() {
         console.time("loadWeather");
         console.log("### Database: Loading weather");
-        this.weather = JSON.parse(fs.readFileSync('./Server/dumps/weather.json', 'utf8')).data;
+        this.weather = utils.FileIO.readParsed('./Server/dumps/weather.json').data;
         console.timeEnd("loadWeather");
         console.log("### Database: Loaded weather");
     }
@@ -111,20 +94,15 @@ class Database {
     async loadLanguage() {
         console.log("### Database: Loading languages");
         console.time("loadLanguage");
-        const allLangs = JSON.parse(fs.readFileSync('./Server/dumps/locales/all_locales.json', 'utf8')).data;
+        const allLangs = utils.FileIO.readParsed('./Server/dumps/locales/all_locales.json').data;
         this.languages = {"all_locales": allLangs};
         for (const locale of allLangs) {
             const currentLocalePath = "./Server/dumps/locales/" + locale.ShortName + "/";
             if (fs.existsSync(currentLocalePath + "locales.json") && fs.existsSync(currentLocalePath + "menu.json")){
                 this.languages[locale.ShortName] =  {
-                    locale: JSON.parse(fs.readFileSync(currentLocalePath + "locales.json", 'utf8')).data,
-                    menu: JSON.parse(fs.readFileSync(currentLocalePath + "menu.json", 'utf8')).data,
-                };
-                //const [localeData, menuData] = await Promise.all([
-                //    utils.FileIO.readFileAsync(),
-                //    utils.FileIO.readFileAsync(),
-                //]);
-                
+                    locale: utils.FileIO.readParsed(currentLocalePath + "locales.json").data,
+                    menu: utils.FileIO.readParsed(currentLocalePath + "menu.json").data,
+                };       
             }
         }
         console.timeEnd("loadLanguage");
@@ -133,7 +111,13 @@ class Database {
 
     async loadTemplates() {
         console.log("Loaded templates");
-        this.templates = "templates";
+        console.time("loadTemplates");
+        const templatesData = utils.FileIO.readParsed('./Server/dumps/templates.json').data;
+        this.templates = {
+            "Categories": templatesData.Categories,
+            "Items": templatesData.Items,
+        };
+        console.timeEnd("loadTemplates");
     }
 
     async loadConfigs() {

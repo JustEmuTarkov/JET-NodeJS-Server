@@ -1,12 +1,14 @@
 const fs = require("fs");
+const path = require("path");
 const fsPromises = require('fs').promises
+
 class FileIO {
     static readFile(FileName) {
         return fs.readFileSync(FileName);
     }
 
     static readParsed(filename){
-        return JSON.parse(fs.readFileSync(filename));
+        return JSON.parse(fs.readFileSync(path.resolve(filename), 'utf8'));
     }
 
     static createFileWriteStream(file){
