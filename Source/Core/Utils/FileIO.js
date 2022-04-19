@@ -1,15 +1,15 @@
 const fs = require("fs");
 const fsPromises = require('fs').promises
 class FileIO {
-    static readFile(FileName) {
+    static readFile = (FileName) => {
         return fs.readFileSync(FileName);
     }
 
-    static readParsed(filename){
+    static readParsed = (filename) => {
         return JSON.parse(fs.readFileSync(filename));
     }
 
-    static createFileWriteStream(file){
+    static createFileWriteStream = (file) => {
         return fs.createWriteStream(file, { flags: 'w' });
     }
 
@@ -19,7 +19,7 @@ class FileIO {
      * @param {string} file path of the file to  be read
      * @returns {Promise}
      */
-    static readFileAsync(file){
+    static readFileAsync = (file) => {
         return fsPromises.readFile(file, 'utf-8');
     }
 
@@ -28,7 +28,7 @@ class FileIO {
      * @param {string} path 
      * @returns {Array}
      */
-    static getDirectories(path){
+    static getDirectories = (path) => {
         return fs.readdirSync(path).filter(function (file) {
             return fs.statSync(path+'/'+file).isDirectory();
         });
@@ -39,7 +39,7 @@ class FileIO {
      * @param {string} path 
      * @returns {Array}
      */
-    static getFilesInDirectory(path){
+    static getFilesInDirectory = (path) => {
         return fs.readdirSync(path).filter(function (file) {
             return fs.statSync(path+'/'+file).isFile();
         });
