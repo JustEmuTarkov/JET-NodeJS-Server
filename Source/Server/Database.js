@@ -3,6 +3,7 @@ class Database {
     constructor() {
         this.core;
         this.items;
+        this.hideout;
         this.languages;
         this.templates;
         this.configs;
@@ -21,6 +22,7 @@ class Database {
         await Promise.all([
             this.loadCore(),
             this.loadItems(),
+            this.loadHideout(),
             this.loadLanguage(),
             this.loadTemplates(),
             this.loadConfigs(),
@@ -30,11 +32,11 @@ class Database {
 
         console.timeEnd("loadDatabase");
         console.log(typeof this.core);
-        console.log(this.items);
-        console.log(this.languages);
-        console.log(this.templates);
-        console.log(this.configs);
-        console.log(this.bots);
+        console.log(typeof this.items);
+        console.log(typeof this.languages);
+        console.log(typeof this.templates);
+        console.log(typeof this.configs);
+        console.log(typeof this.bots);
 
     }
 
@@ -58,7 +60,7 @@ class Database {
 
     async loadItems() {
         console.log("### Database: Loading core");
-        const itemsDump = JSON.parse(global.JET.Utils.FileIO.readFile('./Server/dumps/items.json'));
+        const itemsDump = JSON.parse(global.JET.Utils.FileIO.readFile('./Server/dumps/items/items.json'));
 
         const itemsAsArray = Object.entries(itemsDump.data);
         
@@ -72,7 +74,27 @@ class Database {
             "fullData":  itemsDump.data,
             "nodes": nodes
         };
-        console.log("Loaded items");
+        console.log("### Database: Loaded items");
+    }
+
+    async loadHideout() {
+        console.log("### Database: Loading core");
+        console.time("loadHideout");
+        const [areas, productions, scavcase, settings] = await Promise.all([
+            global.JET.Utils.FileIO.readFileAsync('./Server/dumps/hideout/areas.json'),
+            global.JET.Utils.FileIO.readFileAsync('./Server/dumps/hideout/productions.json'),
+            global.JET.Utils.FileIO.readFileAsync('./Server/dumps/hideout/scavcase.json'),
+            global.JET.Utils.FileIO.readFileAsync('./Server/dumps/hideout/settings.json'),
+        ]);
+
+        this.hideout = {
+            areas: JSON.parse(areas).data,
+            productions: JSON.parse(productions).data,
+            scavcase: JSON.parse(scavcase).data,
+            settings: JSON.parse(settings).data,
+        };
+        console.timeEnd("loadHideout");
+        console.log("### Database: Loaded items");
     }
 
     async loadLanguage() {
