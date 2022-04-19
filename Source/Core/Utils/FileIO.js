@@ -5,6 +5,10 @@ class FileIO {
         return fs.readFileSync(FileName);
     }
 
+    static readParsed(filename){
+        return JSON.parse(fs.readFileSync(filename));
+    }
+
     static createFileWriteStream(file){
         return fs.createWriteStream(file, { flags: 'w' });
     }
