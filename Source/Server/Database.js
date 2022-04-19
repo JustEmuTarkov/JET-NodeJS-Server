@@ -28,9 +28,9 @@ class Database {
             this.loadHideout(),
             this.loadWeather(),
             this.loadLanguage(),
-            this.loadTemplates(),
-            this.loadBots(),
-            this.loadProfiles(),
+            //this.loadTemplates(),
+            //this.loadBots(),
+            //this.loadProfiles(),
         ]);
 
         // TODO: apply user settings (Server/settings/{}.json) for each database component
@@ -41,94 +41,93 @@ class Database {
         console.log(typeof this.hideout);
         console.log(typeof this.weather);
         console.log(typeof this.languages);
-        console.log(typeof this.templates);
-        console.log(typeof this.bots);
+        //console.log(typeof this.templates);
+        //console.log(typeof this.bots);
 
     }
 
     async loadCore() {
         console.log("### Database: Loading core");
-        const [botBase, botCore, fleaOffer, matchMetrics] = await Promise.all([
-            utils.FileIO.readFileAsync('./Server/db/base/botBase.json'),
-            utils.FileIO.readFileAsync('./Server/db/base/botCore.json'),
-            utils.FileIO.readFileAsync('./Server/db/base/fleaOffer.json'),
-            utils.FileIO.readFileAsync('./Server/db/base/matchMetrics.json'),
-        ])
+        //const [botBase, botCore, fleaOffer, matchMetrics] = await Promise.all([
+        //    utils.FileIO.readFileAsync(),
+        //    utils.FileIO.readFileAsync(),
+        //    utils.FileIO.readFileAsync(),
+        //    utils.FileIO.readFileAsync(),
+        //])
 
         this.core = {
-            botBase: JSON.parse(botBase),
-            botCore: JSON.parse(botCore),
-            fleaOffer: JSON.parse(fleaOffer),
-            matchMetric: JSON.parse(matchMetrics),
+            botBase: JSON.parse(fs.readFileSync('./Server/db/base/botBase.json', 'utf8')),
+            botCore: JSON.parse(fs.readFileSync('./Server/db/base/botCore.json', 'utf8')),
+            fleaOffer: JSON.parse(fs.readFileSync('./Server/db/base/fleaOffer.json', 'utf8')),
+            matchMetric: JSON.parse(fs.readFileSync('./Server/db/base/matchMetrics.json', 'utf8')),
         };
         console.log("### Database: Loaded core");
     }
 
     async loadItems() {
-        console.log("### Database: Loading core");
-        const itemsDump = JSON.parse(utils.FileIO.readFile('./Server/dumps/items.json'));
+        console.log("### Database: Loading items");
+        console.time("loadItems");
+        const itemsDump = JSON.parse(fs.readFileSync('./Server/dumps/items.json', 'utf8'));
 
-        const itemsAsArray = Object.entries(itemsDump.data);
+        //const itemsAsArray = Object.entries(itemsDump.data);
         
         // retrieve nodes
-        console.time("loadnodes");
-        const nodesAsArray = itemsAsArray.filter(([key, value]) => value._type === 'Node');
-        const nodes = Object.fromEntries(nodesAsArray);
-        console.timeEnd("loadnodes");
+        //const nodesAsArray = itemsAsArray.filter(([key, value]) => value._type === 'Node');
+        //const nodes = Object.fromEntries(nodesAsArray);
 
-        this.items = {
-            "fullData":  itemsDump.data,
-            "nodes": nodes
-        };
+        this.items = {fullData: itemsDump.data}
+        console.timeEnd("loadItems");
         console.log("### Database: Loaded items");
     }
 
     async loadHideout() {
         console.log("### Database: Loading hideout");
         console.time("loadHideout");
-        const [areas, productions, scavcase, settings] = await Promise.all([
-            utils.FileIO.readFileAsync('./Server/dumps/hideout/areas.json'),
-            utils.FileIO.readFileAsync('./Server/dumps/hideout/productions.json'),
-            utils.FileIO.readFileAsync('./Server/dumps/hideout/scavcase.json'),
-            utils.FileIO.readFileAsync('./Server/dumps/hideout/settings.json'),
-        ]);
+        //const [areas, productions, scavcase, settings] = await Promise.all([
+        //    utils.FileIO.readFileAsync(),
+        //    utils.FileIO.readFileAsync(),
+        //    utils.FileIO.readFileAsync(),
+        //    utils.FileIO.readFileAsync(),
+        //]);
 
         this.hideout = {
-            areas: JSON.parse(areas).data,
-            productions: JSON.parse(productions).data,
-            scavcase: JSON.parse(scavcase).data,
-            settings: JSON.parse(settings).data,
+            areas: JSON.parse(fs.readFileSync('./Server/dumps/hideout/areas.json', 'utf8')).data,
+            productions: JSON.parse(fs.readFileSync('./Server/dumps/hideout/productions.json', 'utf8')).data,
+            scavcase: JSON.parse(fs.readFileSync('./Server/dumps/hideout/scavcase.json', 'utf8')).data,
+            settings: JSON.parse(fs.readFileSync('./Server/dumps/hideout/settings.json', 'utf8')).data,
         };
         console.timeEnd("loadHideout");
         console.log("### Database: Loaded hideout");
     }
 
     async loadWeather() {
+        console.time("loadWeather");
         console.log("### Database: Loading weather");
         this.weather = JSON.parse(fs.readFileSync('./Server/dumps/weather.json', 'utf8')).data;
+        console.timeEnd("loadWeather");
         console.log("### Database: Loaded weather");
     }
 
     async loadLanguage() {
         console.log("### Database: Loading languages");
+        console.time("loadLanguage");
         const allLangs = JSON.parse(fs.readFileSync('./Server/dumps/locales/all_locales.json', 'utf8')).data;
         this.languages = {"all_locales": allLangs};
         for (const locale of allLangs) {
             const currentLocalePath = "./Server/dumps/locales/" + locale.ShortName + "/";
-            try {
-                const [localeData, menuData] = await Promise.all([
-                    utils.FileIO.readFileAsync(currentLocalePath + "locales.json"),
-                    utils.FileIO.readFileAsync(currentLocalePath + "menu.json"),
-                ])
+            if (fs.existsSync(currentLocalePath + "locales.json") && fs.existsSync(currentLocalePath + "menu.json")){
                 this.languages[locale.ShortName] =  {
-                    locale: JSON.parse(localeData).data,
-                    menu: JSON.parse(menuData).data,
-                } 
-            }
-            catch (exception) {
-                console.log("### Database: Error while loading language " + locale.ShortName);
+                    locale: JSON.parse(fs.readFileSync(currentLocalePath + "locales.json", 'utf8')).data,
+                    menu: JSON.parse(fs.readFileSync(currentLocalePath + "menu.json", 'utf8')).data,
+                };
+                //const [localeData, menuData] = await Promise.all([
+                //    utils.FileIO.readFileAsync(),
+                //    utils.FileIO.readFileAsync(),
+                //]);
+                
             }
         }
+        console.timeEnd("loadLanguage");
         console.log("### Database: Loaded languages");
     }
 
