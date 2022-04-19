@@ -5,7 +5,7 @@ const { v4: uuidv4 } = require('uuid');
 
 class Tools {
 
-    static getIsoDateString(useFormatted = false) {
+    static getIsoDateString = (useFormatted = false) => {
         if(useFormatted){
             return new Date().toISOString().
                     replace(/T/, ' ').
@@ -16,21 +16,21 @@ class Tools {
                 replace(/\..+/, '');
     }
 
-    static utilFormat(data){
+    static utilFormat = (data) => {
         return util.format(data);
     }
 
-    static clearString(s){
+    static clearString = (s) => {
         s.replace(/[\b]/g, '').replace(/[\f]/g, '').replace(/[\n]/g, '').replace(/[\r]/g, '').replace(/[\t]/g, '').replace(/[\\]/g, '');
     }
 
     // Invisible in console.log
-    static toRawType(value) {
+    static toRawType = (value) => {
         return Object.prototype.toString.call(value).slice(8,-1);
     }
 
     // Invisible in console.log
-    static forEach(array, iteratee){
+    static forEach = (array, iteratee) => {
         let index = -1;
         const length = array.length;
         while (++index < length) {
@@ -40,16 +40,16 @@ class Tools {
     }
 
     // Invisible in console.log
-    static cloneSymbol(target){ return Object(Symbol.prototype.valueOf.call(target)); }
+    static cloneSymbol = (target) => { return Object(Symbol.prototype.valueOf.call(target)); }
     // Invisible in console.log
-    static cloneReg(target) {
+    static cloneReg = (target) => {
         const regexFlags = /\w*$/;
         const result = new target.constructor(targe.source, regexFlags.exec(target));
         result.lastIndex = target.lastIndex;
         return result;
     }
     // Invisible in console.log
-    static cloneOtherType (target) {
+    static cloneOtherType = (target)  => {
         //const targetConstructor = target.constructor;
         switch (this.ToRawType(target)) {
             case "Boolean":
@@ -74,7 +74,7 @@ class Tools {
      * @param {* | null} map 
      * @returns 
      */
-    static deepCopy(target, map = new WeakMap()){
+    static deepCopy = (target, map = new WeakMap()) => {
         // clone primitive types
         if (typeof target != "object" || target == null) {
             return target;
@@ -130,20 +130,20 @@ class Tools {
     /**
      * @returns Server uptime in seconds
      */
-    static getServerUptimeInSeconds(){
+    static getServerUptimeInSeconds = () => {
         ~~(process.uptime());
     }
     /**
      * @returns Current Date timestamp in seconds
      */
-    static getCurrentTimestamp(){
+    static getCurrentTimestamp = () => {
         ~~(new Date().getTime() / 1000);
     }
     /**
      * @param {Date} date 
      * @returns returns formated date to "hours-minutes-seconds" format
      */
-    static formatTime(date){
+    static formatTime = (date) => {
         `${("0" + date.getHours()).substr(-2)}-${("0" + date.getMinutes()).substr(-2)}-${("0" + date.getSeconds()).substr(-2)}`;
     }
 
@@ -151,7 +151,7 @@ class Tools {
      * @param {string} prefix 
      * @returns Unique ID as string
      */
-    static generateUniqueId(prefix = ""){
+    static generateUniqueId = (prefix = "") => {
         `${prefix}${uuidv4()}`;
     }
 
@@ -159,7 +159,7 @@ class Tools {
      * 
      * @param {Array} array 
      */
-    static getRandomValueFromArray(array){
+    static getRandomValueFromArray = (array) => {
         JET.Utils.Math.getRandomFromArray(array)
     }
 }
