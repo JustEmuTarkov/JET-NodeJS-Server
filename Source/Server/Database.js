@@ -29,11 +29,12 @@ class Database {
             this.loadWeather(),
             this.loadLanguage(),
             this.loadTemplates(),
-            this.loadConfigs(),
             this.loadBots(),
             this.loadProfiles(),
         ]);
 
+        // TODO: apply user settings (Server/settings/{}.json) for each database component
+        // for example, hideout production times for each area, scav cases production times...
         console.timeEnd("loadDatabase");
         console.log(typeof this.core);
         console.log(typeof this.items);
@@ -41,7 +42,6 @@ class Database {
         console.log(typeof this.weather);
         console.log(typeof this.languages);
         console.log(typeof this.templates);
-        console.log(typeof this.configs);
         console.log(typeof this.bots);
 
     }
@@ -110,8 +110,26 @@ class Database {
     }
 
     async loadLanguage() {
-        console.log("Loaded languages");
-        this.languages = "languages";
+        console.log("### Database: Loading languages");
+        const allLangs = JSON.parse(fs.readFileSync('./Server/dumps/locales/all_locales.json', 'utf8')).data;
+        this.languages = {"all_locales": allLangs};
+        for (const locale of allLangs) {
+            const currentLocalePath = "./Server/dumps/locales/" + locale.ShortName + "/";
+            try {
+                const [localeData, menuData] = await Promise.all([
+                    utils.FileIO.readFileAsync(currentLocalePath + "locales.json"),
+                    utils.FileIO.readFileAsync(currentLocalePath + "menu.json"),
+                ])
+                this.languages[locale.ShortName] =  {
+                    locale: JSON.parse(localeData).data,
+                    menu: JSON.parse(menuData).data,
+                } 
+            }
+            catch (exception) {
+                console.log("### Database: Error while loading language " + locale.ShortName);
+            }
+        }
+        console.log("### Database: Loaded languages");
     }
 
     async loadTemplates() {
