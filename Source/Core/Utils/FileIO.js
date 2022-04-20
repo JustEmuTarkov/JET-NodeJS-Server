@@ -1,18 +1,24 @@
 const fs = require("fs");
-const path = require("path");
 const fsPromises = require('fs').promises
 
 class FileIO {
-    static readFile = (FileName) => {
-        return fs.readFileSync(FileName);
+    static getAbsolutePathFrom(path){
+        const startsWithSlash = path[0] == "/";
+        if(startsWithSlash){
+            return `${process.cwd()}${path}`;
+        }
+        return `${process.cwd()}/${path}`;
+    }
+    static readFile = (filePath, useRelative = true) => {
+        return fs.readFileSync((useRelative) ? this.getAbsolutePathFrom(filePath) : filePath);
     }
 
-    static readParsed(filename){
-        return JSON.parse(fs.readFileSync(path.resolve(filename), 'utf8'));
+    static readParsed = (filePath, useRelative = true) => {
+        return JSON.parse(this.readFile(filePath, useRelative), 'utf8');
     }
 
-    static createFileWriteStream = (file) => {
-        return fs.createWriteStream(file, { flags: 'w' });
+    static createFileWriteStream = (filePath, useRelative = true) => {
+        return fs.createWriteStream((useRelative) ? this.getAbsolutePathFrom(filePath) : filePath, { flags: 'w' });
     }
 
     /**
@@ -21,8 +27,12 @@ class FileIO {
      * @param {string} file path of the file to  be read
      * @returns {Promise}
      */
-    static readFileAsync = (file) => {
-        return fsPromises.readFile(file, 'utf-8');
+    static readFileAsync = (filePath, useRelative = true) => {
+        return fsPromises.readFile((useRelative) ? this.getAbsolutePathFrom(filePath) : filePath, 'utf-8');
+    }
+
+    static fileExist = (filePath, useRelative = true) => {
+        return fs.existsSync(this.getAbsolutePathFrom(filePath, useRelative));
     }
 
     /**
@@ -30,9 +40,10 @@ class FileIO {
      * @param {string} path 
      * @returns {Array}
      */
-    static getDirectories = (path) => {
-        return fs.readdirSync(path).filter(function (file) {
-            return fs.statSync(path+'/'+file).isDirectory();
+    static getDirectoriesFrom = (path, useRelative = true) => {
+        const tempPath = (useRelative) ? this.getAbsolutePathFrom(path) : path;
+        return fs.readdirSync(tempPath).filter(function (file) {
+            return fs.statSync(`${tempPath}/${file}`).isDirectory();
         });
     }
 
@@ -41,9 +52,10 @@ class FileIO {
      * @param {string} path 
      * @returns {Array}
      */
-    static getFilesInDirectory = (path) => {
-        return fs.readdirSync(path).filter(function (file) {
-            return fs.statSync(path+'/'+file).isFile();
+    static getFilesFrom = (path, useRelative = true) => {
+        const tempPath = (useRelative) ? this.getAbsolutePathFrom(path) : path;
+        return fs.readdirSync(tempPath).filter(function (file) {
+            return fs.statSync(`${tempPath}/${file}`).isFile();
         });
     }
     
