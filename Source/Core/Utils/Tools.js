@@ -11,9 +11,7 @@ class Tools {
                     replace(/T/, ' ').
                     replace(/\..+/, '');
         }
-        return new Date().toISOString().
-                replace(/T/, ' ').
-                replace(/\..+/, '');
+        return new Date().toISOString();
     }
 
     static utilFormat = (data) => {
