@@ -1,5 +1,5 @@
 'use strict'
-
+const language = require("./Server/modules/language.js");
 const fastify = require("./Server/Fastify.js");
 const database = require("./Server/database.js");
 
@@ -11,6 +11,7 @@ console.log(JET.Utils);
 database.loadDatabase();
 global.JET.Database = database;
 
+language.initialize(database);
 
 //const LoadServerProfileList = () => {
 //    const Profiles = fs.readdirSync(global.JET.ExecutionPath + "/User/Profiles");

@@ -1,6 +1,5 @@
 const accountUtils = require("../Core/UserData/Account.js").AccountUtils;
-
-
+const language = require("./modules/language.js");
 
 class Routes {
 
@@ -113,7 +112,7 @@ class Routes {
         //"/singleplayer/settings/raid/endstate": this.singleplayerSettingsRaidEndstate,
         //"/singleplayer/settings/raid/menu": this.singleplayerSettingsRaidMenu,
         //"/singleplayer/settings/bot/difficulty": this.singleplayerSettingsBotDifficulty,
-
+        //Routes.addRoute(fastify, "/client/languages", language.getLanguages(), ["GET", "POST"]);
         Routes.addRoute(fastify, "/", async function (request, reply) {
             return { hello: 'world' }
           }, "GET");
