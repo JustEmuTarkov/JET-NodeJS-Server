@@ -1,3 +1,5 @@
+const tools = require('./Tools.js');
+
 class Logger {
   constructor(){
     this.ConsoleColor = {
@@ -30,7 +32,7 @@ class Logger {
   /** Returns the Filename for Logs
    * @returns string - Logs file name
    */
-  GetFileName = () => `${JET.Utils.Tools.getIsoDateString(true)}.log`;
+  GetFileName = () => `${tools.getIsoDateString(true)}.log`;
 
   /** Returns the path to the Logs folder with / at the end
    * @param {boolean} useRelative 
@@ -68,7 +70,7 @@ class Logger {
   Log(type, data, colorAtFront, colorAtBack){
     const FrontColor = this.GetConsoleColor("Front", colorAtFront);
     const BackColor = this.GetConsoleColor("Back", colorAtBack);
-    const Time = JET.Utils.Tools.getIsoDateString(true);
+    const Time = tools.getIsoDateString(true);
 
     const LogString = `${FrontColor}${BackColor}${type}${this.ConsoleColor.Reset}${Time}`;
     const FileString = `${type}${Time}`;
@@ -82,15 +84,15 @@ class Logger {
       if(typeof data == "string"){
         this.LogConsole(LogString + data);
         if(this.LogFileStream != undefined){
-          this.LogFileStream.write(JET.Utils.Tools.utilFormat(FileString + data + "\n"));
+          this.LogFileStream.write(tools.utilFormat(FileString + data + "\n"));
         }
       } else {
         this.LogConsole(LogString);
         this.LogConsole(data);
         if(this.LogFileStream != undefined){
-          this.LogFileStream.write(JET.Utils.Tools.utilFormat(FileString));
-          this.LogFileStream.write(JET.Utils.Tools.utilFormat(data));
-          this.LogFileStream.write(JET.Utils.Tools.utilFormat("\n"));
+          this.LogFileStream.write(tools.utilFormat(FileString));
+          this.LogFileStream.write(tools.utilFormat(data));
+          this.LogFileStream.write(tools.utilFormat("\n"));
         }
       }
   }

@@ -1,5 +1,4 @@
 const utils = require('../Core/Utils.js');
-
 const fs = require('fs')
 
 class Database {
@@ -21,7 +20,7 @@ class Database {
      * No data is losed as we use await keywords to avoid completing execution without a read instruction done.
      */
     async loadDatabase(){
-        JET.Utils.Logger.LogDebug("# Database: All", 1)
+        utils.Logger.LogDebug("# Database: All", 1)
         // load database in parallel, ms goes brrrrrrr
         await Promise.all([
             this.loadCore(),
@@ -36,13 +35,13 @@ class Database {
 
         // TODO: apply user settings (Server/settings/{}.json) for each database component
         // for example, hideout production times for each area, scav cases production times...
-        JET.Utils.Logger.LogDebug("# Database: All", 2)
+        utils.Logger.LogDebug("# Database: All", 2)
 
 
     }
 
     async loadCore() {
-        JET.Utils.Logger.LogDebug("# Database: Loading core", 1);
+        utils.Logger.LogDebug("# Database: Loading core", 1);
         this.core = {
             botBase: utils.FileIO.readParsed('./Server/db/base/botBase.json'),
             botCore: utils.FileIO.readParsed('./Server/db/base/botCore.json'),
@@ -50,35 +49,35 @@ class Database {
             matchMetric: utils.FileIO.readParsed('./Server/db/base/matchMetrics.json'),
             globals: utils.FileIO.readParsed('./Server/dumps/globals.json').data,
         };
-        JET.Utils.Logger.LogDebug("# Database: Loading core", 2);
+        utils.Logger.LogDebug("# Database: Loading core", 2);
     }
 
     async loadItems() {
-        JET.Utils.Logger.LogDebug("# Database: Loading items", 1)
+        utils.Logger.LogDebug("# Database: Loading items", 1)
         const itemsDump = utils.FileIO.readParsed('./Server/dumps/items.json');
         this.items = itemsDump.data;
-        JET.Utils.Logger.LogDebug("# Database: Loading items", 2);
+        utils.Logger.LogDebug("# Database: Loading items", 2);
     }
 
     async loadHideout() {
-        JET.Utils.Logger.LogDebug("# Database: Loading hideout", 1)
+        utils.Logger.LogDebug("# Database: Loading hideout", 1)
         this.hideout = {
             areas: utils.FileIO.readParsed('./Server/dumps/hideout/areas.json').data,
             productions: utils.FileIO.readParsed('./Server/dumps/hideout/productions.json').data,
             scavcase: utils.FileIO.readParsed('./Server/dumps/hideout/scavcase.json').data,
             settings: utils.FileIO.readParsed('./Server/dumps/hideout/settings.json').data,
         };
-        JET.Utils.Logger.LogDebug("# Database: Loading hideout", 2)
+        utils.Logger.LogDebug("# Database: Loading hideout", 2)
     }
 
     async loadWeather() {
-        JET.Utils.Logger.LogDebug("# Database: Loading weather", 1)
+        utils.Logger.LogDebug("# Database: Loading weather", 1)
         this.weather = utils.FileIO.readParsed('./Server/dumps/weather.json').data;
-        JET.Utils.Logger.LogDebug("# Database: Loading weather", 2)
+        utils.Logger.LogDebug("# Database: Loading weather", 2)
     }
 
     async loadLanguage() {
-        JET.Utils.Logger.LogDebug("# Database: Loading languages", 1)
+        utils.Logger.LogDebug("# Database: Loading languages", 1)
         const allLangs = utils.FileIO.readParsed('./Server/dumps/locales/all_locales.json', 'utf8').data;
         this.languages = {"all_locales": allLangs};
         for (const locale of allLangs) {
@@ -90,27 +89,27 @@ class Database {
                 };       
             }
         }
-        JET.Utils.Logger.LogDebug("# Database: Loading languages", 2)
+        utils.Logger.LogDebug("# Database: Loading languages", 2)
     }
 
     async loadTemplates() {
-        JET.Utils.Logger.LogDebug("# Database: Loading templates", 1)
+        utils.Logger.LogDebug("# Database: Loading templates", 1)
         const templatesData = utils.FileIO.readParsed('./Server/dumps/templates.json').data;
         this.templates = {
             "Categories": templatesData.Categories,
             "Items": templatesData.Items,
         };
-        JET.Utils.Logger.LogDebug("# Database: Loading templates", 2)
+        utils.Logger.LogDebug("# Database: Loading templates", 2)
     }
 
     async loadConfigs() {
-        JET.Utils.Logger.LogDebug("# Database: Loading configs", 1)
+        utils.Logger.LogDebug("# Database: Loading configs", 1)
         this.configs = "configs";
-        JET.Utils.Logger.LogDebug("# Database: Loading configs", 2)
+        utils.Logger.LogDebug("# Database: Loading configs", 2)
     }
 
     async loadBots() {
-        JET.Utils.Logger.LogDebug("# Database: Loading bots", 1)
+        utils.Logger.LogDebug("# Database: Loading bots", 1)
         const botTypes = utils.FileIO.getDirectoriesFrom('./Server/db/bots');
         this.bots = {};
         for(let botType of botTypes){
@@ -135,11 +134,11 @@ class Database {
             this.bots[botType]["health"] = utils.FileIO.readParsed(`${folderPath}health.json`);
             // bot names are in db.base.botNames
         }
-        JET.Utils.Logger.LogDebug("# Database: Loading bots", 2)
+        utils.Logger.LogDebug("# Database: Loading bots", 2)
     }
 
     async loadProfiles() {
-        JET.Utils.Logger.LogDebug("# Database: Loading profiles", 1)
+        utils.Logger.LogDebug("# Database: Loading profiles", 1)
         const profilesKeys = utils.FileIO.getDirectoriesFrom('./Server/db/profiles');
         this.profiles = {};
         for(let profileType of profilesKeys){
@@ -152,7 +151,7 @@ class Database {
             //this.profiles[profileType]["starting_outfit"] = utils.FileIO.readParsed(`${path}starting_outfit.json`);
             this.profiles[profileType]["storage"] = utils.FileIO.readParsed(`${path}storage.json`);
         }
-        JET.Utils.Logger.LogDebug("# Database: Loading profiles", 2)
+        utils.Logger.LogDebug("# Database: Loading profiles", 2)
     }
 }
 
