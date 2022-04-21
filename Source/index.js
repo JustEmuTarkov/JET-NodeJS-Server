@@ -1,7 +1,5 @@
 'use strict'
 
-const fs = require("fs");
-const path = require("path");
 const fastify = require("./Server/Fastify.js");
 const database = require("./Server/database.js");
 

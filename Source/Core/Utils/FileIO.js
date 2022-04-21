@@ -2,6 +2,12 @@ const fs = require("fs");
 const fsPromises = require('fs').promises
 
 class FileIO {
+
+    /**
+     * Retrieve absolute path using shortened path.
+     * @param {string} path 
+     * @returns {string} absolutePath
+     */
     static getAbsolutePathFrom(path){
         const startsWithSlash = path[0] == "/";
         if(startsWithSlash){
@@ -13,6 +19,12 @@ class FileIO {
         return fs.readFileSync((useRelative) ? this.getAbsolutePathFrom(filePath) : filePath);
     }
 
+    /**
+     * Read a file and parse it to JSON.
+     * @param {string} filePath 
+     * @param {boolean} useRelative 
+     * @returns 
+     */
     static readParsed = (filePath, useRelative = true) => {
         return JSON.parse(this.readFile(filePath, useRelative), 'utf8');
     }
