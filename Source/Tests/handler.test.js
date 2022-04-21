@@ -33,6 +33,6 @@ test('Initialize language', async t => {
         "You are now entering an emulated version of a Tarkov raid. This emulated raid has all the features of a live version, but it has no connection to BSG's servers, and stays local on your PC.\nOther PMCs will spawn as emulated AI, and will spawn with randomized gear, levels, inventory, and names. This means you can loot, kill, and extract as you would online, and keep your inventory when you extract, but you cannot bring this loot into live EFT servers.\nIf you have any questions, don't hesitate to join the JustEmuTarkov Discord for assistance.",
     ]
     for (let indexInterface in interfaceToVerify){
-        t.equal(languageDatabase.en.locale.interface[interfaceToVerify[indexInterface]], valueNeeded[indexInterface], `${interfaceToVerify[indexInterface]} is ${valueNeeded[indexInterface]}`);
+        t.equal(languageDatabase.en.locale.interface[interfaceToVerify[indexInterface]], valueNeeded[indexInterface], `Replace ${interfaceToVerify[indexInterface]}`);
     }
 })
