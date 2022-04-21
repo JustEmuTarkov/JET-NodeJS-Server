@@ -79,14 +79,15 @@ class Database {
     async loadLanguage() {
         utils.Logger.LogDebug("# Database: Loading languages", 1)
         const allLangs = utils.FileIO.readParsed('./Server/dumps/locales/all_locales.json', 'utf8').data;
-        this.languages = {"all_locales": allLangs};
+        this.languages = {"all_locales": []};
         for (const locale of allLangs) {
             const currentLocalePath = "Server/dumps/locales/" + locale.ShortName + "/";
             if (utils.FileIO.fileExist(currentLocalePath + "locales.json") && utils.FileIO.fileExist(currentLocalePath + "menu.json")){
                 this.languages[locale.ShortName] =  {
                     locale: utils.FileIO.readParsed(currentLocalePath + "locales.json").data,
                     menu: utils.FileIO.readParsed(currentLocalePath + "menu.json").data,
-                };       
+                };
+                this.languages.all_locales.push(locale);   
             }
         }
         utils.Logger.LogDebug("# Database: Loading languages", 2)

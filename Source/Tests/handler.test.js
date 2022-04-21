@@ -4,6 +4,8 @@ const { test } = require('tap');
 const database = require('../Server/Database.js');
 const language = require('../Server/modules/language.js');
 
+/** DATABASE RELATED TESTS */
+
 test('Load database', async t => {
     await database.loadDatabase();
     t.equal(typeof database.core, 'object', 'core is an object');
@@ -17,6 +19,8 @@ test('Load database', async t => {
     t.equal(typeof database.profiles, 'object', 'profiles is an object');
     t.end();
 })
+
+/** LANGUAGES RELATED TESTS */
 
 test('Initialize language', async t => {
     await database.loadDatabase();
@@ -35,4 +39,10 @@ test('Initialize language', async t => {
     for (let indexInterface in interfaceToVerify){
         t.equal(languageDatabase.en.locale.interface[interfaceToVerify[indexInterface]], valueNeeded[indexInterface], `Replace ${interfaceToVerify[indexInterface]}`);
     }
+})
+
+test('Retrieve all languages', async t => {
+    await database.loadDatabase();
+    const retrievedLanguages = await language.getLanguages(database);
+    t.equal(retrievedLanguages.length, 1, 'Retrieved 1 languages');
 })
