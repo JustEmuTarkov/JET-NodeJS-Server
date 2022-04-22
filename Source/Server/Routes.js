@@ -112,7 +112,7 @@ class Routes {
         //"/singleplayer/settings/raid/endstate": this.singleplayerSettingsRaidEndstate,
         //"/singleplayer/settings/raid/menu": this.singleplayerSettingsRaidMenu,
         //"/singleplayer/settings/bot/difficulty": this.singleplayerSettingsBotDifficulty,
-        //Routes.addRoute(fastify, "/client/languages", language.getLanguages(), ["GET", "POST"]);
+        Routes.addRoute(fastify, "/client/languages", language.getLanguages(), ["GET", "POST"]);
         Routes.addRoute(fastify, "/", async function (request, reply) {
             return { hello: 'world' }
           }, "GET");
