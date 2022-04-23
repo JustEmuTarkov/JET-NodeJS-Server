@@ -1,8 +1,8 @@
 'use strict'
 
 const t = require('tap');
-const database = require('../Server/database.js');
-const language = require('../Server/modules/language.js');
+const database = require('../server/database.js');
+const language = require('../server/modules/language.js');
 
 
 t.test('Database', async (t) => {
