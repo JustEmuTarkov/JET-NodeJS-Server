@@ -1,7 +1,7 @@
 'use strict'
-const language = require("./Server/modules/language.js");
-const fastify = require("./Server/fastify.js");
-const database = require("./Server/database.js");
+const language = require("./server/modules/language.js");
+const fastify = require("./server/fastify.js");
+const database = require("./server/database.js");
 
 global.JET = { ExecutionPath: __dirname, UserList: [], userdataList: [], Utils: {} }
 global.JET.Utils = require('./core/utils');
@@ -25,4 +25,4 @@ language.initialize(database.languages);
 // //Fastify.Server.decorate("jet_db", Database);
 
 // LoadServerProfileList();
-fastify.StartServer();
+fastify.startServer();

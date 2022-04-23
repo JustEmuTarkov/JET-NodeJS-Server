@@ -1,6 +1,6 @@
 const certificateGenerator = require('./certificategenerator.js');
 const routes = require("./routes.js");
-const fastifyWS = require("fastify-ws");
+//const fastifyWS = require("fastify-ws");
 const fastify = require('fastify')
 
 class FastifyServer {
@@ -15,8 +15,8 @@ class FastifyServer {
                 cert: certificateGenerator.CERT
             }
         });
-        this.server.register(fastifyWS);
-        this.setWebSocketServer();
+        //this.server.register(fastifyWS);
+        //this.setWebSocketServer();
         this.defaultDecorators();
         routes.initializeRoutes(this.server);
     }
@@ -26,7 +26,7 @@ class FastifyServer {
     async addResponseDecorator(FunctionName, Function){
         this.server.decorateReply(FunctionName, Function);
     }
-    async AddGlobalDecorator(FunctionName, Function){
+    async addGlobalDecorator(FunctionName, Function){
         this.server.decorate(FunctionName, Function);
     }
     async defaultDecorators(){
@@ -36,33 +36,33 @@ class FastifyServer {
         this.addResponseDecorator('Res_BSG', require("./decorators/Response_BSG.js"));
         this.addResponseDecorator('Res_Compress', require("./decorators/Response_Compress.js"));
     }
-    async setWebSocketServer(){
-        this.server.ready(err => {
-            if(err) throw err;
-
-            this.server.ws.on("connection", socket => {
-                socket.on("message", msg => console.log(msg));
-                socket.on("close", () => console.log("Closed Connection"));
-            })
-        });
-    }
-    async addRoute(path, func, type = "get"){
-        switch(type){
-            case "get": 
-                this.server.get(path, func);
-                return;
-            case "post": 
-                this.server.post(path, func);
-                return;
-            case "get&post":
-                this.server.get(path, func);
-                this.server.post(path, func);
-                return;
-            default: 
-                console.log(`Route is not defined: for ${path} as ${type}`);
-                return;
-        }
-    }
+    //async setWebSocketServer(){
+    //    this.server.ready(err => {
+    //        if(err) throw err;
+//
+    //        this.server.ws.on("connection", socket => {
+    //            socket.on("message", msg => console.log(msg));
+    //            socket.on("close", () => console.log("Closed Connection"));
+    //        })
+    //    });
+    //}
+    //async addRoute(path, func, type = "get"){
+    //    switch(type){
+    //        case "get": 
+    //            this.server.get(path, func);
+    //            return;
+    //        case "post": 
+    //            this.server.post(path, func);
+    //            return;
+    //        case "get&post":
+    //            this.server.get(path, func);
+    //            this.server.post(path, func);
+    //            return;
+    //        default: 
+    //            console.log(`Route is not defined: for ${path} as ${type}`);
+    //            return;
+    //    }
+    //}
     async startServer(){
         try
         {

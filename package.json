@@ -2,7 +2,7 @@
   "name": "JetNodeServer",
   "scripts": {
     "start": "node index.js",
-    "test": "tap --reporter=list --watch"
+    "test": "tap"
   },
   "version": "0.0.0",
   "dependencies": {

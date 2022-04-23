@@ -13,8 +13,8 @@ class Routes {
             reply.send(JSON.stringify(reply.Res_BSG(data)));
         });
 
-        fastify.get("/client/languages", async function (request, reply) {
-            reply.send({Hello: "world"});
+        fastify.get("/", async function (request, reply) {
+            reply.send({hello: 'world'});
           });
     }
 
