@@ -1,8 +1,8 @@
 'use strict'
 const t = require('tap');
-const fastify = require("../Server/fastify.js");
-const database = require("../Server/database.js");
-const language = require('../Server/modules/language.js');
+const fastify = require("../server/fastify.js");
+const database = require("../server/Database.js");
+const language = require('../server/modules/language.js');
 
 t.test('...', async (t) => {
   global.JET = { ExecutionPath: __dirname, UserList: [], userdataList: [], Utils: {}, Database: {}}
