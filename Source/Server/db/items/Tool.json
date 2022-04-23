@@ -890,9 +890,9 @@
 		"_parent": "57864bb7245977548b3b66c2",
 		"_type": "Item",
 		"_props": {
-			"Name": "Toolset",
-			"ShortName": "Toolset",
-			"Description": "Toolset",
+			"Name": "toolset",
+			"ShortName": "toolset",
+			"Description": "toolset",
 			"Weight": 0.9,
 			"BackgroundColor": "blue",
 			"Width": 2,

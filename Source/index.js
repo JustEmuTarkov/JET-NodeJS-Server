@@ -1,10 +1,10 @@
 'use strict'
 const language = require("./Server/modules/language.js");
-const fastify = require("./Server/Fastify.js");
+const fastify = require("./Server/fastify.js");
 const database = require("./Server/database.js");
 
-global.JET = { ExecutionPath: __dirname, UserList: [], UserDataList: [], Utils: {} }
-global.JET.Utils = require('./Core/Utils');
+global.JET = { ExecutionPath: __dirname, UserList: [], userdataList: [], Utils: {} }
+global.JET.Utils = require('./core/utils');
 
 console.log(JET.Utils);
 

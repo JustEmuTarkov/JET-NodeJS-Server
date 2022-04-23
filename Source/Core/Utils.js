@@ -1,9 +1,9 @@
 class Utils {
     constructor(){
-        this.FileIO = require("./Utils/FileIO");
-        this.Math = require("./Utils/Math");
-        this.Logger = require("./Utils/Logger");
-        this.Tools = require("./Utils/Tools");
+        this.fileIO = require("./utils/fileIO");
+        this.math = require("./utils/math");
+        this.logger = require("./utils/logger");
+        this.tools = require("./utils/tools");
     }
 }
 

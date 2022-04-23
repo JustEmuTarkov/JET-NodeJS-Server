@@ -1,4 +1,4 @@
-const tools = require('./Tools.js');
+const tools = require('./tools.js');
 
 class Logger {
   constructor(){
@@ -78,7 +78,7 @@ class Logger {
     try{
       if(this.LogFileStream == undefined){
         // somehow this shit is crashing...
-        //this.LogFileStream = JET.Utils.FileIO.createFileWriteStream( this.GetLogsFolderPath() + this.GetFileName() );
+        //this.LogFileStream = JET.Utils.fileIO.createFileWriteStream( this.GetLogsFolderPath() + this.GetFileName() );
       }
     } catch{} 
       if(typeof data == "string"){

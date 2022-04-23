@@ -1,21 +1,21 @@
 const fs = require("fs");
 class User {
 
-    constructor(Id){
-        this.ProfilePath = global.JET.ExecutionPath + "/User/Profile/" + Id + "/";
-        this.ProfileLoaded = false;
-        if(!fs.existsSync(this.ProfilePath)){
-            console.log(`User: ${Id}, Not Found!!!`)
+    constructor(ID){
+        this.profilePath = global.JET.executionPath + "/user/profile/" + ID + "/";
+        this.profileLoaded = false;
+        if(!fs.existsSync(this.profilePath)){
+            console.log(`User: ${ID}, Not Found!!!`)
             return;
         }
-        this.Account = new (require("./UserData/Account.js"))(this.ProfilePath);
-        this.Inventory = new (require("./UserData/Inventory.js"))(this.ProfilePath);
-        this.Profile = new (require("./UserData/Profile.js"))(this.ProfilePath);
-        this.Quests = new (require("./UserData/Quests.js"))(this.ProfilePath);
-        this.Storage = new (require("./UserData/Storage.js"))(this.ProfilePath);
-        this.Trader = new (require("./UserData/Trader.js"))(this.ProfilePath);
-        this.UserBuilds = new (require("./UserData/UserBuilds.js"))(this.ProfilePath);
-        this.ProfileLoaded = true;
+        this.account = new (require("./userdata/account.js"))(this.profilePath);
+        this.inventory = new (require("./userdata/inventory.js"))(this.profilePath);
+        this.profile = new (require("./userdata/profile.js"))(this.profilePath);
+        this.quests = new (require("./userdata/quests.js"))(this.profilePath);
+        this.storage = new (require("./userdata/storage.js"))(this.profilePath);
+        this.trader = new (require("./userdata/trader.js"))(this.profilePath);
+        this.userBuilds = new (require("./userdata/userbuilds.js"))(this.profilePath);
+        this.profileLoaded = true;
     }
 
 

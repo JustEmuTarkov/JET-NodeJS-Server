@@ -1,5 +1,5 @@
-const certificateGenerator = require('./CertificateGenerator.js');
-const routes = require("./Routes.js");
+const certificateGenerator = require('./certificategenerator.js');
+const routes = require("./routes.js");
 const fastifyWS = require("fastify-ws");
 const fastify = require('fastify')
 

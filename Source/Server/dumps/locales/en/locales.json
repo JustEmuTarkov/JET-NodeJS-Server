@@ -5106,8 +5106,8 @@
 				"startedMessageText": "5ac345e886f7741d632339f2",
 				"description": "5ac345e886f7741d632339f3",
 				"conditions": {
-					"5ac7a4ba86f77409f3423628": "Fix the first control board with a Toolset on Factory",
-					"5ac7a51a86f774738a4ffc96": "Fix the second control board with a Toolset on Factory",
+					"5ac7a4ba86f77409f3423628": "Fix the first control board with a toolset on Factory",
+					"5ac7a51a86f774738a4ffc96": "Fix the second control board with a toolset on Factory",
 					"5ac7a5d586f774383111ee63": "Survive and extract from the location",
 					"5acf388786f7741cdb2f7ef9": "",
 					"5acf390d86f774184403900f": ""
@@ -9057,7 +9057,7 @@
 			"5b47574386f77428ca22b2f2": "Flammable materials",
 			"5b47574386f77428ca22b2f3": "Medical supplies",
 			"5b47574386f77428ca22b2f4": "Others",
-			"5b47574386f77428ca22b2f6": "Tools",
+			"5b47574386f77428ca22b2f6": "tools",
 			"5b47574386f77428ca22b32f": "Facecovers",
 			"5b47574386f77428ca22b330": "Headwear & helmets",
 			"5b47574386f77428ca22b331": "Visors",
@@ -12407,8 +12407,8 @@
 				"Description": "A battery charger with a USB output. Used to be an indispensable household item."
 			},
 			"590c2e1186f77425357b6124": {
-				"Name": "Toolset",
-				"ShortName": "Toolset",
+				"Name": "toolset",
+				"ShortName": "toolset",
 				"Description": "A repairman’s bag with a set of different tools."
 			},
 			"5909d5ef86f77467974efbd8": {
@@ -23414,7 +23414,7 @@
 			},
 			"619cc01e0a7c3a1a2731940c": {
 				"Name": "Medical tools",
-				"ShortName": "MedTools",
+				"ShortName": "Medtools",
 				"Description": "A set of various medical instruments required for surgeries."
 			},
 			"618426d96c780c1e710c9b9f": {
