@@ -1,12 +1,12 @@
 'use strict'
 
 const t = require('tap');
-const database = require('../../server/Database.js');
+const database = require('../../server/database.js');
 const language = require('../../server/modules/language.js');
 
 
 t.test('Module-Language', async (t) => {
-    global.JET = { executionPath: __dirname, userList: [], UserDataList: [], utils: {}, database: {}}
+    global.JET = { executionPath: __dirname, userList: [], userDataList: [], utils: {}, database: {}}
     t.before(async () => {
       database.loadDatabase();
       global.JET.database = database;

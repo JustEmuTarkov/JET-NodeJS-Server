@@ -12,6 +12,7 @@ class Database {
         this.configs;
         this.bots;
         this.profiles;
+        this.traders;
     }
 
     /**
@@ -112,7 +113,7 @@ class Database {
 
     async loadBots() {
         utils.logger.LogDebug("# Database: Loading bots", 1)
-        const botTypes = utils.fileIO.getDirectoriesFrom('./Server/db/bots');
+        const botTypes = utils.fileIO.getDirectoriesFrom('./server/db/bots');
         this.bots = {};
         for (let botType of botTypes) {
             const folderPath = `./server/db/bots/${botType}/`;
@@ -156,23 +157,26 @@ class Database {
         utils.logger.LogDebug("# Database: Loading profiles", 2)
     }
 
-    //async loadTraders() {
-    //    utils.logger.LogDebug("# Database: Loading traders", 1)
-    //    const traders = utils.fileIO.getDirectoriesFrom('./server/dumps/traders');
-    //    this.traders = {};
-    //    for (let traderID in traders) {
-    //        const path = `./server/dumps/traders/${traderID}/`;
-    //        traders.trader[traderID] = { base: {}, assort: {}, categories: {} };
-//
-    //        traders.trader[traderID].base = utils.fileIO.readParsed(`./server/dumps/traders/${path}/base.json`);
-    //        traders.trader[traderID].questassort = utils.fileIO.readParsed(`./server/dumps/traders/${path}/questassort.json`);
-//
-    //        traders.trader[traderID].assort = utils.fileIO.readParsed(`./server/dumps/traders/${path}/assort.json`);
-    //        if (typeof traders.trader[traderID].assort.data != "undefined") { traders.trader[traderID].assort = traders.trader[traderID].assort.data; }
-    //    }
-    //    // Ragfair will need to be generated or added to the database later
-    //    utils.logger.LogDebug("# Database: Loading traders", 2)
-    //}
+    async loadTraders() {
+        utils.logger.LogDebug("# Database: Loading traders", 1)
+        const traders = utils.fileIO.getDirectoriesFrom('./server/dumps/traders');
+        this.traders = {};
+        for (let traderID in traders) {
+            const path = `./server/dumps/traders/${traderID}/`;
+            traders.trader[traderID] = { base: {}, assort: {}, categories: {} };
+
+            traders.trader[traderID].base = utils.fileIO.readParsed(`./server/dumps/traders/${path}/base.json`);
+
+            if ("questassort" in traders.trader[traderID]) {
+                traders.trader[traderID].questassort = utils.fileIO.readParsed(`./server/dumps/traders/${path}/questassort.json`);
+            }
+
+            traders.trader[traderID].assort = utils.fileIO.readParsed(`./server/dumps/traders/${path}/assort.json`);
+            if (typeof traders.trader[traderID].assort.data != "undefined") { traders.trader[traderID].assort = traders.trader[traderID].assort.data; }
+        }
+        // Ragfair will need to be generated or added to the database later
+        utils.logger.LogDebug("# Database: Loading traders", 2)
+    }
 }
 
 
