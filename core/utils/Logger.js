@@ -2,8 +2,8 @@ const tools = require('./tools.js');
 
 class Logger {
   constructor(){
-    this.ConsoleColor = {
-      Front: {
+    this.consoleColor = {
+      front: {
         black: "\x1b[30m",
         red: "\x1b[31m",
         green: "\x1b[32m",
@@ -13,7 +13,7 @@ class Logger {
         cyan: "\x1b[36m",
         white: "\x1b[37m",
       },
-      Back: {
+      back: {
         black: "\x1b[40m",
         red: "\x1b[41m",
         green: "\x1b[42m",
@@ -23,22 +23,22 @@ class Logger {
         cyan: "\x1b[46m",
         white: "\x1b[47m",
       },
-      Reset: "\x1b[0m"
+      reset: "\x1b[0m"
     }
     // this will be created once first log occurs
-    this.LogFileStream = undefined;
+    this.logFileStream = undefined;
   }
 
   /** Returns the Filename for Logs
    * @returns string - Logs file name
    */
-  GetFileName = () => `${tools.getIsoDateString(true)}.log`;
+  getFileName = () => `${tools.getIsoDateString(true)}.log`;
 
   /** Returns the path to the Logs folder with / at the end
    * @param {boolean} useRelative 
    * @returns 
    */
-  GetLogsFolderPath(useRelative = true) {
+  getLogsFolderPath(useRelative = true) {
     if(useRelative){
       return "Local/Logs/";
     }
@@ -51,13 +51,13 @@ class Logger {
    * @param {string} color ("black", "red", "green", "yellow", "blue", "magenta", "cyan", "white")
    * @returns 
    */
-  GetConsoleColor(type = "Front", color = "white"){
-    const ColorTag = this.ConsoleColor[type][color];
-    if(ColorTag == undefined)
+  getConsoleColor(type = "Front", color = "white"){
+    const colorTag = this.consoleColor[type][color];
+    if(colorTag == undefined)
       return "";
-    return ColorTag;
+    return colorTag;
   }
-  LogConsole(data){
+  logConsole(data){
     // allow to change this shit in 1 place and everywhere it will be changed
     console.log(data);
   }
@@ -67,47 +67,47 @@ class Logger {
    * @param {string} colorAtFront ("black", "red", "green", "yellow", "blue", "magenta", "cyan", "white")
    * @param {string} colorAtBack ("black", "red", "green", "yellow", "blue", "magenta", "cyan", "white")
    */
-  Log(type, data, colorAtFront, colorAtBack){
-    const FrontColor = this.GetConsoleColor("Front", colorAtFront);
-    const BackColor = this.GetConsoleColor("Back", colorAtBack);
+  log(type, data, colorAtFront, colorAtBack){
+    const FrontColor = this.getConsoleColor("Front", colorAtFront);
+    const BackColor = this.getConsoleColor("Back", colorAtBack);
     const Time = tools.getIsoDateString(true);
 
-    const LogString = `${FrontColor}${BackColor}${type}${this.ConsoleColor.Reset}${Time}`;
-    const FileString = `${type}${Time}`;
+    const logString = `${FrontColor}${BackColor}${type}${this.consoleColor.reset}${Time}`;
+    const fileString = `${type}${Time}`;
 
     try{
-      if(this.LogFileStream == undefined){
+      if(this.logFileStream == undefined){
         // somehow this shit is crashing...
-        //this.LogFileStream = JET.utils.fileIO.createFileWriteStream( this.GetLogsFolderPath() + this.GetFileName() );
+        //this.LogFileStream = JET.utils.fileIO.createFileWriteStream( this.getLogsFolderPath() + this.getFileName() );
       }
     } catch{} 
       if(typeof data == "string"){
-        this.LogConsole(LogString + data);
-        if(this.LogFileStream != undefined){
-          this.LogFileStream.write(tools.utilFormat(FileString + data + "\n"));
+        this.logConsole(logString + data);
+        if(this.logFileStream != undefined){
+          this.logFileStream.write(tools.utilFormat(fileString + data + "\n"));
         }
       } else {
-        this.LogConsole(LogString);
-        this.LogConsole(data);
-        if(this.LogFileStream != undefined){
-          this.LogFileStream.write(tools.utilFormat(FileString));
-          this.LogFileStream.write(tools.utilFormat(data));
-          this.LogFileStream.write(tools.utilFormat("\n"));
+        this.logConsole(logString);
+        this.logConsole(data);
+        if(this.logFileStream != undefined){
+          this.logFileStream.write(tools.utilFormat(fileString));
+          this.logFileStream.write(tools.utilFormat(data));
+          this.logFileStream.write(tools.utilFormat("\n"));
         }
       }
   }
 
-  LogInfo(text) {
-    this.Log("[INFO]", text, "white", "blue");
+  logInfo(text) {
+    this.log("[INFO]", text, "white", "blue");
   }
-  LogSuccess(text) {
-    this.Log("[INFO]", text, "white", "green");
+  logSuccess(text) {
+    this.log("[INFO]", text, "white", "green");
   }
-  LogWarning(text) {
-    this.Log("[INFO]", text, "white", "yellow");
+  logWarning(text) {
+    this.log("[INFO]", text, "white", "yellow");
   }
-  LogError(text) {
-    this.Log("[INFO]", text, "white", "red");
+  logError(text) {
+    this.log("[INFO]", text, "white", "red");
   }
   /**
    * 
@@ -115,21 +115,21 @@ class Logger {
    * @param {number} mode 0 -> only draw log, 1 -> draw log and start timer, 2 -> end timer (default: 0)
    * @returns 
    */
-  LogDebug(text, mode = 0) {
+  logDebug(text, mode = 0) {
     switch (mode){
-      case 0: this.Log("[DEBUG]", text, "white"); return;
-      case 1: this.Log("[DEBUG]", text, "white"); console.time(text); return;
+      case 0: this.log("[DEBUG]", text, "white"); return;
+      case 1: this.log("[DEBUG]", text, "white"); console.time(text); return;
       case 2: console.timeEnd(text); return;
     }    
   }
-  LogRequest(text, data = "") {
+  logRequest(text, data = "") {
     if(data == ""){
-      this.Log("[INFO]", text, "cyan", "black");
+      this.log("[INFO]", text, "cyan", "black");
     }
-    this.Log("[INFO]", text, "cyan", "black");
+    this.log("[INFO]", text, "cyan", "black");
   }
-  throwError(message, whereOccured, AdditionalInfo = ""){
-    throw message + "\r\n" + whereOccured + (AdditionalInfo != "" ? `\r\n${AdditionalInfo}` : "");
+  throwError(message, whereOccured, additionalInfo = ""){
+    throw message + "\r\n" + whereOccured + (additionalInfo != "" ? `\r\n${additionalInfo}` : "");
   }
 }
 module.exports = new Logger();

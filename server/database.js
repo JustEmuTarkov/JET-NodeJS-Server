@@ -21,7 +21,7 @@ class Database {
      * No data is losed as we use await keywords to avoid completing execution without a read instruction done.
      */
     async loadDatabase() {
-        utils.logger.LogDebug("# Database: All", 1)
+        utils.logger.logDebug("# Database: All", 1)
         // load database in parallel, ms goes brrrrrrr
         await Promise.all([
             this.loadCore(),
@@ -37,13 +37,13 @@ class Database {
 
         // TODO: apply user settings (Server/settings/{}.json) for each database component
         // for example, hideout production times for each area, scav cases production times...
-        utils.logger.LogDebug("# Database: All", 2)
+        utils.logger.logDebug("# Database: All", 2)
 
 
     }
 
     async loadCore() {
-        utils.logger.LogDebug("# Database: Loading core", 1);
+        utils.logger.logDebug("# Database: Loading core", 1);
         this.core = {
             botBase: utils.fileIO.readParsed('./server/db/base/botBase.json'),
             botCore: utils.fileIO.readParsed('./server/db/base/botCore.json'),
@@ -51,35 +51,47 @@ class Database {
             matchMetric: utils.fileIO.readParsed('./server/db/base/matchMetrics.json'),
             globals: utils.fileIO.readParsed('./server/dumps/globals.json').data,
         };
-        utils.logger.LogDebug("# Database: Loading core", 2);
+        utils.logger.logDebug("# Database: Loading core", 2);
     }
 
+    /**
+     * Load item data in parallel.
+     */
     async loadItems() {
-        utils.logger.LogDebug("# Database: Loading items", 1)
+        utils.logger.logDebug("# Database: Loading items", 1)
         const itemsDump = utils.fileIO.readParsed('./server/dumps/items.json');
         this.items = itemsDump.data;
-        utils.logger.LogDebug("# Database: Loading items", 2);
+        utils.logger.logDebug("# Database: Loading items", 2);
     }
 
+    /**
+     * Load hideout data in parallel.
+     */
     async loadHideout() {
-        utils.logger.LogDebug("# Database: Loading hideout", 1)
+        utils.logger.logDebug("# Database: Loading hideout", 1)
         this.hideout = {
             areas: utils.fileIO.readParsed('./server/dumps/hideout/areas.json').data,
             productions: utils.fileIO.readParsed('./server/dumps/hideout/productions.json').data,
             scavcase: utils.fileIO.readParsed('./server/dumps/hideout/scavcase.json').data,
             settings: utils.fileIO.readParsed('./server/dumps/hideout/settings.json').data,
         };
-        utils.logger.LogDebug("# Database: Loading hideout", 2)
+        utils.logger.logDebug("# Database: Loading hideout", 2)
     }
 
+    /**
+     * Load weather data in parallel.
+     */
     async loadWeather() {
-        utils.logger.LogDebug("# Database: Loading weather", 1)
+        utils.logger.logDebug("# Database: Loading weather", 1)
         this.weather = utils.fileIO.readParsed('./server/dumps/weather.json').data;
-        utils.logger.LogDebug("# Database: Loading weather", 2)
+        utils.logger.logDebug("# Database: Loading weather", 2)
     }
 
+    /**
+     * Load language data in parallel.
+     */
     async loadLanguage() {
-        utils.logger.LogDebug("# Database: Loading languages", 1)
+        utils.logger.logDebug("# Database: Loading languages", 1)
         const allLangs = utils.fileIO.readParsed('./server/dumps/locales/all_locales.json', 'utf8').data;
         this.languages = { "all_locales": [] };
         for (const locale of allLangs) {
@@ -92,27 +104,36 @@ class Database {
                 this.languages.all_locales.push(locale);
             }
         }
-        utils.logger.LogDebug("# Database: Loading languages", 2)
+        utils.logger.logDebug("# Database: Loading languages", 2)
     }
 
+    /**
+     * Load templates data in parallel.
+     */
     async loadTemplates() {
-        utils.logger.LogDebug("# Database: Loading templates", 1)
+        utils.logger.logDebug("# Database: Loading templates", 1)
         const templatesData = utils.fileIO.readParsed('./server/dumps/templates.json').data;
         this.templates = {
             "Categories": templatesData.Categories,
             "Items": templatesData.Items,
         };
-        utils.logger.LogDebug("# Database: Loading templates", 2)
+        utils.logger.logDebug("# Database: Loading templates", 2)
     }
 
+    /**
+     * Load configs data in parallel.
+     */
     async loadConfigs() {
-        utils.logger.LogDebug("# Database: Loading configs", 1)
+        utils.logger.logDebug("# Database: Loading configs", 1)
         this.configs = "configs";
-        utils.logger.LogDebug("# Database: Loading configs", 2)
+        utils.logger.logDebug("# Database: Loading configs", 2)
     }
 
+    /**
+     * Load bots data in parallel.
+     */
     async loadBots() {
-        utils.logger.LogDebug("# Database: Loading bots", 1)
+        utils.logger.logDebug("# Database: Loading bots", 1)
         const botTypes = utils.fileIO.getDirectoriesFrom('./server/db/bots');
         this.bots = {};
         for (let botType of botTypes) {
@@ -137,11 +158,14 @@ class Database {
             this.bots[botType]["health"] = utils.fileIO.readParsed(`${folderPath}health.json`);
             // bot names are in db.base.botNames
         }
-        utils.logger.LogDebug("# Database: Loading bots", 2)
+        utils.logger.logDebug("# Database: Loading bots", 2)
     }
 
+    /**
+     * Load profiles data in parallel.
+     */
     async loadProfiles() {
-        utils.logger.LogDebug("# Database: Loading profiles", 1)
+        utils.logger.logDebug("# Database: Loading profiles", 1)
         const profilesKeys = utils.fileIO.getDirectoriesFrom('./server/db/profiles');
         this.profiles = {};
         for (let profileType of profilesKeys) {
@@ -154,11 +178,14 @@ class Database {
             //this.profiles[profileType]["starting_outfit"] = utils.fileIO.readParsed(`${path}starting_outfit.json`);
             this.profiles[profileType]["storage"] = utils.fileIO.readParsed(`${path}storage.json`);
         }
-        utils.logger.LogDebug("# Database: Loading profiles", 2)
+        utils.logger.logDebug("# Database: Loading profiles", 2)
     }
 
+    /**
+     * Load traders base data in parallel.
+     */
     async loadTraders() {
-        utils.logger.LogDebug("# Database: Loading traders", 1)
+        utils.logger.logDebug("# Database: Loading traders", 1)
         const traders = utils.fileIO.getDirectoriesFrom('./server/dumps/traders');
         this.traders = {};
         for (let traderID in traders) {
@@ -172,10 +199,19 @@ class Database {
             }
 
             traders.trader[traderID].assort = utils.fileIO.readParsed(`./server/dumps/traders/${path}/assort.json`);
-            if (typeof traders.trader[traderID].assort.data != "undefined") { traders.trader[traderID].assort = traders.trader[traderID].assort.data; }
+            // give support for assort dump files
+            if (!utils.isUndefined(traders.trader[traderID].assort.data)) {
+                traders.trader[traderID].assort = traders.trader[traderID].assort.data;
+            }
         }
-        // Ragfair will need to be generated or added to the database later
-        utils.logger.LogDebug("# Database: Loading traders", 2)
+
+        /**
+         * Ragfair will need to be regenerated to the database later
+         * so that we can populate the assort with the correct/missing item data.
+         * It may be best to do this as a separate step, and call it here.
+         */
+
+        utils.logger.logDebug("# Database: Loading traders", 2)
     }
 }
 

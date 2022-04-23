@@ -5,6 +5,15 @@ const { v4: uuidv4 } = require('uuid');
 
 class Tools {
 
+    /**Check if the given value is undefined
+     * 
+     * @param {*} value definition to check
+     * @returns true or false
+     */
+    static isUndefined = (value) => {
+        return typeof value === 'undefined';
+    }
+
     static getIsoDateString = (useFormatted = false) => {
         if(useFormatted){
             return new Date().toISOString().
