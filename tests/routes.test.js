@@ -21,7 +21,6 @@ t.test('test "/" routes', async t => {
 
   
   t.equal(response.statusCode, 200, '"/" route returns a status code of 200');
-  fastify.server.close();
   t.end();
 })
 
