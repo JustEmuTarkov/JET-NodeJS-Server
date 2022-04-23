@@ -6,7 +6,7 @@ const database = require("../server/database.js");
 const language = require('../server/modules/language.js');
 
  t.beforeEach(() => {
-   global.JET = { executionPath: __dirname, userList: [], UserDataList: [], utils: {}, database: {}};
+   global.JET = { executionPath: __dirname, userList: [], userDataList: [], utils: {}, database: {}};
    database.loadDatabase();
    global.JET.database = database;
    fastify.startServer();

@@ -1,6 +1,6 @@
 const certificateGenerator = require('./certificategenerator.js');
 const routes = require("./routes.js");
-const fastifyWS = require("fastify-ws");
+const uWebSocket = require("uWebSockets.js");
 const fastify = require('fastify')
 
 class FastifyServer {
@@ -15,7 +15,7 @@ class FastifyServer {
                 cert: certificateGenerator.CERT
             }
         });
-        this.server.register(fastifyWS);
+        this.server.register(uWebSocket);
         this.setWebSocketServer();
         this.defaultDecorators();
         routes.initializeRoutes(this.server);
@@ -26,7 +26,7 @@ class FastifyServer {
     async addResponseDecorator(FunctionName, Function){
         this.server.decorateReply(FunctionName, Function);
     }
-    async AddGlobalDecorator(FunctionName, Function){
+    async addGlobalDecorator(FunctionName, Function){
         this.server.decorate(FunctionName, Function);
     }
     async defaultDecorators(){

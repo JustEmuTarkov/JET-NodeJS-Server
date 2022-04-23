@@ -12,6 +12,7 @@ class Database {
         this.configs;
         this.bots;
         this.profiles;
+        this.traders;
     }
 
     /**
@@ -44,18 +45,18 @@ class Database {
     async loadCore() {
         utils.logger.LogDebug("# Database: Loading core", 1);
         this.core = {
-            botBase: utils.fileIO.readParsed('./Server/db/base/botBase.json'),
-            botCore: utils.fileIO.readParsed('./Server/db/base/botCore.json'),
-            fleaOffer: utils.fileIO.readParsed('./Server/db/base/fleaOffer.json'),
-            matchMetric: utils.fileIO.readParsed('./Server/db/base/matchMetrics.json'),
-            globals: utils.fileIO.readParsed('./Server/dumps/globals.json').data,
+            botBase: utils.fileIO.readParsed('./server/db/base/botBase.json'),
+            botCore: utils.fileIO.readParsed('./server/db/base/botCore.json'),
+            fleaOffer: utils.fileIO.readParsed('./server/db/base/fleaOffer.json'),
+            matchMetric: utils.fileIO.readParsed('./server/db/base/matchMetrics.json'),
+            globals: utils.fileIO.readParsed('./server/dumps/globals.json').data,
         };
         utils.logger.LogDebug("# Database: Loading core", 2);
     }
 
     async loadItems() {
         utils.logger.LogDebug("# Database: Loading items", 1)
-        const itemsDump = utils.fileIO.readParsed('./Server/dumps/items.json');
+        const itemsDump = utils.fileIO.readParsed('./server/dumps/items.json');
         this.items = itemsDump.data;
         utils.logger.LogDebug("# Database: Loading items", 2);
     }
@@ -63,23 +64,23 @@ class Database {
     async loadHideout() {
         utils.logger.LogDebug("# Database: Loading hideout", 1)
         this.hideout = {
-            areas: utils.fileIO.readParsed('./Server/dumps/hideout/areas.json').data,
-            productions: utils.fileIO.readParsed('./Server/dumps/hideout/productions.json').data,
-            scavcase: utils.fileIO.readParsed('./Server/dumps/hideout/scavcase.json').data,
-            settings: utils.fileIO.readParsed('./Server/dumps/hideout/settings.json').data,
+            areas: utils.fileIO.readParsed('./server/dumps/hideout/areas.json').data,
+            productions: utils.fileIO.readParsed('./server/dumps/hideout/productions.json').data,
+            scavcase: utils.fileIO.readParsed('./server/dumps/hideout/scavcase.json').data,
+            settings: utils.fileIO.readParsed('./server/dumps/hideout/settings.json').data,
         };
         utils.logger.LogDebug("# Database: Loading hideout", 2)
     }
 
     async loadWeather() {
         utils.logger.LogDebug("# Database: Loading weather", 1)
-        this.weather = utils.fileIO.readParsed('./Server/dumps/weather.json').data;
+        this.weather = utils.fileIO.readParsed('./server/dumps/weather.json').data;
         utils.logger.LogDebug("# Database: Loading weather", 2)
     }
 
     async loadLanguage() {
         utils.logger.LogDebug("# Database: Loading languages", 1)
-        const allLangs = utils.fileIO.readParsed('./Server/dumps/locales/all_locales.json', 'utf8').data;
+        const allLangs = utils.fileIO.readParsed('./server/dumps/locales/all_locales.json', 'utf8').data;
         this.languages = { "all_locales": [] };
         for (const locale of allLangs) {
             const currentLocalePath = "Server/dumps/locales/" + locale.ShortName + "/";
@@ -96,7 +97,7 @@ class Database {
 
     async loadTemplates() {
         utils.logger.LogDebug("# Database: Loading templates", 1)
-        const templatesData = utils.fileIO.readParsed('./Server/dumps/templates.json').data;
+        const templatesData = utils.fileIO.readParsed('./server/dumps/templates.json').data;
         this.templates = {
             "Categories": templatesData.Categories,
             "Items": templatesData.Items,
@@ -112,10 +113,10 @@ class Database {
 
     async loadBots() {
         utils.logger.LogDebug("# Database: Loading bots", 1)
-        const botTypes = utils.fileIO.getDirectoriesFrom('./Server/db/bots');
+        const botTypes = utils.fileIO.getDirectoriesFrom('./server/db/bots');
         this.bots = {};
         for (let botType of botTypes) {
-            const folderPath = `./Server/db/bots/${botType}/`;
+            const folderPath = `./server/db/bots/${botType}/`;
             const dificulties = utils.fileIO.getFilesFrom(`${folderPath}difficulty`);
             const inventories = utils.fileIO.getFilesFrom(`${folderPath}inventory`);
             this.bots[botType] = {};
@@ -141,10 +142,10 @@ class Database {
 
     async loadProfiles() {
         utils.logger.LogDebug("# Database: Loading profiles", 1)
-        const profilesKeys = utils.fileIO.getDirectoriesFrom('./Server/db/profiles');
+        const profilesKeys = utils.fileIO.getDirectoriesFrom('./server/db/profiles');
         this.profiles = {};
         for (let profileType of profilesKeys) {
-            const path = `./Server/db/profiles/${profileType}/`;
+            const path = `./server/db/profiles/${profileType}/`;
             this.profiles[profileType] = {};
             this.profiles[profileType]["character"] = utils.fileIO.readParsed(`${path}character.json`);
             this.profiles[profileType]["initialTraderStanding"] = utils.fileIO.readParsed(`${path}initialTraderStanding.json`);
@@ -158,16 +159,19 @@ class Database {
 
     async loadTraders() {
         utils.logger.LogDebug("# Database: Loading traders", 1)
-        const traders = utils.fileIO.getDirectoriesFrom('./Server/dumps/traders');
+        const traders = utils.fileIO.getDirectoriesFrom('./server/dumps/traders');
         this.traders = {};
         for (let traderID in traders) {
-            const path = `./Server/dumps/traders/${traderID}/`;
+            const path = `./server/dumps/traders/${traderID}/`;
             traders.trader[traderID] = { base: {}, assort: {}, categories: {} };
 
-            traders.trader[traderID].base = utils.fileIO.readParsed(`./Server/dumps/traders/${path}/base.json`);
-            traders.trader[traderID].questassort = utils.fileIO.readParsed(`./Server/dumps/traders/${path}/questassort.json`);
+            traders.trader[traderID].base = utils.fileIO.readParsed(`./server/dumps/traders/${path}/base.json`);
 
-            traders.trader[traderID].assort = utils.fileIO.readParsed(`./Server/dumps/traders/${path}/assort.json`);
+            if ("questassort" in traders.trader[traderID]) {
+                traders.trader[traderID].questassort = utils.fileIO.readParsed(`./server/dumps/traders/${path}/questassort.json`);
+            }
+
+            traders.trader[traderID].assort = utils.fileIO.readParsed(`./server/dumps/traders/${path}/assort.json`);
             if (typeof traders.trader[traderID].assort.data != "undefined") { traders.trader[traderID].assort = traders.trader[traderID].assort.data; }
         }
         // Ragfair will need to be generated or added to the database later
