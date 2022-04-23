@@ -32,7 +32,7 @@ class Database {
             this.loadTemplates(),
             this.loadBots(),
             this.loadProfiles(),
-            //this.loadTraders()
+            this.loadTraders()
         ]);
 
         // TODO: apply user settings (Server/settings/{}.json) for each database component
@@ -47,6 +47,24 @@ class Database {
         this.core = {
             botBase: utils.fileIO.readParsed('./server/db/base/botBase.json'),
             botCore: utils.fileIO.readParsed('./server/db/base/botCore.json'),
+
+            /**
+             * As a reminder, items sold by `players` do not house the following:
+             * buyRestrictionMax, loyaltyLevel
+             * 
+             * Their `upd` also always contains the following:
+             * "SpawnedInSession": true
+             * 
+             * 
+             * Traders are formatted as such:
+             * "user": {
+                    "id": "5ac3b934156ae10c4430e83c",
+                    "memberType": 4
+             *  }
+             *
+             * We may want to adjust accordingly when creating a fleaOffer
+             */
+
             fleaOffer: utils.fileIO.readParsed('./server/db/base/fleaOffer.json'),
             matchMetric: utils.fileIO.readParsed('./server/db/base/matchMetrics.json'),
             globals: utils.fileIO.readParsed('./server/dumps/globals.json').data,
@@ -92,8 +110,8 @@ class Database {
      */
     async loadLanguage() {
         utils.logger.logDebug("# Database: Loading languages", 1)
-        const allLangs = utils.fileIO.readParsed('./server/dumps/locales/all_locales.json', 'utf8').data;
-        this.languages = { "all_locales": [] };
+        const allLangs = utils.fileIO.readParsed('./server/dumps/locales/languages.json', 'utf8').data;
+        this.languages = { "languages": [] };
         for (const locale of allLangs) {
             const currentLocalePath = "server/dumps/locales/" + locale.ShortName + "/";
             if (utils.fileIO.fileExist(currentLocalePath + "locales.json") && utils.fileIO.fileExist(currentLocalePath + "menu.json")) {
@@ -101,7 +119,7 @@ class Database {
                     locale: utils.fileIO.readParsed(currentLocalePath + "locales.json").data,
                     menu: utils.fileIO.readParsed(currentLocalePath + "menu.json").data,
                 };
-                this.languages.all_locales.push(locale);
+                this.languages.languages.push(locale);
             }
         }
         utils.logger.logDebug("# Database: Loading languages", 2)
