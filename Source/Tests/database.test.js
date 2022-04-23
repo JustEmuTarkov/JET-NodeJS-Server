@@ -5,7 +5,7 @@ const database = require('../Server/Database.js');
 const language = require('../Server/modules/language.js');
 
 
-t.test('...', async (t) => {
+t.test('Database', async (t) => {
     global.JET = { ExecutionPath: __dirname, UserList: [], UserDataList: [], Utils: {}, Database: {}}
     t.before(async () => {
       database.loadDatabase();
@@ -23,4 +23,6 @@ t.test('...', async (t) => {
         t.equal(typeof database.profiles, 'object', 'profiles is an object');
         t.end();
     })
+
+    t.end();
 })

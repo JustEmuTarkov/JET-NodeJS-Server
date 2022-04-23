@@ -5,7 +5,7 @@ const fastify = require('fastify')
 
 class FastifyServer {
     constructor(){
-        this.Server = fastify({
+        this.server = fastify({
             logger: true,
             http2: true,
             prettyPrint: true,
@@ -15,58 +15,58 @@ class FastifyServer {
                 cert: certificateGenerator.CERT
             }
         });
-        this.Server.register(fastifyWS);
-        this.SetWebSocketServer();
-        this.DefaultDecorators();
-        routes.initializeRoutes(this.Server);
+        this.server.register(fastifyWS);
+        this.setWebSocketServer();
+        this.defaultDecorators();
+        routes.initializeRoutes(this.server);
     }
-    async AddRequestDecorator(FunctionName, Function){
-        this.Server.decorateRequest(FunctionName, Function);
+    async addRequestDecorator(FunctionName, Function){
+        this.server.decorateRequest(FunctionName, Function);
     }
-    async AddResponseDecorator(FunctionName, Function){
-        this.Server.decorateReply(FunctionName, Function);
+    async addResponseDecorator(FunctionName, Function){
+        this.server.decorateReply(FunctionName, Function);
     }
     async AddGlobalDecorator(FunctionName, Function){
-        this.Server.decorate(FunctionName, Function);
+        this.server.decorate(FunctionName, Function);
     }
-    async DefaultDecorators(){
-        this.AddRequestDecorator('Req_Body2Json', require("./decorators/Request_BodyToJson.js"));
-        this.AddRequestDecorator('Req_Decompress', require("./decorators/Request_Decompress.js"));
-        this.AddResponseDecorator('ResponseHeader', require("./decorators/Response_Header.js"));
-        this.AddResponseDecorator('Res_BSG', require("./decorators/Response_BSG.js"));
-        this.AddResponseDecorator('Res_Compress', require("./decorators/Response_Compress.js"));
+    async defaultDecorators(){
+        this.addRequestDecorator('Req_Body2Json', require("./decorators/Request_BodyToJson.js"));
+        this.addRequestDecorator('Req_Decompress', require("./decorators/Request_Decompress.js"));
+        this.addResponseDecorator('ResponseHeader', require("./decorators/Response_Header.js"));
+        this.addResponseDecorator('Res_BSG', require("./decorators/Response_BSG.js"));
+        this.addResponseDecorator('Res_Compress', require("./decorators/Response_Compress.js"));
     }
-    async SetWebSocketServer(){
-        this.Server.ready(err => {
+    async setWebSocketServer(){
+        this.server.ready(err => {
             if(err) throw err;
 
-            this.Server.ws.on("connection", socket => {
+            this.server.ws.on("connection", socket => {
                 socket.on("message", msg => console.log(msg));
                 socket.on("close", () => console.log("Closed Connection"));
             })
         });
     }
-    async AddRoute(path, func, type = "get"){
+    async addRoute(path, func, type = "get"){
         switch(type){
             case "get": 
-                this.Server.get(path, func);
+                this.server.get(path, func);
                 return;
             case "post": 
-                this.Server.post(path, func);
+                this.server.post(path, func);
                 return;
             case "get&post":
-                this.Server.get(path, func);
-                this.Server.post(path, func);
+                this.server.get(path, func);
+                this.server.post(path, func);
                 return;
             default: 
                 console.log(`Route is not defined: for ${path} as ${type}`);
                 return;
         }
     }
-    async StartServer(){
+    async startServer(){
         try
         {
-            await this.Server.listen(443);
+            await this.server.listen(443);
         } catch(error)
         {
             console.log(error);

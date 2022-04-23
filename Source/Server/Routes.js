@@ -13,24 +13,9 @@ class Routes {
             reply.send(JSON.stringify(reply.Res_BSG(data)));
         });
 
-        Routes.addRoute(fastify, "/", async function (request, reply) {
-            return { hello: 'world' }
-          }, "GET");
-    }
-
-    /**
-     * Template function that can add routes to the server dynamically
-     * @param {fastify} fastify - fastify server
-     * @param {string} route - route to add (ex: /api/v1/user/)
-     * @param {function} handler - function that will be executed when the route is called
-     * @param {string} method - method that will be used to call the route (ex: GET, POST)
-     */
-    static addRoute(fastify, route, handler, method) {
-        fastify.route({
-            method: method,
-            url: route,
-            handler: handler
-        });
+        fastify.get("/client/languages", async function (request, reply) {
+            reply.send({Hello: "world"});
+          });
     }
 
     /**

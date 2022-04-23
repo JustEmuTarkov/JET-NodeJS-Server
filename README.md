@@ -8,5 +8,5 @@ In Fastify.js:
 - decorators are initialized,
 - routes are initialized
 
-Test are located in ./Source/Tests/app.test.js. Test dependencie is TAP.
+Test are located in ./Source/Tests/. Test dependencie is TAP.
 To run tests, simply type npm test. (CTRL + C at the end of the test to exit TAP input)
