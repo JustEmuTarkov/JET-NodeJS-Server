@@ -1,4 +1,4 @@
-const accountUtils = require("../core/userdata/account.js").AccountUtils;
+const accountutils = require("../core/userdata/account.js").Accountutils;
 const language = require("./modules/language.js");
 
 class Routes {

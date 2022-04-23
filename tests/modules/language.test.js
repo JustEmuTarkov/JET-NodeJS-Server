@@ -6,16 +6,16 @@ const language = require('../../server/modules/language.js');
 
 
 t.test('Module-Language', async (t) => {
-    global.JET = { ExecutionPath: __dirname, UserList: [], UserDataList: [], Utils: {}, Database: {}}
+    global.JET = { executionPath: __dirname, userList: [], UserDataList: [], utils: {}, database: {}}
     t.before(async () => {
       database.loadDatabase();
-      global.JET.Database = database;
+      global.JET.database = database;
     })
 
     t.test('Initialize language', async t => {
         await language.initialize(database.languages);
 
-        const languageDatabase = global.JET.Database.languages;
+        const languageDatabase = global.JET.database.languages;
         const interfaceToVerify = [
             "Attention! This is a Beta version of Escape from Tarkov for testing purposes.",
             "NDA free warning",

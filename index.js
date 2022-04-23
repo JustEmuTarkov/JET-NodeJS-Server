@@ -3,26 +3,26 @@ const language = require("./server/modules/language.js");
 const fastify = require("./server/fastify.js");
 const database = require("./server/database.js");
 
-global.JET = { ExecutionPath: __dirname, UserList: [], userdataList: [], Utils: {} }
-global.JET.Utils = require('./core/utils');
+global.JET = { executionPath: __dirname, userList: [], userdataList: [], utils: {} }
+global.JET.utils = require('./core/utils');
 
-console.log(JET.Utils);
+console.log(JET.utils);
 
 database.loadDatabase();
-global.JET.Database = database;
+global.JET.database = database;
 
 language.initialize(database.languages);
 
 //const LoadServerProfileList = () => {
-//    const Profiles = fs.readdirSync(global.JET.ExecutionPath + "/User/Profiles");
+//    const Profiles = fs.readdirSync(global.JET.executionPath + "/User/Profiles");
 //    for(let profileId of Profiles){
 //        if(profileId.includes(".")) continue;
-//        global.JET.UserList.push(profileId);
+//        global.JET.userList.push(profileId);
 //    }
 //}
 
 
-// //Fastify.Server.decorate("jet_db", Database);
+// //Fastify.Server.decorate("jet_db", database);
 
 // LoadServerProfileList();
 fastify.startServer();
