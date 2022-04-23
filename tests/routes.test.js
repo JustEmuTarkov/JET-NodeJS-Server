@@ -1,7 +1,7 @@
 'use strict'
 const t = require('tap');
 const fastify = require("../server/fastify.js");
-const database = require("../server/Database.js");
+const database = require("../server/database.js");
 const language = require('../server/modules/language.js');
 
 t.test('...', async (t) => {
