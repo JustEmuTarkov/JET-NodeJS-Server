@@ -11,7 +11,7 @@ console.log(JET.utils);
 database.loadDatabase();
 global.JET.database = database;
 
-//language.initialize(database.locales);
+language.initialize(database.locales);
 
 //const LoadServerProfileList = () => {
 //    const Profiles = fs.readdirSync(global.JET.executionPath + "/User/Profiles");

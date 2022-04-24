@@ -246,6 +246,15 @@ class Database {
 
         utils.logger.logDebug("# Database: Loading traders", 2)
     }
+
+    async regenerateRagfair() {
+        /**
+         * Ragfair needs to be created in a meticulous way this time around
+         * We need to compensate for the fact that the items in the assort
+         * won't always be correct or up to date, so we need to create functions
+         * to generate that data, and then use that data to populate the flea.
+         */
+    }
 }
 
 
