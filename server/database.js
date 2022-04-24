@@ -226,10 +226,16 @@ class Database {
                 traders[traderID].assort = traders[traderID].assort.data;
             }
 
-            // read suits and assign to variable
+            // check if suits exists, read and assign to variable
             if (utils.fileIO.fileExist(`${path}suits.json`)) {
                 traders[traderID].suits = utils.fileIO.readParsed(`${path}suits.json`);
             }
+
+            // check if dialogue exists, read and assign to variable
+            if (utils.fileIO.fileExist(`${path}dialogue.json`)) {
+                traders[traderID].dialogue = utils.fileIO.readParsed(`${path}dialogue.json`);
+            }
+
         }
 
         /**

@@ -34,6 +34,18 @@ class FileIO {
     }
 
     /**
+     * 
+     * @param {*} filePath 
+     * @param {*} data 
+     * @param {*} useRelative 
+     * @returns 
+     */
+    static writeFile = (filePath, data, useRelative = true) => { 
+        return fsPromises.writeFile((useRelative) ? this.getAbsolutePathFrom(filePath) : filePath, data);
+    }
+
+
+    /**
      * Async read function mean to be used in an async function.
      * Used for database loading  mainly, in a promise.all closure.
      * @param {string} file path of the file to  be read
