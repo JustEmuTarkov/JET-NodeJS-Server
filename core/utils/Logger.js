@@ -47,11 +47,11 @@ class Logger {
 
   /**
    * 
-   * @param {string} type ("Front", "Back")
+   * @param {string} type ("front", "back")
    * @param {string} color ("black", "red", "green", "yellow", "blue", "magenta", "cyan", "white")
    * @returns 
    */
-  getConsoleColor(type = "Front", color = "white"){
+  getConsoleColor(type = "front", color = "white"){
     const colorTag = this.consoleColor[type][color];
     if(colorTag == undefined)
       return "";
@@ -68,8 +68,8 @@ class Logger {
    * @param {string} colorAtBack ("black", "red", "green", "yellow", "blue", "magenta", "cyan", "white")
    */
   log(type, data, colorAtFront, colorAtBack){
-    const FrontColor = this.getConsoleColor("Front", colorAtFront);
-    const BackColor = this.getConsoleColor("Back", colorAtBack);
+    const FrontColor = this.getConsoleColor("front", colorAtFront);
+    const BackColor = this.getConsoleColor("back", colorAtBack);
     const Time = tools.getIsoDateString(true);
 
     const logString = `${FrontColor}${BackColor}${type}${this.consoleColor.reset}${Time}`;
