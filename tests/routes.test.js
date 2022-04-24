@@ -9,29 +9,29 @@ const language = require('../server/modules/language.js');
 //  
 //}) 
 
-t.test('test "/" routes', async t => {
-  global.JET = { ExecutionPath: __dirname, UserList: [], UserDataList: [], Utils: {}, Database: {}};
-  database.loadDatabase();
-  global.JET.Database = database;
+t.test('routes', async (t) => {
+  global.JET = { executionPath: __dirname, userList: [], userDataList: [], utils: {}, database: {}}
+  t.beforeEach(async () => {
+    database.loadDatabase();
+    global.JET.database = database;
+  })
 
-  const response = await fastify.server.inject({
-    method: 'GET',
-    url: '/'
-  });
-
-  t.equal(response.statusCode, 200, 'returns a status code of 200');
-})
-
-t.test('test "/client/languages" routes', async t => {
-  global.JET = { ExecutionPath: __dirname, UserList: [], UserDataList: [], Utils: {}, Database: {}};
-  database.loadDatabase();
-  global.JET.Database = database;
-
-  await language.initialize(database.languages);
-  const response = await fastify.server.inject({
-    method: 'GET',
-    url: '/client/languages'
-  });
+  t.test('test "/" routes', async t => {
+    const response = await fastify.server.inject({
+      method: 'GET',
+      url: '/'
+    });
   
-  t.equal(response.statusCode, 200, '"/client/languages" route returns a status code of 200');
+    t.equal(response.statusCode, 200, 'returns a status code of 200');
+  })
+
+  t.test('test "/client/languages" routes', async t => {
+    //await language.initialize(database.locales);
+    const response = await fastify.server.inject({
+      method: 'GET',
+      url: '/client/languages'
+    });
+    
+    t.equal(response.statusCode, 200, '"/client/languages" route returns a status code of 200');
+  })
 })

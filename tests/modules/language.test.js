@@ -1,21 +1,19 @@
 'use strict'
 
 const t = require('tap');
-const utils = require('../../core/utils.js');
 const database = require('../../server/database.js');
 const language = require('../../server/modules/language.js');
 
 
 t.test('Module-Language', async (t) => {
     global.JET = { executionPath: __dirname, userList: [], userDataList: [], utils: {}, database: {}}
-    t.before(async () => {
+    t.beforeEach(async () => {
       database.loadDatabase();
       global.JET.database = database;
+      await language.initialize(database.locales);
     })
 
     t.test('Initialize language', async t => {
-        await language.initialize(database.locales);
-
         const languageDatabase = global.JET.database.locales;
         const interfaceToVerify = [
             "Attention! This is a Beta version of Escape from Tarkov for testing purposes.",
