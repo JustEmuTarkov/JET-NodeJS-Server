@@ -206,36 +206,41 @@ class Database {
     async loadTraders() {
         utils.logger.logDebug("# Database: Loading traders", 1)
         const traderKeys = utils.fileIO.getDirectoriesFrom('./server/dumps/traders');
-        let traders = {};
+        this.traders = { names: {} };
         for (let traderID of traderKeys) {
+
             const path = `./server/dumps/traders/${traderID}/`;
-            traders[traderID] = { base: {}, assort: {}, categories: {} };
+            this.traders[traderID] = { base: {}, assort: {}, categories: {} };
 
             // read base and assign to variable
-            traders[traderID].base = utils.fileIO.readParsed(`${path}base.json`);
+            const traderBase = utils.fileIO.readParsed(`${path}base.json`);
+            this.traders[traderID].base = traderBase
+            
+            const nickname = traderBase.nickname;
+            this.traders.names[nickname] = traderID;
 
             // if quest assort exists, read and assign to variable
             if (utils.fileIO.fileExist(`${path}questassort.json`)) {
-                traders[traderID].questassort = utils.fileIO.readParsed(`${path}questassort.json`);
+                this.traders[traderID].questassort = utils.fileIO.readParsed(`${path}questassort.json`);
             }
 
             // read assort and assign to variable
-            traders[traderID].assort = utils.fileIO.readParsed(`${path}assort.json`);
+            let assort = utils.fileIO.readParsed(`${path}assort.json`);
             // give support for assort dump files
-            if (!utils.tools.isUndefined(traders[traderID].assort.data)) {
-                traders[traderID].assort = traders[traderID].assort.data;
+            if (!utils.tools.isUndefined(assort.data)) {
+                assort = assort.data;
             }
+            this.traders[traderID].assort = assort;
 
             // check if suits exists, read and assign to variable
             if (utils.fileIO.fileExist(`${path}suits.json`)) {
-                traders[traderID].suits = utils.fileIO.readParsed(`${path}suits.json`);
+                this.traders[traderID].suits = utils.fileIO.readParsed(`${path}suits.json`);
             }
 
             // check if dialogue exists, read and assign to variable
             if (utils.fileIO.fileExist(`${path}dialogue.json`)) {
-                traders[traderID].dialogue = utils.fileIO.readParsed(`${path}dialogue.json`);
+                this.traders[traderID].dialogue = utils.fileIO.readParsed(`${path}dialogue.json`);
             }
-
         }
 
         /**

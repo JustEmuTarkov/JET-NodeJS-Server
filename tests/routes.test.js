@@ -30,15 +30,4 @@ t.test('routes', async (t) => {
     t.equal(response.statusCode, 200, '"/client/languages" route returns a status code of 200');
   })
 
-
-  t.test('test "/client/trading/api/getTraderAssort" routes', async t => {
-    const response = await fastify.server.inject({
-      method: 'GET',
-      url: '/client/trading/api/getTraderAssort'
-    });
-  
-    t.equal(response.statusCode, 200, '"/client/trading/api/getTraderAssort" route returns a status code of 200');
-  })
-
-
 }) 
