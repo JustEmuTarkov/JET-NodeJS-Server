@@ -10,7 +10,7 @@ class Routes {
     static initializeRoutes(fastify) {
         fastify.get("/client/languages", async function (request, reply) {
             const data = await language.getLanguages();
-            reply.send(JSON.stringify(reply.Res_BSG(data)));
+            reply.send(JSON.stringify(reply.resBSG(data)));
         });
 
         fastify.get("/", async function (request, reply) {
@@ -27,8 +27,8 @@ class Routes {
             const body = req.Req_Body2Json(req);
             console.log("body: " + body);
             console.log(req.jsonBody);
-            reply.ResponseHeader(reply, 12345);
-            reply.send(reply.Res_Compress(reply.Res_BSG({ "response": "OK" })));
+            reply.responseHeader(reply, 12345);
+            reply.send(reply.resCompress(reply.resBSG({ "response": "OK" })));
         }, "get&post");
     }
 }

@@ -30,11 +30,11 @@ class FastifyServer {
         this.server.decorate(FunctionName, Function);
     }
     async defaultDecorators(){
-        this.addRequestDecorator('Req_Body2Json', require("./decorators/Request_BodyToJson.js"));
-        this.addRequestDecorator('Req_Decompress', require("./decorators/Request_Decompress.js"));
-        this.addResponseDecorator('ResponseHeader', require("./decorators/Response_Header.js"));
-        this.addResponseDecorator('Res_BSG', require("./decorators/Response_BSG.js"));
-        this.addResponseDecorator('Res_Compress', require("./decorators/Response_Compress.js"));
+        this.addRequestDecorator('reqBody2Json', require("./decorators/Request_BodyToJson.js"));
+        this.addRequestDecorator('reqDecompress', require("./decorators/Request_Decompress.js"));
+        this.addResponseDecorator('responseHeader', require("./decorators/Response_Header.js"));
+        this.addResponseDecorator('resBSG', require("./decorators/Response_BSG.js"));
+        this.addResponseDecorator('resCompress', require("./decorators/Response_Compress.js"));
     }
     //async setWebSocketServer(){
     //    this.server.ready(err => {
