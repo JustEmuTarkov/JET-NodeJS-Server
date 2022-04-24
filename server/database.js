@@ -7,7 +7,7 @@ class Database {
         this.items;
         this.hideout;
         this.weather;
-        this.languages;
+        this.locales;
         this.templates;
         this.configs;
         this.bots;
@@ -111,15 +111,15 @@ class Database {
     async loadLanguage() {
         utils.logger.logDebug("# Database: Loading languages", 1)
         const allLangs = utils.fileIO.readParsed('./server/dumps/locales/languages.json', 'utf8').data;
-        this.languages = { "languages": [] };
+        this.locales = { "languages": [] };
         for (const locale of allLangs) {
             const currentLocalePath = "server/dumps/locales/" + locale.ShortName + "/";
             if (utils.fileIO.fileExist(currentLocalePath + "locales.json") && utils.fileIO.fileExist(currentLocalePath + "menu.json")) {
-                this.languages[locale.ShortName] = {
+                this.locales[locale.ShortName] = {
                     locale: utils.fileIO.readParsed(currentLocalePath + "locales.json").data,
                     menu: utils.fileIO.readParsed(currentLocalePath + "menu.json").data,
                 };
-                this.languages.languages.push(locale);
+                this.locales.languages.push(locale);
             }
         }
         utils.logger.logDebug("# Database: Loading languages", 2)
@@ -210,17 +210,23 @@ class Database {
             const path = `./server/dumps/traders/${traderID}/`;
             traders.trader[traderID] = { base: {}, assort: {}, categories: {} };
 
+            // read base and assign to variable
             traders.trader[traderID].base = utils.fileIO.readParsed(`./server/dumps/traders/${path}/base.json`);
 
+            // if quest assort exists, read and assign to variable
             if ("questassort" in traders.trader[traderID]) {
                 traders.trader[traderID].questassort = utils.fileIO.readParsed(`./server/dumps/traders/${path}/questassort.json`);
             }
 
+            // read assort and assign to variable
             traders.trader[traderID].assort = utils.fileIO.readParsed(`./server/dumps/traders/${path}/assort.json`);
             // give support for assort dump files
             if (!utils.isUndefined(traders.trader[traderID].assort.data)) {
                 traders.trader[traderID].assort = traders.trader[traderID].assort.data;
             }
+
+            // read suits and assign to variable
+            traders.trader[traderID].suits = utils.fileIO.readParsed(`./server/dumps/traders/${path}/suits.json`);
         }
 
         /**

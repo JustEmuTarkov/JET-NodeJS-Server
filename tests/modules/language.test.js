@@ -1,6 +1,7 @@
 'use strict'
 
 const t = require('tap');
+const utils = require('../../core/utils.js');
 const database = require('../../server/database.js');
 const language = require('../../server/modules/language.js');
 
@@ -13,9 +14,9 @@ t.test('Module-Language', async (t) => {
     })
 
     t.test('Initialize language', async t => {
-        await language.initialize(database.languages);
+        await language.initialize(database.locales);
 
-        const languageDatabase = global.JET.database.languages;
+        const languageDatabase = global.JET.database.locales;
         const interfaceToVerify = [
             "Attention! This is a Beta version of Escape from Tarkov for testing purposes.",
             "NDA free warning",

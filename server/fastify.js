@@ -1,6 +1,6 @@
 const certificateGenerator = require('./certificategenerator.js');
 const routes = require("./routes.js");
-const uWebSocket = require("uWebSockets.js");
+//const uWebSocket = require("uWebSockets.js");
 const fastify = require('fastify')
 
 class FastifyServer {
@@ -15,8 +15,8 @@ class FastifyServer {
                 cert: certificateGenerator.CERT
             }
         });
-        this.server.register(uWebSocket);
-        this.setWebSocketServer();
+        //this.server.register(uWebSocket);
+        //this.setWebSocketServer();
         this.defaultDecorators();
         routes.initializeRoutes(this.server);
     }

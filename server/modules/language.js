@@ -16,7 +16,7 @@ class Language {
     }
 
     static getLanguages() {
-        return global.JET.database.languages.all_locales
+        return global.JET.database.locales.languages
     }
 }
 
