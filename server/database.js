@@ -216,7 +216,8 @@ class Database {
             const traderBase = utils.fileIO.readParsed(`${path}base.json`);
             this.traders[traderID].base = traderBase
             
-            const nickname = traderBase.nickname;
+            let nickname = traderBase.nickname;
+            if (nickname === "Unknown") nickname = "Ragfair";
             this.traders.names[nickname] = traderID;
 
             // if quest assort exists, read and assign to variable
