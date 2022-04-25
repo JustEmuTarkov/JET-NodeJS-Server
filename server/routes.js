@@ -1,6 +1,7 @@
 const accountutil = require("../core/userdata/account.js").Accountutil;
 const language = require("./modules/language.js");
 const database = require("../server/database.js");
+const profile = require('./modules/profile.js');
 
 class Routes {
 
@@ -9,6 +10,16 @@ class Routes {
      * @param {fastify} fastify - fastify server
      */
     static initializeRoutes(fastify) {
+        
+        fastify.get("/launcher/server/connect", async function (request, reply) {
+            const data = await profile.getEditions();
+            const serverConfig = global.JET.database.core.serverConfig;
+            reply.send(JSON.stringify({
+                backendUrl: serverConfig.ip + ":" + serverConfig.port,
+                name: serverConfig.name,
+                editions: data,
+            }))
+        })
         
         fastify.get("/mode/offline", async function (request, reply) {
             reply.send(reply.resNoBody(database.core.serverConfig.Patches));

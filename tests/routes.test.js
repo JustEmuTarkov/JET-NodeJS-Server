@@ -20,6 +20,14 @@ t.test('routes', async (t) => {
     t.equal(response.statusCode, 200, 'returns a status code of 200');
   })
 
+  t.test('test "/launcher/server/connect" routes', async t => {
+    const response = await fastify.server.inject({
+      method: 'GET',
+      url: '/launcher/server/connect'
+    });
+    t.equal(response.body, '{"backendUrl":"127.0.0.1:443","name":"JustEmuTarkov","editions":["Developer","Edge Of Darkness","Left Behind","Prepare To Escape","Standard"]}', 'returns server connect infos')
+  })
+
   t.test('test "/mode/offline" routes', async t => {
     const response = await fastify.server.inject({
       method: 'GET',

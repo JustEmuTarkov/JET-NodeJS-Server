@@ -102,7 +102,7 @@ class Database {
     async loadCore() {
         util.logger.logDebug("# Database: Loading core", 1);
         this.core = {
-                serverConfig: this.refreshConfig('server'),
+                serverConfig: await this.refreshConfig('server'),
                 botBase: fileIO.readParsed('./server/db/base/botBase.json'),
                 botCore: fileIO.readParsed('./server/db/base/botCore.json'),
 
