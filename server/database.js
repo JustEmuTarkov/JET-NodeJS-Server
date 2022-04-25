@@ -50,8 +50,8 @@ class Database {
     async refreshConfig(type) {
         switch (type) {
             case 'gameplay':
-                let gpconfig = fileIO.readParsed('./server/config/gameplay_base.json');
-                const gppath = './server/config/gameplay.json';
+                let gpconfig = fileIO.readParsed('server/db/config/gameplay_base.json');
+                const gppath = 'server/db/config/gameplay.json';
                 if (!fileIO.fileExist(gppath)) fileIO.write(gppath, gpconfig);
 
                 let gpjson = {};
@@ -72,8 +72,8 @@ class Database {
                 return gpconfig;
 
             case 'server':
-                let srvconfig = fileIO.readParsed('server/config/server_base.json');
-                const srvpath = 'server/config/server.json';
+                let srvconfig = fileIO.readParsed('server/db/config/server_base.json');
+                const srvpath = 'server/db/config/server.json';
                 if (!fileIO.fileExist(srvpath)) fileIO.write(srvpath, srvconfig);
 
                 let srvChanges = false;
