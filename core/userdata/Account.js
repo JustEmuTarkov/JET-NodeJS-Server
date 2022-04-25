@@ -5,7 +5,7 @@ const { logger } = require("../util.js");
 class Account {
     constructor(path) {
         this.profilePath = path; // will be used for saving account data
-        let accountData = JSON.parse(fs.readFileSync(path + "account.json"));
+        let accountData = fileIO.readParsed(path + "account.json");
         this.id = accountData.id;
         this.login = accountData.login;
         this.password = accountData.password;
@@ -61,7 +61,7 @@ class AccountUtils {
         let accountsData = {};
         for (const profileID of fs.readdir('./user/profiles')) {
             if (fs.stat("./user/profiles/" + profileID + "/account.json")) {
-                accountsData[profileID] = JSON.parse(fs.readFileSync("./user/profiles/" + profileID + "/account.json"));
+                accountsData[profileID] = fileIO.readParsed("./user/profiles/" + profileID + "/account.json");
             }
 
         }
@@ -94,7 +94,9 @@ class AccountUtils {
         const accounts = this.loadAccounts();
         for (const account in accounts) {
             if (account == sessionID) {
-                if (!fileIO.fileExist("user/profiles/" + sessionID + "/character.json")) logger.logSuccess(`[CLUSTER] New account ${sessionID} logged in!`);
+                if (!fileIO.fileExist("user/profiles/" + sessionID + "/character.json")) {
+                    logger.logSuccess(`[CLUSTER] New account ${sessionID} logged in!`);
+                }
                 return true
             }
         }
