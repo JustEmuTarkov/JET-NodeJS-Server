@@ -4,7 +4,7 @@ const profile = require('../../server/modules/profile.js');
 
 
 t.test('Module-Profile', async (t) => {
-    global.JET = { executionPath: __dirname, userList: [], userDataList: [], utils: {}, database: {}}
+    global.JET = { executionPath: __dirname, userList: [], userDataList: [], util: {}, database: {}}
     t.beforeEach(async () => {
       database.loadDatabase();
       global.JET.database = database;

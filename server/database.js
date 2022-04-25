@@ -1,6 +1,6 @@
-const utils = require('../core/utils.js');
+const util = require('../core/util.js');
 const fs = require('fs');
-const { fileIO } = require('../core/utils.js');
+const { fileIO } = require('../core/util.js');
 
 class Database {
     constructor() {
@@ -22,7 +22,7 @@ class Database {
      * No data is losed as we use await keywords to avoid completing execution without a read instruction done.
      */
     async loadDatabase() {
-        utils.logger.logDebug("# Database: All", 1)
+        util.logger.logDebug("# Database: All", 1)
         // load database in parallel, ms goes brrrrrrr
         await Promise.all([
             this.loadCore(),
@@ -38,174 +38,227 @@ class Database {
 
         // TODO: apply user settings (Server/settings/{}.json) for each database component
         // for example, hideout production times for each area, scav cases production times...
-        utils.logger.logDebug("# Database: All", 2)
+        util.logger.logDebug("# Database: All", 2)
 
 
     }
 
+    /**Refresh and return config file with new values if needed.
+     * 
+     * @param {string} type 'server' or 'gameplay'
+     */
+    async refreshConfig(type) {
+        switch (type) {
+            case 'gameplay':
+                let gpconfig = fileIO.readParsed('./server/config/gameplay_base.json');
+                const gppath = './server/config/gameplay.json';
+                if (!fileIO.fileExist(gppath)) fileIO.write(gppath, gpconfig);
+
+                let gpjson = {};
+                if (fileIO.fileExist(gppath)) gpjson = gpconfig;
+
+                let gpChanges = false;
+                for (let item in gpconfig) {
+                    if (gpjson[item] === undefined) {
+                        gpjson[item] = gpconfig[item];
+                        util.logger.logInfo("Adding Config Setting " + item + " to gameplay.json");
+                        gpChanges = true;
+                    }
+                }
+
+                if (gpChanges) fileIO.write(gppath, gpjson);
+                gpconfig = fileIO.readParsed(gppath);
+
+                return gpconfig;
+
+            case 'server':
+                let srvconfig = fileIO.readParsed('server/config/server_base.json');
+                const srvpath = 'server/config/server.json';
+                if (!fileIO.fileExist(srvpath)) fileIO.write(srvpath, srvconfig);
+
+                let srvChanges = false;
+                let srvjson = {};
+                if (fileIO.fileExist(srvpath)) srvrjson = fileIO.readParsed(srvpath);
+
+                for (let item in srvconfig) {
+                    if (srvjson[item] === undefined) {
+                        srvjson[item] = srvconfig[item];
+                        logger.logInfo("Adding Config Setting " + item + " to server.json");
+                        srvChanges = true;
+                    }
+                }
+
+                if (srvChanges) fileIO.write(srvpath, srvjson);
+                srvconfig = fileIO.readParsed(srvpath);
+                return srvconfig;
+        }
+    }
+
+
     async loadCore() {
-        utils.logger.logDebug("# Database: Loading core", 1);
+        util.logger.logDebug("# Database: Loading core", 1);
         this.core = {
-            botBase: utils.fileIO.readParsed('./server/db/base/botBase.json'),
-            botCore: utils.fileIO.readParsed('./server/db/base/botCore.json'),
+                serverConfig: this.refreshConfig('server'),
+                botBase: fileIO.readParsed('./server/db/base/botBase.json'),
+                botCore: fileIO.readParsed('./server/db/base/botCore.json'),
 
-            /**
-             * As a reminder, items sold by `players` do not house the following:
-             * buyRestrictionMax, loyaltyLevel
-             * 
-             * Their `upd` also always contains the following:
-             * "SpawnedInSession": true
-             * 
-             * 
-             * Traders are formatted as such:
-             * "user": {
-                    "id": "5ac3b934156ae10c4430e83c",
-                    "memberType": 4
-             *  }
-             *
-             * We may want to adjust accordingly when creating a fleaOffer
-             */
+                /**
+                 * As a reminder, items sold by `players` do not house the following:
+                 * buyRestrictionMax, loyaltyLevel
+                 * 
+                 * Their `upd` also always contains the following:
+                 * "SpawnedInSession": true
+                 * 
+                 * 
+                 * Traders are formatted as such:
+                 * "user": {
+                        "id": "5ac3b934156ae10c4430e83c",
+                        "memberType": 4
+                 *  }
+                 *
+                 * We may want to adjust accordingly when creating a fleaOffer
+                 */
 
-            fleaOffer: utils.fileIO.readParsed('./server/db/base/fleaOffer.json'),
-            matchMetric: utils.fileIO.readParsed('./server/db/base/matchMetrics.json'),
-            globals: utils.fileIO.readParsed('./server/dumps/globals.json').data,
+                fleaOffer: fileIO.readParsed('./server/db/base/fleaOffer.json'),
+                matchMetric: fileIO.readParsed('./server/db/base/matchMetrics.json'),
+                globals: fileIO.readParsed('./server/dumps/globals.json').data,
         };
-        utils.logger.logDebug("# Database: Loading core", 2);
+        util.logger.logDebug("# Database: Loading core", 2);
     }
 
     /**
      * Load item data in parallel.
      */
     async loadItems() {
-        utils.logger.logDebug("# Database: Loading items", 1)
-        const itemsDump = utils.fileIO.readParsed('./server/dumps/items.json');
+        util.logger.logDebug("# Database: Loading items", 1)
+        const itemsDump = util.fileIO.readParsed('./server/dumps/items.json');
         this.items = itemsDump.data;
-        utils.logger.logDebug("# Database: Loading items", 2);
+        util.logger.logDebug("# Database: Loading items", 2);
     }
 
     /**
      * Load hideout data in parallel.
      */
     async loadHideout() {
-        utils.logger.logDebug("# Database: Loading hideout", 1)
+        util.logger.logDebug("# Database: Loading hideout", 1)
         this.hideout = {
-            areas: utils.fileIO.readParsed('./server/dumps/hideout/areas.json').data,
-            productions: utils.fileIO.readParsed('./server/dumps/hideout/productions.json').data,
-            scavcase: utils.fileIO.readParsed('./server/dumps/hideout/scavcase.json').data,
-            settings: utils.fileIO.readParsed('./server/dumps/hideout/settings.json').data,
+            areas: fileIO.readParsed('./server/dumps/hideout/areas.json').data,
+            productions: fileIO.readParsed('./server/dumps/hideout/productions.json').data,
+            scavcase: fileIO.readParsed('./server/dumps/hideout/scavcase.json').data,
+            settings: fileIO.readParsed('./server/dumps/hideout/settings.json').data,
         };
-        utils.logger.logDebug("# Database: Loading hideout", 2)
+        util.logger.logDebug("# Database: Loading hideout", 2)
     }
 
     /**
      * Load weather data in parallel.
      */
     async loadWeather() {
-        utils.logger.logDebug("# Database: Loading weather", 1)
-        this.weather = utils.fileIO.readParsed('./server/dumps/weather.json').data;
-        utils.logger.logDebug("# Database: Loading weather", 2)
+        util.logger.logDebug("# Database: Loading weather", 1)
+        this.weather = fileIO.readParsed('./server/dumps/weather.json').data;
+        util.logger.logDebug("# Database: Loading weather", 2)
     }
 
     /**
      * Load language data in parallel.
      */
     async loadLanguage() {
-        utils.logger.logDebug("# Database: Loading languages", 1)
-        const allLangs = utils.fileIO.readParsed('./server/dumps/locales/languages.json', 'utf8').data;
+        util.logger.logDebug("# Database: Loading languages", 1)
+        const allLangs = fileIO.readParsed('./server/dumps/locales/languages.json', 'utf8').data;
         this.locales = { "languages": [] };
         for (const locale of allLangs) {
             const currentLocalePath = "server/dumps/locales/" + locale.ShortName + "/";
-            if (utils.fileIO.fileExist(currentLocalePath + "locales.json") && utils.fileIO.fileExist(currentLocalePath + "menu.json")) {
+            if (fileIO.fileExist(currentLocalePath + "locales.json") && fileIO.fileExist(currentLocalePath + "menu.json")) {
                 this.locales[locale.ShortName] = {
-                    locale: utils.fileIO.readParsed(currentLocalePath + "locales.json").data,
-                    menu: utils.fileIO.readParsed(currentLocalePath + "menu.json").data,
+                    locale: fileIO.readParsed(currentLocalePath + "locales.json").data,
+                    menu: fileIO.readParsed(currentLocalePath + "menu.json").data,
                 };
                 this.locales.languages.push(locale);
             }
         }
-        utils.logger.logDebug("# Database: Loading languages", 2)
+        util.logger.logDebug("# Database: Loading languages", 2)
     }
 
     /**
      * Load templates data in parallel.
      */
     async loadTemplates() {
-        utils.logger.logDebug("# Database: Loading templates", 1)
-        const templatesData = utils.fileIO.readParsed('./server/dumps/templates.json').data;
+        util.logger.logDebug("# Database: Loading templates", 1)
+        const templatesData = fileIO.readParsed('./server/dumps/templates.json').data;
         this.templates = {
             "Categories": templatesData.Categories,
             "Items": templatesData.Items,
         };
-        utils.logger.logDebug("# Database: Loading templates", 2)
+        util.logger.logDebug("# Database: Loading templates", 2)
     }
 
     /**
      * Load configs data in parallel.
      */
     async loadConfigs() {
-        utils.logger.logDebug("# Database: Loading configs", 1)
+        util.logger.logDebug("# Database: Loading configs", 1)
         this.configs = "configs";
-        utils.logger.logDebug("# Database: Loading configs", 2)
+        util.logger.logDebug("# Database: Loading configs", 2)
     }
 
     /**
      * Load bots data in parallel.
      */
     async loadBots() {
-        utils.logger.logDebug("# Database: Loading bots", 1)
-        const botTypes = utils.fileIO.getDirectoriesFrom('./server/db/bots');
+        util.logger.logDebug("# Database: Loading bots", 1)
+        const botTypes = fileIO.getDirectoriesFrom('./server/db/bots');
         this.bots = {};
         for (let botType of botTypes) {
             const folderPath = `./server/db/bots/${botType}/`;
-            const dificulties = utils.fileIO.getFilesFrom(`${folderPath}difficulty`);
-            const inventories = utils.fileIO.getFilesFrom(`${folderPath}inventory`);
+            const dificulties = fileIO.getFilesFrom(`${folderPath}difficulty`);
+            const inventories = fileIO.getFilesFrom(`${folderPath}inventory`);
             this.bots[botType] = {};
             this.bots[botType]["difficulty"] = {};
             this.bots[botType]["inventory"] = {};
             for (let difficulty of dificulties) {
-                this.bots[botType]["difficulty"][difficulty.replace(".json", "")] = utils.fileIO.readParsed(`${folderPath}difficulty/${difficulty}`);
+                this.bots[botType]["difficulty"][difficulty.replace(".json", "")] = fileIO.readParsed(`${folderPath}difficulty/${difficulty}`);
             }
 
             for (let inventory of inventories) {
-                this.bots[botType]["inventory"][inventory.replace(".json", "")] = utils.fileIO.readParsed(`${folderPath}inventory/${inventory}`);
+                this.bots[botType]["inventory"][inventory.replace(".json", "")] = fileIO.readParsed(`${folderPath}inventory/${inventory}`);
             }
 
-            this.bots[botType]["appearance"] = utils.fileIO.readParsed(`${folderPath}appearance.json`);
-            this.bots[botType]["chances"] = utils.fileIO.readParsed(`${folderPath}chances.json`);
-            this.bots[botType]["experience"] = utils.fileIO.readParsed(`${folderPath}experience.json`);
-            this.bots[botType]["generation"] = utils.fileIO.readParsed(`${folderPath}generation.json`);
-            this.bots[botType]["health"] = utils.fileIO.readParsed(`${folderPath}health.json`);
+            this.bots[botType]["appearance"] = fileIO.readParsed(`${folderPath}appearance.json`);
+            this.bots[botType]["chances"] = fileIO.readParsed(`${folderPath}chances.json`);
+            this.bots[botType]["experience"] = fileIO.readParsed(`${folderPath}experience.json`);
+            this.bots[botType]["generation"] = fileIO.readParsed(`${folderPath}generation.json`);
+            this.bots[botType]["health"] = fileIO.readParsed(`${folderPath}health.json`);
             // bot names are in db.base.botNames
         }
-        utils.logger.logDebug("# Database: Loading bots", 2)
+        util.logger.logDebug("# Database: Loading bots", 2)
     }
 
     /**
      * Load profiles data in parallel.
      */
     async loadProfiles() {
-        utils.logger.logDebug("# Database: Loading profiles", 1)
-        const profilesKeys = utils.fileIO.getDirectoriesFrom('./server/db/profiles');
+        util.logger.logDebug("# Database: Loading profiles", 1)
+        const profilesKeys = fileIO.getDirectoriesFrom('./server/db/profiles');
         this.profiles = {};
         for (let profileType of profilesKeys) {
             const path = `./server/db/profiles/${profileType}/`;
             this.profiles[profileType] = {};
-            this.profiles[profileType]["character"] = utils.fileIO.readParsed(`${path}character.json`);
-            this.profiles[profileType]["initialTraderStanding"] = utils.fileIO.readParsed(`${path}initialTraderStanding.json`);
-            this.profiles[profileType]["inventory_bear"] = utils.fileIO.readParsed(`${path}inventory_bear.json`);
-            this.profiles[profileType]["inventory_usec"] = utils.fileIO.readParsed(`${path}inventory_usec.json`);
-            //this.profiles[profileType]["starting_outfit"] = utils.fileIO.readParsed(`${path}starting_outfit.json`);
-            this.profiles[profileType]["storage"] = utils.fileIO.readParsed(`${path}storage.json`);
+            this.profiles[profileType]["character"] = fileIO.readParsed(`${path}character.json`);
+            this.profiles[profileType]["initialTraderStanding"] = fileIO.readParsed(`${path}initialTraderStanding.json`);
+            this.profiles[profileType]["inventory_bear"] = fileIO.readParsed(`${path}inventory_bear.json`);
+            this.profiles[profileType]["inventory_usec"] = fileIO.readParsed(`${path}inventory_usec.json`);
+            //this.profiles[profileType]["starting_outfit"] = util.fileIO.readParsed(`${path}starting_outfit.json`);
+            this.profiles[profileType]["storage"] = fileIO.readParsed(`${path}storage.json`);
         }
-        utils.logger.logDebug("# Database: Loading profiles", 2)
+        util.logger.logDebug("# Database: Loading profiles", 2)
     }
 
     /**
      * Load traders base data in parallel.
      */
     async loadTraders() {
-        utils.logger.logDebug("# Database: Loading traders", 1)
-        const traderKeys = utils.fileIO.getDirectoriesFrom('./server/dumps/traders');
+        util.logger.logDebug("# Database: Loading traders", 1)
+        const traderKeys = fileIO.getDirectoriesFrom('./server/dumps/traders');
         this.traders = { names: {} };
         for (let traderID of traderKeys) {
 
@@ -213,34 +266,34 @@ class Database {
             this.traders[traderID] = { base: {}, assort: {}, categories: {} };
 
             // read base and assign to variable
-            const traderBase = utils.fileIO.readParsed(`${path}base.json`);
+            const traderBase = fileIO.readParsed(`${path}base.json`);
             this.traders[traderID].base = traderBase
-            
+
             let nickname = traderBase.nickname;
             if (nickname === "Unknown") nickname = "Ragfair";
             this.traders.names[nickname] = traderID;
 
             // if quest assort exists, read and assign to variable
-            if (utils.fileIO.fileExist(`${path}questassort.json`)) {
-                this.traders[traderID].questassort = utils.fileIO.readParsed(`${path}questassort.json`);
+            if (fileIO.fileExist(`${path}questassort.json`)) {
+                this.traders[traderID].questassort = fileIO.readParsed(`${path}questassort.json`);
             }
 
             // read assort and assign to variable
-            let assort = utils.fileIO.readParsed(`${path}assort.json`);
+            let assort = fileIO.readParsed(`${path}assort.json`);
             // give support for assort dump files
-            if (!utils.tools.isUndefined(assort.data)) {
+            if (!util.tools.isUndefined(assort.data)) {
                 assort = assort.data;
             }
             this.traders[traderID].assort = assort;
 
             // check if suits exists, read and assign to variable
-            if (utils.fileIO.fileExist(`${path}suits.json`)) {
-                this.traders[traderID].suits = utils.fileIO.readParsed(`${path}suits.json`);
+            if (fileIO.fileExist(`${path}suits.json`)) {
+                this.traders[traderID].suits = fileIO.readParsed(`${path}suits.json`);
             }
 
             // check if dialogue exists, read and assign to variable
-            if (utils.fileIO.fileExist(`${path}dialogue.json`)) {
-                this.traders[traderID].dialogue = utils.fileIO.readParsed(`${path}dialogue.json`);
+            if (fileIO.fileExist(`${path}dialogue.json`)) {
+                this.traders[traderID].dialogue = fileIO.readParsed(`${path}dialogue.json`);
             }
         }
 
@@ -250,7 +303,7 @@ class Database {
          * It may be best to do this as a separate step, and call it here.
          */
 
-        utils.logger.logDebug("# Database: Loading traders", 2)
+        util.logger.logDebug("# Database: Loading traders", 2)
     }
 
     async regenerateRagfair() {

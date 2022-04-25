@@ -3,10 +3,10 @@ const language = require("./server/modules/language.js");
 const fastify = require("./server/fastify.js");
 const database = require("./server/database.js");
 
-global.JET = { executionPath: __dirname, userList: [], userdataList: [], utils: {} }
-global.JET.utils = require('./core/utils');
+global.JET = { executionPath: __dirname, userList: [], userdataList: [], util: {} }
+global.JET.util = require('./core/util');
 
-console.log(JET.utils);
+console.log(JET.util);
 
 database.loadDatabase();
 global.JET.database = database;

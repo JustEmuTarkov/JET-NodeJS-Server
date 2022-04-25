@@ -34,6 +34,7 @@ class FastifyServer {
         this.addRequestDecorator('reqDecompress', require("./decorators/Request_Decompress.js"));
         this.addResponseDecorator('responseHeader', require("./decorators/Response_Header.js"));
         this.addResponseDecorator('resBSG', require("./decorators/Response_BSG.js"));
+        this.addResponseDecorator('resNoBody', require("./decorators/Response_NoBody.js"));
         this.addResponseDecorator('resCompress', require("./decorators/Response_Compress.js"));
     }
     //async setWebSocketServer(){

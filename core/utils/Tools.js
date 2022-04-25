@@ -167,7 +167,7 @@ class Tools {
      * @param {Array} array 
      */
     static getRandomValueFromArray = (array) => {
-        JET.utils.math.getRandomFromArray(array)
+        JET.util.math.getRandomFromArray(array)
     }
 }
 

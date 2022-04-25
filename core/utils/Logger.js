@@ -78,7 +78,7 @@ class Logger {
     try{
       if(this.logFileStream == undefined){
         // somehow this shit is crashing...
-        //this.LogFileStream = JET.utils.fileIO.createFileWriteStream( this.getLogsFolderPath() + this.getFileName() );
+        //this.LogFileStream = JET.util.fileIO.createFileWriteStream( this.getLogsFolderPath() + this.getFileName() );
       }
     } catch{} 
       if(typeof data == "string"){

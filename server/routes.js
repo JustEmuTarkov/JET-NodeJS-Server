@@ -1,5 +1,6 @@
-const accountutils = require("../core/userdata/account.js").Accountutils;
+const accountutil = require("../core/userdata/account.js").Accountutil;
 const language = require("./modules/language.js");
+const database = require("../server/database.js");
 
 class Routes {
 
@@ -8,6 +9,15 @@ class Routes {
      * @param {fastify} fastify - fastify server
      */
     static initializeRoutes(fastify) {
+        
+        fastify.get("/mode/offline", async function (request, reply) {
+            reply.send(reply.resNoBody(database.core.serverConfig.Patches));
+        });
+
+        fastify.get("/mode/offlineNodes", async function (request, reply) {
+            reply.send(reply.resNoBody(database.core.serverConfig.PatchNodes));
+        });
+
         fastify.get("/client/languages", async function (request, reply) {
             const data = await language.getLanguages();
             reply.send(JSON.stringify(reply.resBSG(data)));

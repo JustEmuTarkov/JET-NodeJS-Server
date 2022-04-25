@@ -6,7 +6,7 @@ const language = require('../../server/modules/language.js');
 
 
 t.test('Module-Language', async (t) => {
-    global.JET = { executionPath: __dirname, userList: [], userDataList: [], utils: {}, database: {}}
+    global.JET = { executionPath: __dirname, userList: [], userDataList: [], util: {}, database: {}}
     t.beforeEach(async () => {
       database.loadDatabase();
       global.JET.database = database;

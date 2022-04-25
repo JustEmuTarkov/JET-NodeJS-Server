@@ -1,4 +1,4 @@
-class Utils {
+class Util {
     constructor(){
         this.fileIO = require("./utils/fileIO");
         this.math = require("./utils/math");
@@ -7,4 +7,4 @@ class Utils {
     }
 }
 
-module.exports = new Utils();
+module.exports = new Util();

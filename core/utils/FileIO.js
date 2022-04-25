@@ -33,17 +33,6 @@ class FileIO {
         return fs.createWriteStream((useRelative) ? this.getAbsolutePathFrom(filePath) : filePath, { flags: 'w' });
     }
 
-    /**
-     * 
-     * @param {*} filePath 
-     * @param {*} data 
-     * @param {*} useRelative 
-     * @returns 
-     */
-    static writeFile = (filePath, data, useRelative = true) => { 
-        return fsPromises.writeFile((useRelative) ? this.getAbsolutePathFrom(filePath) : filePath, data);
-    }
-
 
     /**
      * Async read function mean to be used in an async function.
