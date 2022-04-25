@@ -217,6 +217,7 @@ class Database {
             const traderBase = fileIO.readParsed(`${path}base.json`);
             this.traders[traderID].base = traderBase
 
+            // create names object and assign trader nickname to traderID
             let nickname = traderBase.nickname;
             if (nickname === "Unknown") nickname = "Ragfair";
             this.traders.names[nickname] = traderID;

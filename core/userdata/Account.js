@@ -1,57 +1,51 @@
 const fs = require("fs");
+const { fileIO } = require("../util.js");
+const { logger } = require("../util.js");
+
 class Account {
-    constructor(Path)
-    {
-        this.ProfilePath = Path; // will be used for saving account data
-        let AccountData = JSON.parse(fs.readFileSync(Path + "account.json"));
-        this.Id = AccountData.id;
-        this.Login = AccountData.login;
-        this.Password = AccountData.password;
-        this.Edition = AccountData.edition;
-        this.Wipe = AccountData.wipe;
-        this.Lang = AccountData.lang;
+    constructor(path) {
+        this.profilePath = path; // will be used for saving account data
+        let accountData = JSON.parse(fs.readFileSync(path + "account.json"));
+        this.id = accountData.id;
+        this.login = accountData.login;
+        this.password = accountData.password;
+        this.edition = accountData.edition;
+        this.wipe = accountData.wipe;
+        this.lang = accountData.lang;
     }
-    async SaveAccount(){
+    async saveAccount() {
         const Account = {
-            id: this.Id,
-            login: this.Login,
-            password: this.Password,
-            edition: this.Edition,
-            wipe: this.Wipe,
-            lang: this.Lang
+            id: this.id,
+            login: this.login,
+            password: this.password,
+            edition: this.edition,
+            wipe: this.wipe,
+            lang: this.lang
         };
-        fs.writeFile(this.ProfilePath + "account.json", JSON.stringify(Account, null, " "));
+        fileIO.writeFile(this.profilePath + "account.json", JSON.stringify(Account, null, " "));
     }
-    async AccountDataTest(AccountData)
-    {
-        if(AccountData.id == undefined)
-        {
-            AccountData.id = "";
+    async accountDataTest(accountData) {
+        if (accountData.id == undefined) {
+            accountData.id = "";
         }
-        if(AccountData.email == undefined)
-        {
-            AccountData.email = "";
+        if (accountData.email == undefined) {
+            accountData.email = "";
         }
-        if(AccountData.password == undefined)
-        {
-            AccountData.password = "";
+        if (accountData.password == undefined) {
+            accountData.password = "";
         }
-        if(AccountData.wipe == undefined)
-        {
-            AccountData.wipe = false;
+        if (accountData.wipe == undefined) {
+            accountData.wipe = false;
         }
-        if(AccountData.edition == undefined)
-        {
-            AccountData.edition = "Standard";
+        if (accountData.edition == undefined) {
+            accountData.edition = "Standard";
         }
-        if(AccountData.lang == undefined)
-        {
-            AccountData.lang = "en";
+        if (accountData.lang == undefined) {
+            accountData.lang = "en";
         }
     }
-    async CheckUser(login, password)
-    {
-        if(login == this.Login && password == this.Password){
+    async checkUser(login, password) {
+        if (login == this.login && password == this.password) {
             return true;
         }
         return false;
@@ -63,11 +57,11 @@ class AccountUtils {
      * Retrieve every existing accounts from the disk
      * @returns {object} - Dict made of Accounts IDS & Accounts infos
      */
-     static loadAccounts() {
+    static loadAccounts() {
         let accountsData = {};
-        for (let profileID of fs.readdir('./User/Profiles')) {
-            if (fs.stat("./User/Profiles/" + profileID + "/account.json")) {
-                accountsData[profileID] = JSON.parse(fs.readFileSync("./User/Profiles/" + profileID + "/account.json"));
+        for (const profileID of fs.readdir('./user/profiles')) {
+            if (fs.stat("./user/profiles/" + profileID + "/account.json")) {
+                accountsData[profileID] = JSON.parse(fs.readFileSync("./user/profiles/" + profileID + "/account.json"));
             }
 
         }
@@ -81,13 +75,61 @@ class AccountUtils {
      * @returns accountID or false
      */
     static loginAccount(accounts, loginInfos) {
-        for (let [accountID, accountInfos] of Object.entries(accounts)){
+        for (const [accountID, accountInfos] of Object.entries(accounts)) {
             if (accountInfos.login == loginInfos.login && accountInfos.password == loginInfos.password) {
                 return accountID;
             }
         }
 
         return false;
+    }
+
+    /**
+ * Check if the client has a profile. This function will be used by the response "/client/game/start" and determine, if a new profile will be created.
+ * @param {*} sessionID 
+ * @returns If the account exists.
+ */
+    static clientHasProfile(sessionID) {
+        this.reloadAccountBySessionID(sessionID)
+        const accounts = this.loadAccounts();
+        for (const account in accounts) {
+            if (account == sessionID) {
+                if (!fileIO.fileExist("user/profiles/" + sessionID + "/character.json")) logger.logSuccess(`[CLUSTER] New account ${sessionID} logged in!`);
+                return true
+            }
+        }
+        return false
+    }
+
+    /**
+   * Reloads the account stored in memory for a specific session (aka. accountID), if the file was modified elsewhere.
+   * @param {*} sessionID 
+   */
+    static reloadAccountBySessionID(sessionID) {
+        if (!fileIO.fileExist(`./user/profiles/${sessionID}/account.json`)) {
+            logger.logWarning(`[CLUSTER] Account file for account ${sessionID} does not exist.`);
+        } else {
+            // Does the session exist?
+            if (!this.accounts[sessionID]) {
+                logger.logWarning(`[CLUSTER] Tried to load session ${sessionID} but it wasn't cached, loading.`);
+                // Reload the account from disk.
+                this.accounts[sessionID] = fileIO.readParsed(`./user/profiles/${sessionID}/account.json`);
+                // Set the file age for this users account file.
+                const stats = fs.statSync(`./user/profiles/${sessionID}/account.json`);
+                this.accountFileAge[sessionID] = stats.mtimeMs;
+            } else {
+                // Check if the file was modified by another cluster member using the file age.
+                const stats = fs.statSync(`./user/profiles/${sessionID}/account.json`);
+                if (stats.mtimeMs != this.accountFileAge[sessionID]) {
+                    logger.logWarning(`[CLUSTER] Account file for account ${sessionID} was modified, reloading.`);
+
+                    // Reload the account from disk.
+                    this.accounts[sessionID] = fileIO.readParsed(`./user/profiles/${sessionID}/account.json`);
+                    // Reset the file age for this users account file.
+                    this.accountFileAge[sessionID] = stats.mtimeMs;
+                }
+            }
+        }
     }
 }
 

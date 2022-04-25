@@ -1,6 +1,7 @@
 /launcher/profile/login
 /mode/offline
 /mode/offlineNodes
+
 /client/game/start
 /client/menu/locale/en
 /client/game/version/validate
