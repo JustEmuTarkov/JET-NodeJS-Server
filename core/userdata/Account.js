@@ -53,11 +53,21 @@ class Account {
 }
 
 class AccountUtils {
+
+    /**
+     * Memory storage for accounts and their file age.
+     * Unsure if this is needed
+     */
+    constructor() {
+        this.accounts = {};
+        this.accountFileAge = {};
+    }
+
     /**
      * Retrieve every existing accounts from the disk
      * @returns {object} - Dict made of Accounts IDS & Accounts infos
      */
-    static loadAccounts() {
+    async loadAccounts() {
         let accountsData = {};
         for (const profileID of fs.readdir('./user/profiles')) {
             if (fs.stat("./user/profiles/" + profileID + "/account.json")) {
@@ -69,12 +79,20 @@ class AccountUtils {
     }
 
     /**
+     * Return directory of account IDs
+     * @returns {object} - Dict made of Accounts IDS & Accounts infos
+     */
+    static getList() {
+        return this.accounts;
+      }
+
+    /**
      * Find matching account
      * @param {object} accounts - Dict made of Accounts IDS & Accounts infos
      * @param {object} loginInfos - username and password combo
      * @returns accountID or false
      */
-    static loginAccount(accounts, loginInfos) {
+    async loginAccount(accounts, loginInfos) {
         for (const [accountID, accountInfos] of Object.entries(accounts)) {
             if (accountInfos.login == loginInfos.login && accountInfos.password == loginInfos.password) {
                 return accountID;
@@ -89,9 +107,9 @@ class AccountUtils {
  * @param {*} sessionID 
  * @returns If the account exists.
  */
-    static clientHasProfile(sessionID) {
+    async clientHasProfile(sessionID) {
         this.reloadAccountBySessionID(sessionID)
-        const accounts = this.loadAccounts();
+        const accounts = this.getList();
         for (const account in accounts) {
             if (account == sessionID) {
                 if (!fileIO.fileExist("user/profiles/" + sessionID + "/character.json")) {
@@ -107,7 +125,7 @@ class AccountUtils {
    * Reloads the account stored in memory for a specific session (aka. accountID), if the file was modified elsewhere.
    * @param {*} sessionID 
    */
-    static reloadAccountBySessionID(sessionID) {
+    async reloadAccountBySessionID(sessionID) {
         if (!fileIO.fileExist(`./user/profiles/${sessionID}/account.json`)) {
             logger.logWarning(`[CLUSTER] Account file for account ${sessionID} does not exist.`);
         } else {
@@ -118,7 +136,7 @@ class AccountUtils {
                 this.accounts[sessionID] = fileIO.readParsed(`./user/profiles/${sessionID}/account.json`);
                 // Set the file age for this users account file.
                 const stats = fs.statSync(`./user/profiles/${sessionID}/account.json`);
-                this.accountFileAge[sessionID] = stats.mtimeMs;
+                accountFileAge[sessionID] = stats.mtimeMs;
             } else {
                 // Check if the file was modified by another cluster member using the file age.
                 const stats = fs.statSync(`./user/profiles/${sessionID}/account.json`);
