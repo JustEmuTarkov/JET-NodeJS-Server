@@ -20,6 +20,16 @@ class FileIO {
     }
 
     /**
+     * Overwrite if file exists, else create file with content in it.
+     * @param {string} filePath
+     * @param {*} data 
+     * @param {boolean} useRelative 
+     */
+    static writeFile = (filePath, data, useRelative = true) => {
+        fs.writeFileSync((useRelative) ? this.getAbsolutePathFrom(filePath) : filePath, data, {encoding: "utf8", flag: "w+"});
+    }
+
+    /**
      * Read a file and parse it to JSON.
      * @param {string} filePath 
      * @param {boolean} useRelative 

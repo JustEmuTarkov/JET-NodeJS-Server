@@ -52,7 +52,7 @@ class Database {
             case 'gameplay':
                 let gpconfig = fileIO.readParsed('server/db/config/gameplay_base.json');
                 const gppath = 'server/db/config/gameplay.json';
-                if (!fileIO.fileExist(gppath)) fileIO.write(gppath, gpconfig);
+                if (!fileIO.fileExist(gppath)) fileIO.writeFile(gppath, JSON.stringify(gpconfig));
 
                 let gpjson = {};
                 if (fileIO.fileExist(gppath)) gpjson = gpconfig;
@@ -66,7 +66,7 @@ class Database {
                     }
                 }
 
-                if (gpChanges) fileIO.write(gppath, gpjson);
+                if (gpChanges) fileIO.writeFile(gppath, JSON.stringify(gpjson));
                 gpconfig = fileIO.readParsed(gppath);
 
                 return gpconfig;
@@ -74,11 +74,15 @@ class Database {
             case 'server':
                 let srvconfig = fileIO.readParsed('server/db/config/server_base.json');
                 const srvpath = 'server/db/config/server.json';
-                if (!fileIO.fileExist(srvpath)) fileIO.write(srvpath, srvconfig);
+                if (!fileIO.fileExist(srvpath)){
+                    fileIO.writeFile(srvpath, JSON.stringify(srvconfig));
+                }
 
                 let srvChanges = false;
                 let srvjson = {};
-                if (fileIO.fileExist(srvpath)) srvrjson = fileIO.readParsed(srvpath);
+                if (fileIO.fileExist(srvpath)){
+                    srvjson = fileIO.readParsed(srvpath);
+                }
 
                 for (let item in srvconfig) {
                     if (srvjson[item] === undefined) {
@@ -88,7 +92,7 @@ class Database {
                     }
                 }
 
-                if (srvChanges) fileIO.write(srvpath, srvjson);
+                if (srvChanges) fileIO.writeFile(srvpath, JSON.stringify(srvjson));
                 srvconfig = fileIO.readParsed(srvpath);
                 return srvconfig;
         }
