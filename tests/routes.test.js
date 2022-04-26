@@ -52,7 +52,7 @@ t.test('routes', async (t) => {
       url: '/client/game/start'
     });
     
-    t.equal(response.statusCode, 200, '"/client/game/start" route returns a status code of 200');
+    t.equal(response.body, '"/client/game/start" route returns time');
   })
 
   t.test('test "/client/languages" routes', async t => {

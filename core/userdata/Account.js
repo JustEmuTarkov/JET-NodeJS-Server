@@ -67,7 +67,7 @@ class AccountUtils {
      * Retrieve every existing accounts from the disk
      * @returns {object} - Dict made of Accounts IDS & Accounts infos
      */
-    async loadAccounts() {
+    static loadAccounts() {
         let accountsData = {};
         for (const profileID of fs.readdir('./user/profiles')) {
             if (fs.stat("./user/profiles/" + profileID + "/account.json")) {
@@ -84,7 +84,7 @@ class AccountUtils {
      */
     static getList() {
         return this.accounts;
-      }
+    }
 
     /**
      * Find matching account
@@ -92,7 +92,7 @@ class AccountUtils {
      * @param {object} loginInfos - username and password combo
      * @returns accountID or false
      */
-    async loginAccount(accounts, loginInfos) {
+    static loginAccount(accounts, loginInfos) {
         for (const [accountID, accountInfos] of Object.entries(accounts)) {
             if (accountInfos.login == loginInfos.login && accountInfos.password == loginInfos.password) {
                 return accountID;
@@ -103,16 +103,16 @@ class AccountUtils {
     }
 
     /**
- * Check if the client has a profile. This function will be used by the response "/client/game/start" and determine, if a new profile will be created.
- * @param {*} sessionID 
- * @returns If the account exists.
- */
-    async clientHasProfile(sessionID) {
+    * Check if the client has a profile. This function will be used by the response "/client/game/start" and determine, if a new profile will be created.
+    * @param {*} sessionID 
+    * @returns If the account exists.
+    */
+    static clientHasProfile(sessionID) {
         this.reloadAccountBySessionID(sessionID)
         const accounts = this.getList();
         for (const account in accounts) {
             if (account == sessionID) {
-                if (!fileIO.fileExist("user/profiles/" + sessionID + "/character.json")) {
+                if (!fileIO.fileExist("./user/profiles/" + sessionID + "/character.json")) {
                     logger.logSuccess(`[CLUSTER] New account ${sessionID} logged in!`);
                 }
                 return true
@@ -125,7 +125,7 @@ class AccountUtils {
    * Reloads the account stored in memory for a specific session (aka. accountID), if the file was modified elsewhere.
    * @param {*} sessionID 
    */
-    async reloadAccountBySessionID(sessionID) {
+    static reloadAccountBySessionID(sessionID) {
         if (!fileIO.fileExist(`./user/profiles/${sessionID}/account.json`)) {
             logger.logWarning(`[CLUSTER] Account file for account ${sessionID} does not exist.`);
         } else {
