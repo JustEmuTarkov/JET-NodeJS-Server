@@ -20,7 +20,7 @@ class FastifyServer {
         this.server.register(
             require('fastify-compress'),
             { 
-                encodings: ['deflate', 'gzip'],
+                encodings: ['deflate'],
                 global: true,
             });
         routes.initializeRoutes(this.server);

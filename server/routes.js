@@ -19,11 +19,14 @@ class Routes {
         fastify.get("/launcher/server/connect", async function (request, reply) {
             const data = await account.getEditions();
             const serverConfig = database.core.serverConfig;
-            reply.send({
-                backendUrl: serverConfig.ip + ":" + serverConfig.port,
+            
+            reply.header('Content-Type', 'text/plain; charset=utf-8');
+            const finalData = JSON.stringify ({
+                backendUrl: "https://" + serverConfig.ip + ":" + serverConfig.port,
                 name: serverConfig.name,
                 editions: data,
-            })
+            }, null, "\t")
+            reply.send(finalData)
         });
 
         fastify.get("/launcher/profile/register", async function (request, reply) {
@@ -67,8 +70,6 @@ class Routes {
         });
 
         fastify.get("/client/game/start", async function (request, reply) {
-            const test = request.headers;
-            console.log("AAAAAAAAAAAAAAAAAAAAAAA")
             const mockAccountId = "AID0194876887698uxRXETLq";
             const data = account.clientHasAccount(mockAccountId)
             if (data) {
