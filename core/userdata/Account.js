@@ -401,7 +401,7 @@ class AccountUtils {
     * @returns If the account exists.
     */
     static clientHasProfile(sessionID) {
-        this.reloadAccountBySessionID(sessionID)
+        Account.reloadAccountBySessionID(sessionID)
         const accounts = this.getList();
         for (const account in accounts) {
             if (account == sessionID) {
