@@ -65,7 +65,7 @@ class AccountUtils {
 
     /**
      * Retrieve every existing accounts from the disk
-     * @returns {object} - Dict made of Accounts IDS & Accounts infos
+     * @returns {object} Dict made of Accounts IDS & Accounts infos
      */
     static loadAccounts() {
         let accountsData = {};
@@ -136,7 +136,7 @@ class AccountUtils {
                 this.accounts[sessionID] = fileIO.readParsed(`./user/profiles/${sessionID}/account.json`);
                 // Set the file age for this users account file.
                 const stats = fs.statSync(`./user/profiles/${sessionID}/account.json`);
-                accountFileAge[sessionID] = stats.mtimeMs;
+                this.accountFileAge[sessionID] = stats.mtimeMs;
             } else {
                 // Check if the file was modified by another cluster member using the file age.
                 const stats = fs.statSync(`./user/profiles/${sessionID}/account.json`);
