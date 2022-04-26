@@ -12,6 +12,11 @@ class Routes {
      */
     static initializeRoutes(fastify, serverAccounts) {
         
+        fastify.get("/launcher/profile/login", async function (request, reply) {
+            let output = await account.Account.reloadAccountByLogin(info);
+            reply.send(output === "" ? "FAILED" : output);
+        });
+        
         fastify.get("/launcher/server/connect", async function (request, reply) {
             const data = await profile.getEditions();
             const serverConfig = database.core.serverConfig;
