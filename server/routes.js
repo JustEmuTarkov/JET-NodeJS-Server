@@ -11,24 +11,15 @@ class Routes {
      * @param {fastify} fastify - fastify server
      */
     static initializeRoutes(fastify) {
-
-        fastify.get("/launcher/profile/register", async function (request, reply) {
-            const data = await profile.register(request.body);
-        });
         
         fastify.get("/launcher/server/connect", async function (request, reply) {
             const data = await profile.getEditions();
             const serverConfig = database.core.serverConfig;
-            reply.send(JSON.stringify({
+            reply.type('text/plain').compress({
                 backendUrl: serverConfig.ip + ":" + serverConfig.port,
                 name: serverConfig.name,
                 editions: data,
-            }))
-        })
-
-        fastify.get("/launcher/profile/login", async function (request, reply) {
-            let output = await account.Account.reloadAccountByLogin(info);
-            reply.send(output === "" ? "FAILED" : "OK");
+            })
         });
 
         fastify.get("/launcher/profile/register", async function (request, reply) {
@@ -72,6 +63,8 @@ class Routes {
         });
 
         fastify.get("/client/game/start", async function (request, reply) {
+            const test = request.headers;
+            console.log(test)
             const sessionID = "AID0194876887698uxRXETLq";
             const data = await account.AccountUtils.clientHasProfile(sessionID)
             if (data) {

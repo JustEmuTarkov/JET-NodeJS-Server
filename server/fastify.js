@@ -18,6 +18,12 @@ class FastifyServer {
         //this.server.register(uWebSocket);
         //this.setWebSocketServer();
         this.defaultDecorators();
+        this.server.register(
+            require('fastify-compress'),
+            { 
+                encodings: ['deflate', 'gzip'],
+                global: true,
+            });
         routes.initializeRoutes(this.server);
     }
     async addRequestDecorator(FunctionName, Function){
