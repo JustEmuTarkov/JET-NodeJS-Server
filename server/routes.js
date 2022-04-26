@@ -11,6 +11,10 @@ class Routes {
      */
     static initializeRoutes(fastify) {
 
+        fastify.get("/launcher/profile/register", async function (request, reply) {
+            const data = await profile.register(request.body);
+        });
+        
         fastify.get("/launcher/server/connect", async function (request, reply) {
             const data = await profile.getEditions();
             const serverConfig = database.core.serverConfig;
@@ -19,8 +23,8 @@ class Routes {
                 name: serverConfig.name,
                 editions: data,
             }))
-        })
-
+        });
+        
         fastify.get("/mode/offline", async function (request, reply) {
             reply.send(reply.resNoBody(database.core.serverConfig.Patches));
         });

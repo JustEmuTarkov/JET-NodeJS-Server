@@ -10,3 +10,7 @@ In Fastify.js:
 
 Test are located in ./Source/Tests/. Test dependencie is TAP.
 To run tests, simply type npm test. (CTRL + C at the end of the test to exit TAP input)
+
+More info:
+- core folder hold utils,
+- modules are classes called in routes handler,

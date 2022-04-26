@@ -10,7 +10,6 @@ class Database {
         this.weather;
         this.locales;
         this.templates;
-        this.configs;
         this.bots;
         this.profiles;
         this.traders;
@@ -138,15 +137,6 @@ class Database {
             "Items": templatesData.Items,
         };
         util.logger.logDebug("# Database: Loading templates", 2)
-    }
-
-    /**
-     * Load configs data in parallel.
-     */
-    async loadConfigs() {
-        util.logger.logDebug("# Database: Loading configs", 1)
-        this.configs = "configs";
-        util.logger.logDebug("# Database: Loading configs", 2)
     }
 
     /**
