@@ -13,6 +13,11 @@ t.test('Module-Account', async (t) => {
 
     t.test('Account exists', async t => {
         const mockSessionID = 'AID0194876887698uxRXETLq'
-        t.equal(account.clientHasProfile(mockSessionID), true, 'Client has profile');
+        t.equal(account.clientHasAccount(mockSessionID), true, 'Client has profile');
+    });
+
+    t.test('Get editions', async t => {
+        const editions = await account.getEditions();
+        t.equal(Array.isArray(editions), true, 'returns a list of editions');
     });
 })

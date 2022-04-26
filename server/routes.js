@@ -1,6 +1,5 @@
 const language = require("./modules/language.js");
 const database = require("../server/database.js");
-const profile = require('./modules/profile.js');
 const account = require("./modules/account.js");
 
 
@@ -17,13 +16,8 @@ class Routes {
             reply.send(output === "" ? "FAILED" : output);
         });
         
-        fastify.get("/launcher/profile/login", async function (request, reply) {
-            let output = await account.Account.reloadAccountByLogin(info);
-            reply.send(output === "" ? "FAILED" : output);
-        });
-        
         fastify.get("/launcher/server/connect", async function (request, reply) {
-            const data = await profile.getEditions();
+            const data = await account.getEditions();
             const serverConfig = database.core.serverConfig;
             reply.send({
                 backendUrl: serverConfig.ip + ":" + serverConfig.port,
@@ -76,7 +70,7 @@ class Routes {
             const test = request.headers;
             console.log("AAAAAAAAAAAAAAAAAAAAAAA")
             const mockAccountId = "AID0194876887698uxRXETLq";
-            const data = account.clientHasProfile(mockAccountId)
+            const data = account.clientHasAccount(mockAccountId)
             if (data) {
                 reply.send(reply.resBSG({ utc_time: Date.now() / 1000 }, 0, null));
             }

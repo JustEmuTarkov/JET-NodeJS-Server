@@ -195,11 +195,11 @@ class Account {
   }
 
   /**
-  * Check if the client has a profile. This function will be used by the response "/client/game/start" and determine, if a new profile will be created.
+  * Check if the client has an account. This function will be used by the response "/client/game/start" and determine, if a new account will be created.
   * @param {*} sessionID 
   * @returns If the account exists.
   */
-  clientHasProfile(sessionID) {
+  clientHasAccount(sessionID) {
     this.reloadAccountBySessionID(sessionID)
     const accounts = this.getList();
     for (const account in accounts) {
@@ -358,6 +358,15 @@ class Account {
 
     return false;
   }
+
+  /**
+   * Retrieve all existing editions in server/db/profiles
+   * @returns {Array} list of existing editions
+   */
+  getEditions(){
+    return Object.keys(global.JET.database.profiles);
+  } 
+
 }
 
 
