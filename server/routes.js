@@ -10,7 +10,12 @@ class Routes {
      * Add all needed routes to fastify server
      * @param {fastify} fastify - fastify server
      */
-    static initializeRoutes(fastify, serverAccounts) {
+    static initializeRoutes(fastify) {
+
+        fastify.get("/launcher/profile/login", async function (request, reply) {
+            let output = await account.reloadAccountByLogin(info);
+            reply.send(output === "" ? "FAILED" : output);
+        });
         
         fastify.get("/launcher/server/connect", async function (request, reply) {
             const data = await profile.getEditions();
@@ -23,34 +28,34 @@ class Routes {
         });
 
         fastify.get("/launcher/profile/register", async function (request, reply) {
-            let output = await account.Account.reloadAccountByLogin(info);
+            let output = await account.reloadAccountByLogin(info);
             reply.send(output !== "" ? "FAILED" : "OK");
         });
 
         fastify.get("/launcher/profile/get", async function (request, reply) {
-            const accountID = await account.Account.reloadAccountByLogin(info)
-            let output = await account.AccountUtils.find(accountID);
+            const accountID = await account.reloadAccountByLogin(info)
+            let output = await account.find(accountID);
             output['server'] = server.name
             reply.send(JSON.stringify(output));
         });
 
         fastify.get("/launcher/profile/change/email", async function (request, reply) {
-            let output = await account.AccountUtils.changeEmail(info);
+            let output = await account.changeEmail(info);
             reply.send(output === "" ? "FAILED" : "OK");
         });
 
         fastify.get("/launcher/profile/change/password", async function (request, reply) {
-            let output = await account.AccountUtils.changePassword(info);
+            let output = await account.changePassword(info);
             reply.send(output === "" ? "FAILED" : "OK");
         });
 
         fastify.get("/launcher/profile/change/wipe", async function (request, reply) {
-            let output = await account.AccountUtils.wipe(info);
+            let output = await account.wipe(info);
             reply.send(output === "" ? "FAILED" : "OK");
         });
 
         fastify.get("/launcher/profile/remove", async function (request, reply) {
-            let output = await account.AccountUtils.remove(info);
+            let output = await account.remove(info);
             reply.send(output === "" ? "FAILED" : "OK");
         });
 
@@ -66,7 +71,7 @@ class Routes {
             const test = request.headers;
             console.log("AAAAAAAAAAAAAAAAAAAAAAA")
             const mockAccountId = "AID0194876887698uxRXETLq";
-            const data = serverAccounts.clientHasProfile(mockAccountId)
+            const data = account.clientHasProfile(mockAccountId)
             if (data) {
                 reply.send(reply.resBSG({ utc_time: Date.now() / 1000 }, 0, null));
             }
