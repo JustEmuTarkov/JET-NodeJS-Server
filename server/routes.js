@@ -1,7 +1,7 @@
 const language = require("./modules/language.js");
 const database = require("../server/database.js");
 const profile = require('./modules/profile.js');
-const account = require("../core/userdata/account.js");
+const account = require("./modules/account.js");
 
 
 class Routes {
@@ -10,12 +10,12 @@ class Routes {
      * Add all needed routes to fastify server
      * @param {fastify} fastify - fastify server
      */
-    static initializeRoutes(fastify) {
+    static initializeRoutes(fastify, serverAccounts) {
         
         fastify.get("/launcher/server/connect", async function (request, reply) {
             const data = await profile.getEditions();
             const serverConfig = database.core.serverConfig;
-            reply.type('text/plain').compress({
+            reply.send({
                 backendUrl: serverConfig.ip + ":" + serverConfig.port,
                 name: serverConfig.name,
                 editions: data,
@@ -64,9 +64,9 @@ class Routes {
 
         fastify.get("/client/game/start", async function (request, reply) {
             const test = request.headers;
-            console.log(test)
-            const sessionID = "AID0194876887698uxRXETLq";
-            const data = await account.AccountUtils.clientHasProfile(sessionID)
+            console.log("AAAAAAAAAAAAAAAAAAAAAAA")
+            const mockAccountId = "AID0194876887698uxRXETLq";
+            const data = serverAccounts.clientHasProfile(mockAccountId)
             if (data) {
                 reply.send(reply.resBSG({ utc_time: Date.now() / 1000 }, 0, null));
             }
