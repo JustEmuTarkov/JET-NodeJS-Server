@@ -1,6 +1,7 @@
 const language = require("./modules/language.js");
 const database = require("../server/database.js");
 const account = require("./modules/account.js");
+const dialogue = require("./modules/dialogue.js");
 
 
 class Routes {
@@ -83,8 +84,50 @@ class Routes {
             reply.send(JSON.stringify(reply.resBSG(data)));
         });
 
-        fastify.get("/", async function (request, reply) {
-            reply.send({ hello: 'world' });
+
+        /**
+         * /client/mail/dialog/
+         */
+        const mailPath = "/client/mail/dialog/";
+
+        fastify.get(mailPath + `getAllAttachments`, async function (request, reply) {
+            const data = await dialogue.getAllAttachments(info.dialogId, sessionID);
+            reply.send(reply.resBSG(data));
+        });
+
+        fastify.get(mailPath + `info`, async function (request, reply) {
+            const data = await dialogue.getDialogueInfo(info.dialogId, sessionID);
+            reply.send(reply.resBSG(data));
+        });
+
+        fastify.get(mailPath + `list`, async function (request, reply) {
+            const data = await dialogue.generateDialogueList(sessionID);
+            reply.send(data);
+        });
+        
+        fastify.get(mailPath + `pin`, async function (request, reply) {
+            //const data = await dialogue.setDialoguePin(info.dialogId, true, sessionID);
+            reply.send(reply.resBSG([]));
+        });
+
+        fastify.get(mailPath + `read`, async function (request, reply) {
+            //const data = await dialogue.setRead(info.dialogId, sessionID);
+            reply.send(reply.resBSG([]));
+        });
+
+        fastify.get(mailPath + `remove`, async function (request, reply) {
+            //const data = await dialogue.removeDialogue(info.dialogId, sessionID);
+            reply.send(reply.resBSG([]));
+        });
+
+        fastify.get(mailPath + `unpin`, async function (request, reply) {
+            //const data = await dialogue.setDialoguePin(info.dialogId, sessionID);
+            reply.send(reply.resBSG([]));
+        });
+
+        fastify.get(mailPath + `view`, async function (request, reply) {
+            const data = await dialogue.generateDialogueView(info.dialogId, sessionID);
+            reply.send(data);
         });
     }
 

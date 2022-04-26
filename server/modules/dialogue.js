@@ -2,7 +2,7 @@ const fs = require("fs");
 const { fileIO } = require("../../core/util.js");
 const { logger } = require("../../core/util.js");
 
-const getPath = (sessionID) => `user/profiles/${sessionID}/dialogue.json`;
+const getPath = (sessionID) => `./user/profiles/${sessionID}/dialogue.json`;
 
 class Diaglogue {
     constructor() {
@@ -339,4 +339,4 @@ class Diaglogue {
         }
     }
 }
-module.exports.Diaglogue = new Diaglogue();
+module.exports = new Diaglogue();
