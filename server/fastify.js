@@ -4,7 +4,7 @@ const routes = require("./routes.js");
 const fastify = require('fastify')
 
 class FastifyServer {
-    constructor(){
+    constructor(serverAccounts){
         this.server = fastify({
             logger: true,
             http2: true,
@@ -24,7 +24,7 @@ class FastifyServer {
                 encodings: ['deflate', 'gzip'],
                 global: true,
             });
-        routes.initializeRoutes(this.server);
+        routes.initializeRoutes(this.server, serverAccounts);
     }
     async addRequestDecorator(FunctionName, Function){
         this.server.decorateRequest(FunctionName, Function);
@@ -81,4 +81,4 @@ class FastifyServer {
     }
 }
 
-module.exports = new FastifyServer();
+module.exports.FastifyServer = FastifyServer;
