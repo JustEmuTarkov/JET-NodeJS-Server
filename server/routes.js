@@ -3,6 +3,7 @@ const database = require("../server/database.js");
 const profile = require('./modules/profile.js');
 const account = require("../core/userdata/account.js");
 
+
 class Routes {
 
     /**
@@ -23,8 +24,45 @@ class Routes {
                 name: serverConfig.name,
                 editions: data,
             }))
+        })
+
+        fastify.get("/launcher/profile/login", async function (request, reply) {
+            let output = await account.Account.reloadAccountByLogin(info);
+            reply.send(output === "" ? "FAILED" : "OK");
         });
-        
+
+        fastify.get("/launcher/profile/register", async function (request, reply) {
+            let output = await account.Account.reloadAccountByLogin(info);
+            reply.send(output !== "" ? "FAILED" : "OK");
+        });
+
+        fastify.get("/launcher/profile/get", async function (request, reply) {
+            const accountID = await account.Account.reloadAccountByLogin(info)
+            let output = await account.AccountUtils.find(accountID);
+            output['server'] = server.name
+            reply.send(JSON.stringify(output));
+        });
+
+        fastify.get("/launcher/profile/change/email", async function (request, reply) {
+            let output = await account.AccountUtils.changeEmail(info);
+            reply.send(output === "" ? "FAILED" : "OK");
+        });
+
+        fastify.get("/launcher/profile/change/password", async function (request, reply) {
+            let output = await account.AccountUtils.changePassword(info);
+            reply.send(output === "" ? "FAILED" : "OK");
+        });
+
+        fastify.get("/launcher/profile/change/wipe", async function (request, reply) {
+            let output = await account.AccountUtils.wipe(info);
+            reply.send(output === "" ? "FAILED" : "OK");
+        });
+
+        fastify.get("/launcher/profile/remove", async function (request, reply) {
+            let output = await account.AccountUtils.remove(info);
+            reply.send(output === "" ? "FAILED" : "OK");
+        });
+
         fastify.get("/mode/offline", async function (request, reply) {
             reply.send(reply.resNoBody(database.core.serverConfig.Patches));
         });
