@@ -58,14 +58,13 @@ class Server {
     }
 
 
-    /*     initializeCallbacks() {
-            const callbacks = require(executedDir + "/src/functions/callbacks.js").callbacks;
-    
-            this.receiveCallback = callbacks.getReceiveCallbacks();
-            this.respondCallback = callbacks.getRespondCallbacks();
-    
-            logger.logSuccess("Create: Receive Callback");
-        } */
+    initializeCallbacks() {
+
+        this.receiveCallback = Callbacks.getReceiveCallbacks();
+        this.respondCallback = Callbacks.getRespondCallbacks();
+
+        logger.logSuccess("Create: Receive Callback");
+    }
 
 
     resetBuffer = (sessionID) => { this.buffers[sessionID] = undefined; }
@@ -429,96 +428,97 @@ class ServerUtils {
 }
 
 class Callbacks {
-	getReceiveCallbacks() {
-		return {
-			"insurance": this.receiveInsurance,
-			"SAVE": this.receiveSave
-		};
-	}
-	getRespondCallbacks() {
-		return {
-			"BUNDLE": this.respondBundle,
-			"IMAGE": this.respondImage,
-			"NOTIFY": this.respondNotify,
-			"DONE": this.respondKillResponse
-		};
-	}
-	receiveInsurance(sessionID, request, reply, body, output) {
-		if (request.url === "/client/notifier/channel/create") {
-			insurance_f.handler.checkExpiredInsurance();
-		}
-	}
-	receiveSave(sessionID, request, reply, body, output) {
-		if (global._database.clusterConfig.saveOnReceive) {
-			savehandler_f.saveOpenSessions();
-		}
-	}
+    getReceiveCallbacks() {
+        return {
+            "insurance": this.receiveInsurance,
+            "SAVE": this.receiveSave
+        };
+    }
+    getRespondCallbacks() {
+        return {
+            "BUNDLE": this.respondBundle,
+            "IMAGE": this.respondImage,
+            "NOTIFY": this.respondNotify,
+            "DONE": this.respondKillResponse
+        };
+    }
+    
+    receiveInsurance(sessionID, request, reply, body, output) {
+        if (request.url === "/client/notifier/channel/create") {
+            insurance_f.handler.checkExpiredInsurance();
+        }
+    }
+    receiveSave(sessionID, request, reply, body, output) {
+        if (global._database.clusterConfig.saveOnReceive) {
+            savehandler_f.saveOpenSessions();
+        }
+    }
 
-	respondBundle(sessionID, request, reply, body) {
-		let bundleKey = request.url.split('/bundle/')[1];
-		bundleKey = decodeURI(bundleKey);
-		logger.logInfo(`[BUNDLE]: ${request.url}`);
-		let bundle = bundles_f.handler.getBundleByKey(bundleKey, true);
-		let path = bundle.path;
-		// send bundle
-		server.tarkovSend.file(reply, path);
-	}
-	respondImage(sessionID, request, reply, body) {
-		let splittedUrl = request.url.split('/');
-		let fileName = splittedUrl[splittedUrl.length - 1].split('.').slice(0, -1).join('.');
-		let baseNode = {};
-		let imgCategory = "none";
+    respondBundle(sessionID, request, reply, body) {
+        let bundleKey = request.url.split('/bundle/')[1];
+        bundleKey = decodeURI(bundleKey);
+        logger.logInfo(`[BUNDLE]: ${request.url}`);
+        let bundle = bundles_f.handler.getBundleByKey(bundleKey, true);
+        let path = bundle.path;
+        // send bundle
+        server.tarkovSend.file(reply, path);
+    }
+    respondImage(sessionID, request, reply, body) {
+        let splittedUrl = request.url.split('/');
+        let fileName = splittedUrl[splittedUrl.length - 1].split('.').slice(0, -1).join('.');
+        let baseNode = {};
+        let imgCategory = "none";
 
-		// get images to look through
-		switch (true) {
-			case request.url.includes("/quest"):
-				logger.logInfo(`[IMG.quests]: ${request.url}`);
-				baseNode = res.quest;
-				imgCategory = "quest";
-				break;
+        // get images to look through
+        switch (true) {
+            case request.url.includes("/quest"):
+                logger.logInfo(`[IMG.quests]: ${request.url}`);
+                baseNode = res.quest;
+                imgCategory = "quest";
+                break;
 
-			case request.url.includes("/handbook"):
-				logger.logInfo(`[IMG.handbook]: ${request.url}`);
-				baseNode = res.handbook;
-				imgCategory = "handbook";
-				break;
+            case request.url.includes("/handbook"):
+                logger.logInfo(`[IMG.handbook]: ${request.url}`);
+                baseNode = res.handbook;
+                imgCategory = "handbook";
+                break;
 
-			case request.url.includes("/avatar"):
-				logger.logInfo(`[IMG.avatar]: ${request.url}`);
-				baseNode = res.trader;
-				imgCategory = "avatar";
-				break;
+            case request.url.includes("/avatar"):
+                logger.logInfo(`[IMG.avatar]: ${request.url}`);
+                baseNode = res.trader;
+                imgCategory = "avatar";
+                break;
 
-			case request.url.includes("/banners"):
-				logger.logInfo(`[IMG.banners]: ${request.url}`);
-				baseNode = res.banners;
-				imgCategory = "banner";
-				break;
+            case request.url.includes("/banners"):
+                logger.logInfo(`[IMG.banners]: ${request.url}`);
+                baseNode = res.banners;
+                imgCategory = "banner";
+                break;
 
-			default:
-				logger.logInfo(`[IMG.hideout]: ${request.url}`);
-				baseNode = res.hideout;
-				imgCategory = "hideout";
-				break;
-		}
+            default:
+                logger.logInfo(`[IMG.hideout]: ${request.url}`);
+                baseNode = res.hideout;
+                imgCategory = "hideout";
+                break;
+        }
 
-		// if file does not exist
-		if (!baseNode[fileName]) {
-			logger.logError("Image not found! Sending backup image.");
-			baseNode[fileName] = "res/noimage/" + imgCategory + ".png";
-			server.tarkovSend.file(reply, baseNode[fileName]);
-		} else {
-			// send image
-			server.tarkovSend.file(reply, baseNode[fileName]);
-		}
-	}
-	respondNotify(sessionID, request, reply, data) {
-		let splittedUrl = request.url.split('/');
-		sessionID = splittedUrl[splittedUrl.length - 1].split("?last_id")[0];
-		notifier_f.handler.notificationWaitAsync(reply, sessionID);
-	}
-	respondKillResponse() {
-		return;
-	}
+        // if file does not exist
+        if (!baseNode[fileName]) {
+            logger.logError("Image not found! Sending backup image.");
+            baseNode[fileName] = "res/noimage/" + imgCategory + ".png";
+            server.tarkovSend.file(reply, baseNode[fileName]);
+        } else {
+            // send image
+            server.tarkovSend.file(reply, baseNode[fileName]);
+        }
+    }
+    respondNotify(sessionID, request, reply, data) {
+        let splittedUrl = request.url.split('/');
+        sessionID = splittedUrl[splittedUrl.length - 1].split("?last_id")[0];
+        notifier_f.handler.notificationWaitAsync(reply, sessionID);
+    }
+    respondKillResponse() {
+        return;
+    }
 }
 module.exports = Server;
