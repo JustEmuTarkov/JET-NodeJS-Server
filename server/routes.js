@@ -1,6 +1,7 @@
 const language = require("./modules/language.js");
 const database = require("../server/database.js");
 const account = require("./modules/account.js");
+const zlib = require('zlib');
 
 
 class Routes {
@@ -20,13 +21,13 @@ class Routes {
             const data = await account.getEditions();
             const serverConfig = database.core.serverConfig;
             
-            reply.header('Content-Type', 'text/plain; charset=utf-8');
-            const finalData = JSON.stringify ({
+            reply.header('Content-Type', 'application/json');
+            const finalData = {
                 backendUrl: "https://" + serverConfig.ip + ":" + serverConfig.port,
                 name: serverConfig.name,
                 editions: data,
-            }, null, "\t")
-            reply.send(finalData)
+            }
+            reply.send(reply.resCompress(JSON.stringify(finalData)))
         });
 
         fastify.get("/launcher/profile/register", async function (request, reply) {
