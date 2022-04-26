@@ -5,7 +5,6 @@ const dialogue = require("./modules/dialogue.js");
 
 
 class Routes {
-
     /**
      * Add all needed routes to fastify server
      * @param {fastify} fastify - fastify server
