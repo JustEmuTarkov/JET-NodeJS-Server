@@ -1,14 +1,17 @@
 'use strict'
 
 const t = require('tap');
-const fastify = require("../server/fastify.js");
+const fastifyServer = require("../server/fastify.js");
 const database = require("../server/database.js");
 
 t.test('routes', async (t) => {
   global.JET = { executionPath: __dirname, userList: [], userDataList: [], util: {}, database: {}}
+  let fastify;
   t.beforeEach(async () => {
+    if (fastify) fastify.server.close();
     database.loadDatabase();
     global.JET.database = database;
+    fastify = new fastifyServer.FastifyServer();
   })
 
   t.test('test "/" routes', async t => {
@@ -52,7 +55,7 @@ t.test('routes', async (t) => {
       url: '/client/game/start'
     });
     
-    t.equal(response.body, '"/client/game/start" route returns time');
+    t.equal(response.statusCode, 200, '"/client/game/start" route returns a status code of 200');
   })
 
   t.test('test "/client/languages" routes', async t => {
