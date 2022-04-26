@@ -308,6 +308,77 @@ class AccountUtils {
         return accountID;
       }
 
+      /**
+       * Set new email for account
+       * @param {*} info 
+       * @returns 
+       */
+      static changeEmail(info) {
+        const accountID = Account.reloadAccountBySessionID(info);
+    
+        if (accountID !== "") {
+          Account.accounts[accountID].email = info.change;
+          Account.saveToDisk(accountID);
+        }
+    
+        return accountID;
+      }
+    
+      /**
+       * Set new password for account
+       * @param {*} info 
+       * @returns 
+       */
+      static changePassword(info) {
+        const accountID = Account.reloadAccountBySessionID(info);
+    
+        if (accountID !== "") {
+          Account.accounts[accountID].password = info.change;
+          Account.saveToDisk(accountID);
+        }
+    
+        return accountID;
+      }
+    
+      /**
+       * Wipe account from memory and disk
+       * @param {*} info 
+       * @returns 
+       */
+      static wipe(info) {
+        const accountID = Account.reloadAccountBySessionID(info);
+    
+        if (accountID !== "") {
+          Account.accounts[accountID].edition = info.edition;
+          this.setWipe(accountID, true);
+          Account.saveToDisk(accountID);
+        }
+    
+        return accountID;
+      }
+
+      /**
+       * Check wipe status
+       * @param {*} sessionID 
+       * @returns 
+       */
+      static isWiped(sessionID) {
+        // This needs to be at the top to check for changed accounts.
+        Account.reloadAccountBySessionID(sessionID);
+        return Account.accounts[sessionID].wipe;
+      }
+    
+      /**
+       * Set wipe status
+       * @param {*} sessionID 
+       * @param {*} state 
+       */
+      static setWipe(sessionID, state) {
+        // This needs to be at the top to check for changed accounts.
+        Account.reloadAccountBySessionID(sessionID);
+        this.accounts[sessionID].wipe = state;
+      }
+
     /**
      * Find matching account
      * @param {object} accounts - Dict made of Accounts IDS & Accounts infos
