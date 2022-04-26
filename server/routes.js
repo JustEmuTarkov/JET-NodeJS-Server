@@ -11,10 +11,6 @@ class Routes {
      * @param {fastify} fastify - fastify server
      */
     static initializeRoutes(fastify) {
-
-        fastify.get("/launcher/profile/register", async function (request, reply) {
-            const data = await profile.register(request.body);
-        });
         
         fastify.get("/launcher/server/connect", async function (request, reply) {
             const data = await profile.getEditions();
