@@ -45,24 +45,29 @@ class Routes {
             output['server'] = server.name
             reply.send(JSON.stringify(output));
         });
+        
+        fastify.get(launchPath + "remove", async function (request, reply) {
+            let output = await account.remove(info);
+            reply.send(output === "" ? "FAILED" : "OK");
+        });
 
-        fastify.get(launchPath + "change/email", async function (request, reply) {
+        /**
+         * /launcher/profile/change
+         */
+        const changePath = "/launcher/profile/change/";
+
+        fastify.get(changePath + "email", async function (request, reply) {
             let output = await account.changeEmail(info);
             reply.send(output === "" ? "FAILED" : "OK");
         });
 
-        fastify.get(launchPath + "change/password", async function (request, reply) {
+        fastify.get(changePath + "password", async function (request, reply) {
             let output = await account.changePassword(info);
             reply.send(output === "" ? "FAILED" : "OK");
         });
 
-        fastify.get(launchPath + "change/wipe", async function (request, reply) {
+        fastify.get(changePath + "wipe", async function (request, reply) {
             let output = await account.wipe(info);
-            reply.send(output === "" ? "FAILED" : "OK");
-        });
-
-        fastify.get(launchPath + "remove", async function (request, reply) {
-            let output = await account.remove(info);
             reply.send(output === "" ? "FAILED" : "OK");
         });
 
