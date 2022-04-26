@@ -1,10 +1,12 @@
 "use strict";
 const http = require('http'); // requires npm install http on the Server
 const WebSocket = require('ws'); // requires npm install ws on the Server
+const decompress = require('../server/decorators/Request_Decompress.js');
+const compress = require('../server/decorators/Response_Compress.js');
+const serverConfig = require('../server/database/database.js').core.serverConfig;
 
 class Server {
     constructor() {
-        this.util = ServerUtils;
         this.name = serverConfig.name;
         this.ip = serverConfig.ip;
         this.port = serverConfig.port;
@@ -91,86 +93,86 @@ class Server {
         return buf.written === buf.allocated;
     }
 
-    sendResponse(sessionID, req, resp, body) {
+    sendResponse(sessionID, request, reply, body) {
         let output = "";
 
         //check if page is static html page or requests like 
-        if (this.tarkovSend.sendStaticFile(req, resp))
+        if (ServerUtils.sendFile(request, reply))
             return;
 
         // get response
-        if (req.method === "POST" || req.method === "PUT") {
-            output = router.getResponse(req, body, sessionID);
+        if (request.method === "POST" || request.method === "PUT") {
+            output = router.getResponse(request, body, sessionID);
         } else {
-            output = router.getResponse(req, "", sessionID);
+            output = router.getResponse(request, "", sessionID);
             // output = router.getResponse(req, body, sessionID);
         }
 
         /* route doesn't exist or response is not properly set up */
         if (output === "") {
-            logger.logError(`[UNHANDLED][${req.url}]`);
+            logger.logError(`[UNHANDLED][${request.url}]`);
             logger.logData(body);
-            output = `{"err": 404, "errmsg": "UNHANDLED RESPONSE: ${req.url}", "data": null}`;
+            output = `{"err": 404, "errmsg": "UNHANDLED RESPONSE: ${request.url}", "data": null}`;
         } else {
             logger.logDebug(body, true);
         }
         // execute data received callback
         for (let type in this.receiveCallback) {
-            this.receiveCallback[type](sessionID, req, resp, body, output);
+            this.receiveCallback[type](sessionID, request, reply, body, output);
         }
 
         // send response
         if (output in this.respondCallback) {
-            this.respondCallback[output](sessionID, req, resp, body);
+            this.respondCallback[output](sessionID, request, reply, body);
         } else {
-            this.tarkovSend.zlibJson(resp, output, sessionID);
+            ServerUtils.zlibJson(reply, output, sessionID);
         }
     }
 
-    handleAsyncRequest(req, resp) {
+    handleAsyncRequest(request, reply) {
         return new Promise(resolve => {
-            resolve(this.handleRequest(req, resp));
+            resolve(this.handleRequest(request, reply));
         });
     }
 
     // Logs the requests made by users. Also stripped from bullshit requests not important ones.
-    requestLog(req, sessionID) {
-        let IP = req.connection.remoteAddress.replace("::ffff:", "");
+    requestLog(request, sessionID) {
+        let IP = request.connection.remoteAddress.replace("::ffff:", "");
         IP = IP == "127.0.0.1" ? "LOCAL" : IP;
 
 
         let displaySessID = typeof sessionID != "undefined" ? `[${sessionID}]` : "";
 
         if (
-            req.url.substr(0, 6) != "/files" &&
-            req.url.substr(0, 6) != "/notif" &&
-            req.url != "/client/game/keepalive" &&
-            req.url != "/player/health/sync" &&
-            !req.url.includes(".css") &&
-            !req.url.includes(".otf") &&
-            !req.url.includes(".ico") &&
-            !req.url.includes("singleplayer/settings/bot/difficulty")
+            request.url.substr(0, 6) != "/files" &&
+            request.url.substr(0, 6) != "/notif" &&
+            request.url != "/client/game/keepalive" &&
+            request.url != "/player/health/sync" &&
+            !request.url.includes(".css") &&
+            !request.url.includes(".otf") &&
+            !request.url.includes(".ico") &&
+            !request.url.includes("singleplayer/settings/bot/difficulty")
         )
-            logger.logRequest(req.url, `${displaySessID}[${IP}] `);
+            logger.logRequest(request.url, `${displaySessID}[${IP}] `);
     }
 
-    handleRequest(req, resp) {
-        const sessionID = (consoleResponse.getDebugEnabled()) ? consoleResponse.getSession() : utility.getCookies(req)["PHPSESSID"];
+    handleRequest(request, reply) {
+        const sessionID = (consoleResponse.getDebugEnabled()) ? consoleResponse.getSession() : utility.getCookies(request)["PHPSESSID"];
 
-        this.requestLog(req, sessionID);
+        this.requestLog(request, sessionID);
 
-        switch (req.method) {
+        switch (request.method) {
             case "GET":
                 {
                     let body = [];
-                    req.on('data', (chunk) => {
+                    request.on('data', (chunk) => {
                         body.push(chunk);
                     }).on('end', () => {
                         // body = Buffer.concat(body).toString();
                         let data = Buffer.concat(body);
                         console.log(data.toString());
                     });
-                    server.sendResponse(sessionID, req, resp, body);
+                    server.sendResponse(sessionID, request, reply, body);
                     return true;
                 }
             //case "GET":
@@ -178,7 +180,7 @@ class Server {
             case "POST":
                 {
                     let body = [];
-                    req.on('data', (chunk) => {
+                    request.on('data', (chunk) => {
                         body.push(chunk);
                     }).on('end', () => {
                         // body = Buffer.concat(body).toString();
@@ -187,7 +189,7 @@ class Server {
                         // });
 
                         // req.on("data", function (data) {
-                        if (req.url == "/" || req.url.includes("/server/config")) {
+                        if (request.url == "/" || request.url.includes("/server/config")) {
                             let _Data = data.toString();
                             _Data = _Data.split("&");
                             let _newData = {};
@@ -195,18 +197,18 @@ class Server {
                                 let datas = _Data[item].split("=");
                                 _newData[datas[0]] = datas[1];
                             }
-                            server.sendResponse(sessionID, req, resp, _newData);
+                            server.sendResponse(sessionID, request, reply, _newData);
                             return;
                         }
                         // console.log(data);
-                        internal.zlib.inflate(data, function (err, body) {
+                        decompress(data, function (err, body) {
                             // console.log(body);
                             if (body !== undefined) {
                                 let jsonData = body !== typeof "undefined" && body !== null && body !== "" ? body.toString() : "{}";
-                                server.sendResponse(sessionID, req, resp, jsonData);
+                                server.sendResponse(sessionID, request, reply, jsonData);
                             }
                             else {
-                                server.sendResponse(sessionID, req, resp, "")
+                                server.sendResponse(sessionID, request, reply, "")
                             }
                         });
                     });
@@ -214,13 +216,13 @@ class Server {
                 }
             case "PUT":
                 {
-                    req.on("data", function (data) {
+                    request.on("data", function (data) {
                         // receive data
-                        if ("expect" in req.headers) {
-                            const requestLength = parseInt(req.headers["content-length"]);
+                        if ("expect" in request.headers) {
+                            const requestLength = parseInt(request.headers["content-length"]);
 
-                            if (!server.putInBuffer(req.headers.sessionid, data, requestLength)) {
-                                resp.writeContinue();
+                            if (!server.putInBuffer(request.headers.sessionid, data, requestLength)) {
+                                reply.writeContinue();
                             }
                         }
                     })
@@ -228,9 +230,9 @@ class Server {
                             let data = server.getFromBuffer(sessionID);
                             server.resetBuffer(sessionID);
 
-                            internal.zlib.inflate(data, function (err, body) {
+                            decompress(data, function (err, body) {
                                 let jsonData = body !== typeof "undefined" && body !== null && body !== "" ? body.toString() : "{}";
-                                server.sendResponse(sessionID, req, resp, jsonData);
+                                server.sendResponse(sessionID, request, reply, jsonData);
                             });
                         });
                     return true;
@@ -245,7 +247,7 @@ class Server {
     CreateServer() {
         let backend = this.backendUrl;
         /* create server */
-        const certificate = require("./certificategenerator.js").certificate;
+        const certificate = require("./certificategenerator.js");
 
         let httpsServer = internal.https.createServer(certificate.generate());
         httpsServer.on('request', async (req, res) => {
@@ -310,9 +312,9 @@ class Server {
         "eventId": "ping"
     };
 
-    static wsOnConnection(ws, req) {
+    static wsOnConnection(ws, request) {
         // Strip request and break it into sections
-        const splitUrl = req.url.replace(/\?.*$/, "").split("/");
+        const splitUrl = request.url.replace(/\?.*$/, "").split("/");
         const sessionID = splitUrl.pop();
 
         Logger.info(`[WS] Player: ${sessionID} has connected`);
@@ -402,26 +404,121 @@ class Server {
 }
 
 class ServerUtils {
-    static zlibJson(resp, output, sessionID) {
+    zlibJson(reply, output, sessionID) {
         let Header = { "Content-Type": this.mime["json"], "Set-Cookie": "PHPSESSID=" + sessionID };
         // this should enable content encoding if you ask server from web browser
         if (typeof sessionID == "undefined") {
             Header["content-encoding"] = "deflate";
         }
-        resp.writeHead(200, "OK", Header);
-        internal.zlib.deflate(output, function (err, buf) {
-            resp.end(buf);
+        reply.writeHead(200, "OK", Header);
+        compress(output, function (err, buf) {
+            reply.end(buf);
         });
     }
 
-    static sendFile(resp, file) {
+    sendFile(reply, file) {
         let pathSlic = file.split("/");
         let type = Server.mimeTypes[pathSlic[pathSlic.length - 1].split(".")[1]] || Server.mimeTypes["txt"];
         let fileStream = fs.createReadStream(file);
 
         fileStream.on("open", function () {
-            resp.setHeader("Content-Type", type);
-            fileStream.pipe(resp);
+            reply.setHeader("Content-Type", type);
+            fileStream.pipe(reply);
         });
     }
 }
+
+class Callbacks {
+	getReceiveCallbacks() {
+		return {
+			"insurance": this.receiveInsurance,
+			"SAVE": this.receiveSave
+		};
+	}
+	getRespondCallbacks() {
+		return {
+			"BUNDLE": this.respondBundle,
+			"IMAGE": this.respondImage,
+			"NOTIFY": this.respondNotify,
+			"DONE": this.respondKillResponse
+		};
+	}
+	receiveInsurance(sessionID, request, reply, body, output) {
+		if (request.url === "/client/notifier/channel/create") {
+			insurance_f.handler.checkExpiredInsurance();
+		}
+	}
+	receiveSave(sessionID, request, reply, body, output) {
+		if (global._database.clusterConfig.saveOnReceive) {
+			savehandler_f.saveOpenSessions();
+		}
+	}
+
+	respondBundle(sessionID, request, reply, body) {
+		let bundleKey = request.url.split('/bundle/')[1];
+		bundleKey = decodeURI(bundleKey);
+		logger.logInfo(`[BUNDLE]: ${request.url}`);
+		let bundle = bundles_f.handler.getBundleByKey(bundleKey, true);
+		let path = bundle.path;
+		// send bundle
+		server.tarkovSend.file(reply, path);
+	}
+	respondImage(sessionID, request, reply, body) {
+		let splittedUrl = request.url.split('/');
+		let fileName = splittedUrl[splittedUrl.length - 1].split('.').slice(0, -1).join('.');
+		let baseNode = {};
+		let imgCategory = "none";
+
+		// get images to look through
+		switch (true) {
+			case request.url.includes("/quest"):
+				logger.logInfo(`[IMG.quests]: ${request.url}`);
+				baseNode = res.quest;
+				imgCategory = "quest";
+				break;
+
+			case request.url.includes("/handbook"):
+				logger.logInfo(`[IMG.handbook]: ${request.url}`);
+				baseNode = res.handbook;
+				imgCategory = "handbook";
+				break;
+
+			case request.url.includes("/avatar"):
+				logger.logInfo(`[IMG.avatar]: ${request.url}`);
+				baseNode = res.trader;
+				imgCategory = "avatar";
+				break;
+
+			case request.url.includes("/banners"):
+				logger.logInfo(`[IMG.banners]: ${request.url}`);
+				baseNode = res.banners;
+				imgCategory = "banner";
+				break;
+
+			default:
+				logger.logInfo(`[IMG.hideout]: ${request.url}`);
+				baseNode = res.hideout;
+				imgCategory = "hideout";
+				break;
+		}
+
+		// if file does not exist
+		if (!baseNode[fileName]) {
+			logger.logError("Image not found! Sending backup image.");
+			baseNode[fileName] = "res/noimage/" + imgCategory + ".png";
+			server.tarkovSend.file(reply, baseNode[fileName]);
+		} else {
+			// send image
+			server.tarkovSend.file(reply, baseNode[fileName]);
+		}
+	}
+	respondNotify(sessionID, request, reply, data) {
+		let splittedUrl = request.url.split('/');
+		sessionID = splittedUrl[splittedUrl.length - 1].split("?last_id")[0];
+		notifier_f.handler.notificationWaitAsync(reply, sessionID);
+	}
+	respondKillResponse() {
+		return;
+	}
+}
+module.exports = Server;
