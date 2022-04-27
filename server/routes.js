@@ -12,19 +12,7 @@ class Routes {
      */
     static initializeRoutes(fastify) {
 
-        fastify.get("/launcher/server/connect", {
-            compress:
-            {
-                inflateIfDeflated: true,
-                threshold: 0,
-                zlib: {
-                    createDeflate: () => zlib.deflate(reply, function (err, buf) {
-                        console.log(response)
-                        return buf;
-                    }),
-                }
-            }
-        }, (request, reply) => {
+        fastify.get("/launcher/server/connect", (request, reply) => {
             const data = account.getEditions();
             const serverConfig = database.core.serverConfig;
 
@@ -34,9 +22,11 @@ class Routes {
                 name: serverConfig.name,
                 editions: data,
             }
-            reply.compress(finalData)
+            console.log("test")
+            reply
+                .type('application/json')
+                .compress(JSON.stringify(finalData));
         });
-
 
         /**
          * /launcher/profile/
@@ -68,7 +58,7 @@ class Routes {
         /**
          * /launcher/profile/change
          */
-        const profileChange = + "change/";
+        const profileChange = launchProfile + "change/";
 
         fastify.get(profileChange + "email", async function (request, reply) {
             let output = await account.changeEmail(info);
