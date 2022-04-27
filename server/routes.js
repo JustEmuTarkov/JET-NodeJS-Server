@@ -6,19 +6,23 @@ const dialogue = require("./modules/dialogue.js");
 
 
 class Routes {
-
     /**
      * Add all needed routes to fastify server
      * @param {fastify} fastify - fastify server
      */
     static initializeRoutes(fastify) {
 
-        fastify.get("/launcher/profile/login", async function (request, reply) {
+        /**
+         * /launcher/profile/
+         */
+        const launchPath = "/launcher/profile/";
+
+        fastify.get(launchPath + "login", async function (request, reply) {
             let output = await account.reloadAccountByLogin(info);
             reply.send(output === "" ? "FAILED" : output);
         });
         
-        fastify.get("/launcher/server/connect", async function (request, reply) {
+        fastify.get(launchPath + "connect", async function (request, reply) {
             const data = await account.getEditions();
             const serverConfig = database.core.serverConfig;
             
@@ -31,37 +35,45 @@ class Routes {
             reply.send(reply.resCompress(JSON.stringify(finalData)))
         });
 
-        fastify.get("/launcher/profile/register", async function (request, reply) {
+        fastify.get(launchPath + "register", async function (request, reply) {
             let output = await account.reloadAccountByLogin(info);
             reply.send(output !== "" ? "FAILED" : "OK");
         });
 
-        fastify.get("/launcher/profile/get", async function (request, reply) {
+        fastify.get(launchPath + "get", async function (request, reply) {
             const accountID = await account.reloadAccountByLogin(info)
             let output = await account.find(accountID);
             output['server'] = server.name
             reply.send(JSON.stringify(output));
         });
+        
+        fastify.get(launchPath + "remove", async function (request, reply) {
+            let output = await account.remove(info);
+            reply.send(output === "" ? "FAILED" : "OK");
+        });
 
-        fastify.get("/launcher/profile/change/email", async function (request, reply) {
+        /**
+         * /launcher/profile/change
+         */
+        const changePath = "/launcher/profile/change/";
+
+        fastify.get(changePath + "email", async function (request, reply) {
             let output = await account.changeEmail(info);
             reply.send(output === "" ? "FAILED" : "OK");
         });
 
-        fastify.get("/launcher/profile/change/password", async function (request, reply) {
+        fastify.get(changePath + "password", async function (request, reply) {
             let output = await account.changePassword(info);
             reply.send(output === "" ? "FAILED" : "OK");
         });
 
-        fastify.get("/launcher/profile/change/wipe", async function (request, reply) {
+        fastify.get(changePath + "wipe", async function (request, reply) {
             let output = await account.wipe(info);
             reply.send(output === "" ? "FAILED" : "OK");
         });
 
-        fastify.get("/launcher/profile/remove", async function (request, reply) {
-            let output = await account.remove(info);
-            reply.send(output === "" ? "FAILED" : "OK");
-        });
+
+
 
         fastify.get("/mode/offline", async function (request, reply) {
             reply.send(reply.resNoBody(database.core.serverConfig.Patches));
@@ -71,7 +83,13 @@ class Routes {
             reply.send(reply.resNoBody(database.core.serverConfig.PatchNodes));
         });
 
-        fastify.get("/client/game/start", async function (request, reply) {
+
+        /**
+         * /client/game/
+         */
+        const gamePath = "/client/game/";
+
+        fastify.get(gamePath + "start", async function (request, reply) {
             const mockAccountId = "AID0194876887698uxRXETLq";
             const data = account.clientHasAccount(mockAccountId)
             if (data) {
@@ -79,6 +97,13 @@ class Routes {
             }
             else { reply.send(reply.resBSG({ utc_time: Date.now() / 1000 }, 999, "Profile not found")); }
         });
+
+        /**
+         * /client/game/profile
+         */
+        const profilePath = gamePath + "profile/";
+
+
 
         fastify.get("/client/languages", async function (request, reply) {
             const data = await language.getLanguages();
