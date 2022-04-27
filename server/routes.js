@@ -22,8 +22,18 @@ class Routes {
             reply.send(output === "" ? "FAILED" : output);
         });
         
-        fastify.get("/launcher/server/connect", async function (request, reply) {
-            const data = await account.getEditions();
+        fastify.get("/launcher/server/connect",{compress:
+        {
+            inflateIfDeflated: true,
+            threshold: 0,
+            zlib: {
+                createDeflate: () => zlib.deflate(reply, function (err, buf) {
+                    console.log(response)
+                    return buf;
+                }),
+            }
+        }} , (request, reply) => {
+            const data = account.getEditions();
             const serverConfig = database.core.serverConfig;
             
             //reply.header('Content-Type', 'text/plain text');
@@ -32,7 +42,7 @@ class Routes {
                 name: serverConfig.name,
                 editions: data,
             }
-            reply.compress(JSON.stringify(finalData))
+            reply.compress(finalData)
         });
 
         fastify.get("/launcher/profile/register", async function (request, reply) {
