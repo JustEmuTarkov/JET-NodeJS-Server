@@ -15,39 +15,39 @@ class Routes {
         /**
          * /launcher/profile/
          */
-        const launchPath = "/launcher/profile/";
+        const launchPath = "";
 
-        fastify.get(launchPath + "login", async function (request, reply) {
+        fastify.get("/launcher/profile/login", async function (request, reply) {
             let output = await account.reloadAccountByLogin(info);
             reply.send(output === "" ? "FAILED" : output);
         });
         
-        fastify.get(launchPath + "connect", async function (request, reply) {
+        fastify.get("/launcher/server/connect", async function (request, reply) {
             const data = await account.getEditions();
             const serverConfig = database.core.serverConfig;
             
-            reply.header('Content-Type', 'application/json');
+            //reply.header('Content-Type', 'text/plain text');
             const finalData = {
                 backendUrl: "https://" + serverConfig.ip + ":" + serverConfig.port,
                 name: serverConfig.name,
                 editions: data,
             }
-            reply.send(reply.resCompress(JSON.stringify(finalData)))
+            reply.compress(JSON.stringify(finalData))
         });
 
-        fastify.get(launchPath + "register", async function (request, reply) {
+        fastify.get("/launcher/profile/register", async function (request, reply) {
             let output = await account.reloadAccountByLogin(info);
             reply.send(output !== "" ? "FAILED" : "OK");
         });
 
-        fastify.get(launchPath + "get", async function (request, reply) {
+        fastify.get("/launcher/profile/get", async function (request, reply) {
             const accountID = await account.reloadAccountByLogin(info)
             let output = await account.find(accountID);
             output['server'] = server.name
             reply.send(JSON.stringify(output));
         });
         
-        fastify.get(launchPath + "remove", async function (request, reply) {
+        fastify.get("/launcher/profile/remove", async function (request, reply) {
             let output = await account.remove(info);
             reply.send(output === "" ? "FAILED" : "OK");
         });

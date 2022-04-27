@@ -21,7 +21,8 @@ class FastifyServer {
             require('fastify-compress'),
             { 
                 encodings: ['deflate'],
-                global: false,
+                global: true,
+                threshold: 0,
             });
         routes.initializeRoutes(this.server);
     }
