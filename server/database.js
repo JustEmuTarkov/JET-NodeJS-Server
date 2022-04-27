@@ -45,30 +45,30 @@ class Database {
     async loadCore() {
         util.logger.logDebug("# Database: Loading core", 1);
         this.core = {
-            serverConfig: DatabaseUtils.refreshConfig('server'),
-            botBase: fileIO.readParsed('./server/db/base/botBase.json'),
-            botCore: fileIO.readParsed('./server/db/base/botCore.json'),
+                serverConfig: await DatabaseUtils.refreshConfig('server'),
+                botBase: fileIO.readParsed('./server/db/base/botBase.json'),
+                botCore: fileIO.readParsed('./server/db/base/botCore.json'),
 
-            /**
-             * As a reminder, items sold by `players` do not house the following:
-             * buyRestrictionMax, loyaltyLevel
-             * 
-             * Their `upd` also always contains the following:
-             * "SpawnedInSession": true
-             * 
-             * 
-             * Traders are formatted as such:
-             * "user": {
-                    "id": "5ac3b934156ae10c4430e83c",
-                    "memberType": 4
-             *  }
-             *
-             * We may want to adjust accordingly when creating a fleaOffer
-             */
+                /**
+                 * As a reminder, items sold by `players` do not house the following:
+                 * buyRestrictionMax, loyaltyLevel
+                 * 
+                 * Their `upd` also always contains the following:
+                 * "SpawnedInSession": true
+                 * 
+                 * 
+                 * Traders are formatted as such:
+                 * "user": {
+                        "id": "5ac3b934156ae10c4430e83c",
+                        "memberType": 4
+                 *  }
+                 *
+                 * We may want to adjust accordingly when creating a fleaOffer
+                 */
 
-            fleaOffer: fileIO.readParsed('./server/db/base/fleaOffer.json'),
-            matchMetric: fileIO.readParsed('./server/db/base/matchMetrics.json'),
-            globals: fileIO.readParsed('./server/dumps/globals.json').data,
+                fleaOffer: fileIO.readParsed('./server/db/base/fleaOffer.json'),
+                matchMetric: fileIO.readParsed('./server/db/base/matchMetrics.json'),
+                globals: fileIO.readParsed('./server/dumps/globals.json').data,
         };
         util.logger.logDebug("# Database: Loading core", 2);
     }
@@ -263,7 +263,7 @@ class DatabaseUtils {
      * @param {string} type 'server' or 'gameplay'
      * @return {object} config object
      */
-    static refreshConfig(type) {
+     static async refreshConfig(type) {
         switch (type) {
             case 'gameplay':
                 let gpconfig = fileIO.readParsed('server/db/config/gameplay_base.json');
@@ -271,7 +271,7 @@ class DatabaseUtils {
                 if (!fileIO.fileExist(gppath)) fileIO.writeFile(gppath, JSON.stringify(gpconfig));
 
                 let gpjson = {};
-                if (fileIO.fileExist(gppath)) gpjson = fileIO.readParsed(gppath);
+                if (fileIO.fileExist(gppath)) gpjson = gpconfig;
 
                 let gpChanges = false;
                 for (let item in gpconfig) {
@@ -282,33 +282,35 @@ class DatabaseUtils {
                     }
                 }
 
-                if (gpChanges) fileIO.writeFile(gppath, gpjson);
-                return fileIO.readParsed(gppath);
+                if (gpChanges) fileIO.writeFile(gppath, JSON.stringify(gpjson));
+                gpconfig = fileIO.readParsed(gppath);
+
+                return gpconfig;
 
             case 'server':
-                let base = fileIO.readParsed('server/db/config/server_base.json');
-                let newBase;
+                let srvconfig = fileIO.readParsed('server/db/config/server_base.json');
                 const srvpath = 'server/db/config/server.json';
-                if (!fileIO.fileExist(srvpath)) {
-                    fileIO.writeFile(srvpath, base);
-                }
-
-                if (fileIO.fileExist(srvpath)) {
-                    newBase = fileIO.readParsed(srvpath);
+                if (!fileIO.fileExist(srvpath)){
+                    fileIO.writeFile(srvpath, JSON.stringify(srvconfig));
                 }
 
                 let srvChanges = false;
-                for (let item in base) {
-                    if (newBase[item] === undefined) {
-                        newBase[item] = base[item];
+                let srvjson = {};
+                if (fileIO.fileExist(srvpath)){
+                    srvjson = fileIO.readParsed(srvpath);
+                }
+
+                for (let item in srvconfig) {
+                    if (srvjson[item] === undefined) {
+                        srvjson[item] = srvconfig[item];
                         logger.logInfo("Adding Config Setting " + item + " to server.json");
                         srvChanges = true;
                     }
                 }
 
-                if (srvChanges) fileIO.writeFile(srvpath, srvjson);
-
-                return fileIO.readParsed(srvpath);
+                if (srvChanges) fileIO.writeFile(srvpath, JSON.stringify(srvjson));
+                srvconfig = fileIO.readParsed(srvpath);
+                return srvconfig;
         }
     }
 
