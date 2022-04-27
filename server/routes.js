@@ -66,9 +66,9 @@ class Routes {
         });
 
         /**
-         * /launcher/profile/change
+         * /launcher/profile/change/
          */
-        const profileChange = + "change/";
+        const profileChange = launchProfile + "change/";
 
         fastify.get(profileChange + "email", async function (request, reply) {
             let output = await account.changeEmail(info);
@@ -114,7 +114,7 @@ class Routes {
         /**
          * /client/game/profile
          */
-        const clientProfile = clientPath + "profile/";
+        //const clientProfile = clientPath + "profile/";
 
 
 
