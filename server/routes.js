@@ -22,10 +22,9 @@ class Routes {
                 name: serverConfig.name,
                 editions: data,
             }
-            console.log("test")
             reply
                 .type('application/json')
-                .compress(JSON.stringify(finalData));
+                .compress(finalData);
         });
 
         /**
