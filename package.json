@@ -8,13 +8,13 @@
   "dependencies": {
     "fastify": "^3.28.0",
     "fastify-compress": "^4.1.0",
-    "fastify-static": "^4.6.1",
+    "fastify-static": "^4.7.0",
     "selfsigned": "^2.0.1",
     "uuid": "^8.3.2",
-    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.3.0"
+    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.8.0"
   },
   "devDependencies": {
     "pino-pretty": "^7.6.1",
-    "tap": "^16.0.1"
+    "tap": "^16.1.0"
   }
 }
