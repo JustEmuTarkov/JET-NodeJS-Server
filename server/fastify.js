@@ -21,7 +21,7 @@ class FastifyServer {
             require('fastify-compress'),
             { 
                 encodings: ['deflate'],
-                global: false,
+                global: true,
                 threshold: 0,
             });
         routes.initializeRoutes(this.server);
@@ -73,7 +73,7 @@ class FastifyServer {
     async startServer(){
         try
         {
-            await this.server.listen(443);
+            await this.server.listen(443, '127.0.0.1');
         } catch(error)
         {
             console.log(error);
