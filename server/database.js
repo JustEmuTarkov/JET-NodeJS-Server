@@ -296,7 +296,6 @@ class DatabaseUtils {
 
                 let srvChanges = false;
 
-
                 for (let item in srvconfig) {
                     if (newconfig[item] === undefined) {
                         newconfig[item] = srvconfig[item];
@@ -305,7 +304,8 @@ class DatabaseUtils {
                     }
                 }
 
-                if (srvChanges) fileIO.writeFile(srvpath, newconfig);
+                if (srvChanges) fileIO.writeFile(srvpath, JSON.stringify(newconfig));
+                newconfig = fileIO.readParsed(srvpath);
                 return newconfig;
         }
     }
