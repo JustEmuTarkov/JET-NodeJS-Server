@@ -1,7 +1,6 @@
 const language = require("./modules/language.js");
 const database = require("../server/database.js");
 const account = require("./modules/account.js");
-const zlib = require('zlib');
 const dialogue = require("./modules/dialogue.js");
 
 
@@ -129,33 +128,6 @@ class Routes {
             reply.send(data);
         });
     }
-
-    /**
-     * Mao test route
-     * @param {fastify} fastify 
-     */
-    static maoTestRoute(fastify) {
-        fastify.AddRoute("/", function (req, reply) {
-            const body = req.Req_Body2Json(req);
-            console.log("body: " + body);
-            console.log(req.jsonBody);
-            reply.responseHeader(reply, 12345);
-            reply.send(reply.resCompress(reply.resBSG({ "response": "OK" })));
-        }, "get&post");
-    }
 }
-
-function testHandler(req, reply) {
-    reply.send({ France: "baise ouai" });
-}
-
-function testHandlerBSG(req, reply) {
-    reply.send(reply.Res_BSG({ France: "baise ouai" }));
-}
-
-function testHandlerBSGCompress(req, reply) {
-    reply.send(reply.Res_Compress(JSON.stringify(reply.Res_BSG({ France: "baise ouai" }))));
-}
-
 
 module.exports = Routes;
