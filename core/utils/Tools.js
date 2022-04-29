@@ -138,20 +138,20 @@ class Tools {
      * @returns Server uptime in seconds
      */
     static getServerUptimeInSeconds = () => {
-        ~~(process.uptime());
+        return ~~(process.uptime());
     }
     /**
      * @returns Current Date timestamp in seconds
      */
     static getCurrentTimestamp = () => {
-        ~~(new Date().getTime() / 1000);
+        return ~~(new Date().getTime() / 1000);
     }
     /**
      * @param {Date} date 
      * @returns returns formated date to "hours-minutes-seconds" format
      */
     static formatTime = (date) => {
-        `${("0" + date.getHours()).substr(-2)}-${("0" + date.getMinutes()).substr(-2)}-${("0" + date.getSeconds()).substr(-2)}`;
+        return `${("0" + date.getHours()).substr(-2)}-${("0" + date.getMinutes()).substr(-2)}-${("0" + date.getSeconds()).substr(-2)}`;
     }
 
     /** Generate Unique ID used in the server by using uuid-v4
@@ -159,7 +159,7 @@ class Tools {
      * @returns Unique ID as string
      */
     static generateUniqueId = (prefix = "") => {
-        `${prefix}${uuidv4()}`;
+        return `${prefix}${uuidv4()}`;
     }
 
     /**
@@ -167,7 +167,7 @@ class Tools {
      * @param {Array} array 
      */
     static getRandomValueFromArray = (array) => {
-        JET.util.math.getRandomFromArray(array)
+        return JET.util.math.getRandomFromArray(array)
     }
 }
 
