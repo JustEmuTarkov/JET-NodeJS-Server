@@ -58,6 +58,10 @@ class FileIO {
         return fs.existsSync(this.getAbsolutePathFrom(filePath, useRelative));
     }
 
+    static createDirectory = (filePath, useRelative = true) => {
+        return fs.mkdirSync(this.getAbsolutePathFrom(filePath, useRelative));
+    }
+
     /**
      * Retrieve all directories present at a given path.
      * @param {string} path 
