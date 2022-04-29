@@ -1,6 +1,7 @@
-const fs = require("fs");
 const { fileIO } = require("../../core/util.js");
+const { tools } = require("../../core/util.js")
 const { logger } = require("../../core/util.js");
+const fs = require("fs");
 
 class Account {
   constructor() {
@@ -8,9 +9,26 @@ class Account {
     this.accountFileAge = {};
   }
 
+/**   register(info) {
+    if (AccountUtils.checkIfExists(this.accounts, info)){
+      console.log("ACCOUNT ALREADY EXISTS YOU DUMB CUNT")
+    }
+    accountID = utility.generateNewAccountId();
+    this.accounts[accountID] = {
+      id: accountID,
+      email: info.email,
+      password: info.password,
+      wipe: true,
+      edition: info.edition,
+    };
+    this.saveToDisk(accountID);
+    console.log()
+  }
+*/
+
   /**
   * reloadAccountByLogin functions checks for changes in profile account data on user login and loads accounts on demand.
-  * @param {*} info 
+  * @param {object} info 
   * @returns user account ID
   */
   reloadAccountByLogin(info) {
@@ -40,17 +58,17 @@ class Account {
     /**
      * Read account files from disk for accounts that are not cached already.
      */
-    const profileIDs = fs.readdir("./user/profiles");
+    const profileIDs = fileIO.getFilesFrom("/user/profiles");
     for (const id in profileIDs) {
-      if (!fileIO.fileExist(`./user/profiles/${profileIDs[id]}/account.json`)) {
+      if (!fileIO.fileExist(`/user/profiles/${profileIDs[id]}/account.json`)) {
         logger.logWarning(`[CLUSTER] Account file for account ${profileIDs[id]} does not exist.`);
       } else {
 
         // Read all account files from disk as we need to compare the login data.
-        const account = fileIO.readParsed(`./user/profiles/${profileIDs[id]}/account.json`);
+        const account = fileIO.readParsed(`/user/profiles/${profileIDs[id]}/account.json`);
         if (info.email === account.email && info.password === account.password) {
           // Read the file age for this users account file.
-          const stats = fs.statSync(`./user/profiles/${profileIDs[id]}/account.json`);
+          const stats = fs.statSync(`/user/profiles/${profileIDs[id]}/account.json`);
 
           // Save the account to memory and set the accountFileAge variable.
           this.accounts[profileIDs[id]] = account
@@ -108,18 +126,18 @@ class Account {
       // Iterate through all cached accounts.
       for (const id in this.accounts) {
         // Check if the file was modified by another cluster member using the file age.
-        const stats = fs.statSync(`./user/profiles/${id}/account.json`);
+        const stats = fs.statSync(`../user/profiles/${id}/account.json`);
         if (stats.mtimeMs == this.accountFileAge[id]) {
 
           // Check if the memory content differs from the content on disk.
           const currentAccount = this.accounts[id];
-          const savedAccount = fileIO.readParsed(`./user/profiles/${id}/account.json`);
+          const savedAccount = fileIO.readParsed(`/user/profiles/${id}/account.json`);
           if (JSON.stringify(currentAccount) !== JSON.stringify(savedAccount)) {
             // Save memory content to disk.
-            fileIO.write(`./user/profiles/${id}/account.json`, this.accounts[id]);
+            fileIO.writeFile(`/user/profiles/${id}/account.json`, this.accounts[id]);
 
             // Update file age to prevent another reload by this server.
-            const stats = fs.statSync(`./user/profiles/${id}/account.json`);
+            const stats = fs.statSync(`/user/profiles/${id}/account.json`);
             this.accountFileAge[id] = stats.mtimeMs;
 
             logger.logSuccess(`[CLUSTER] Account file for account ${id} was saved to disk.`);
@@ -128,16 +146,20 @@ class Account {
           logger.logWarning(`[CLUSTER] Account file for account ${id} was modified, reloading.`);
 
           // Reload the account from disk.
-          this.accounts[id] = fileIO.readParsed(`./user/profiles/${id}/account.json`);
+          this.accounts[id] = fileIO.readParsed(`/user/profiles/${id}/account.json`);
           // Reset the file age for this users account file.
           this.accountFileAge[id] = stats.mtimeMs;
         }
       }
     } else {
+
+      if (!fileIO.fileExist(`/user/profiles/${sessionID}`)){
+        fileIO.createDirectory(`/user/profiles/${sessionID}`);
+      }
       // Does the account file exist? (Required for new accounts)
-      if (!fileIO.fileExist(`./user/profiles/${sessionID}/account.json`)) {
+      if (!fileIO.fileExist(`/user/profiles/${sessionID}/account.json`)) {
         // Save memory content to disk
-        fileIO.write(`./user/profiles/${sessionID}/account.json`, this.accounts[sessionID]);
+        fileIO.writeFile(`/user/profiles/${sessionID}/account.json`, JSON.stringify(this.accounts[sessionID]));
 
         // Update file age to prevent another reload by this server.
         const stats = fs.statSync(`./user/profiles/${sessionID}/account.json`);
@@ -150,10 +172,10 @@ class Account {
         if (stats.mtimeMs == this.accountFileAge[sessionID]) {
           // Check if the memory content differs from the content on disk.
           const currentAccount = this.accounts[sessionID];
-          const savedAccount = fileIO.readParsed(`./user/profiles/${sessionID}/account.json`);
+          const savedAccount = fileIO.readParsed(`/user/profiles/${sessionID}/account.json`);
           if (JSON.stringify(currentAccount) !== JSON.stringify(savedAccount)) {
             // Save memory content to disk
-            fileIO.write(`./user/profiles/${sessionID}/account.json`, this.accounts[sessionID]);
+            fileIO.writeFile(`/user/profiles/${sessionID}/account.json`, this.accounts[sessionID]);
 
             // Update file age to prevent another reload by this server.
             const stats = fs.statSync(`./user/profiles/${sessionID}/account.json`);
@@ -165,7 +187,7 @@ class Account {
           logger.logWarning(`[CLUSTER] Account file for account ${sessionID} was modified, reloading.`);
 
           // Reload the account from disk.
-          this.accounts[sessionID] = fileIO.readParsed(`./user/profiles/${sessionID}/account.json`);
+          this.accounts[sessionID] = fileIO.readParsed(`/user/profiles/${sessionID}/account.json`);
           // Reset the file age for this users account file.
           this.accountFileAge[sessionID] = stats.mtimeMs;
         }
@@ -180,7 +202,7 @@ class Account {
       return accountID
     }
 
-    accountID = utility.generateNewAccountId();
+    accountID = tools.generateUniqueId();
 
     this.accounts[accountID] = {
       id: accountID,
@@ -214,18 +236,14 @@ class Account {
   }
 
   /**
-     * Retrieve every existing accounts from the disk
-     * @returns {object} Dict made of Accounts IDS & Accounts infos
-     */
+  * Retrieve every existing accounts from the disk
+  */
   loadAccounts() {
-    let accountsData = {};
-    for (const profileID of fs.readdir('./user/profiles')) {
-      if (fs.stat("./user/profiles/" + profileID + "/account.json")) {
-        accountsData[profileID] = fileIO.readParsed("./user/profiles/" + profileID + "/account.json");
+    for (const profileID of fileIO.getDirectoriesFrom('/user/profiles')) {
+      if (fileIO.fileExist("/user/profiles/" + profileID + "/account.json")) {
+        this.accounts[profileID] = fileIO.readParsed("/user/profiles/" + profileID + "/account.json");
       }
-
     }
-    return accountsData
   }
 
   /**
@@ -236,11 +254,6 @@ class Account {
     return this.accounts;
   }
 
-  /**
-  * Tries to find account data in loaded account list if not present returns undefined
-  * @param {*} sessionID 
-  * @returns Account_data
-  */
   find(sessionID) {
     // This needs to be at the top to check for changed accounts.
     const accounts = this.reloadAccountBySessionID(sessionID);
@@ -369,5 +382,24 @@ class Account {
 
 }
 
+class AccountUtils {
+
+  /**
+   * Check if account exists.
+   * @param {object} accounts 
+   * @returns {boolean} exists or not
+   */
+  static checkIfExists(accounts, newAccount) {
+    if (accounts){
+      for (const accountID of Object.keys(accounts)) {
+        const account = accounts[accountID];
+        if(account.email === newAccount.email){
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+}
 
 module.exports = new Account();

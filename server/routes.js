@@ -21,9 +21,7 @@ class Routes {
                 name: serverConfig.name,
                 editions: data,
             }
-            reply
-                .type('application/json')
-                .compress(finalData);
+            reply.type('application/json').compress(finalData);
         });
 
         fastify.get("/launcher/profile/login", async function (request, reply) {
@@ -31,9 +29,10 @@ class Routes {
             reply.send(output === "" ? "FAILED" : output);
         });
 
-        fastify.get("/launcher/profile/register", async function (request, reply) {
-            let output = await account.reloadAccountByLogin(info);
-            reply.send(output !== "" ? "FAILED" : "OK");
+        fastify.post("/launcher/profile/register", async function (request, reply) {
+            console.log(request)
+            let output =  account.register(request.body);
+            reply.type('text/plain').compress(output !== "" ? "FAILED" : "OK")
         });
 
         fastify.get("/launcher/profile/get", async function (request, reply) {
