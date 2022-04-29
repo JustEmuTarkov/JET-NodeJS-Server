@@ -9,23 +9,6 @@ class Account {
     this.accountFileAge = {};
   }
 
-/**   register(info) {
-    if (AccountUtils.checkIfExists(this.accounts, info)){
-      console.log("ACCOUNT ALREADY EXISTS YOU DUMB CUNT")
-    }
-    accountID = utility.generateNewAccountId();
-    this.accounts[accountID] = {
-      id: accountID,
-      email: info.email,
-      password: info.password,
-      wipe: true,
-      edition: info.edition,
-    };
-    this.saveToDisk(accountID);
-    console.log()
-  }
-*/
-
   /**
   * reloadAccountByLogin functions checks for changes in profile account data on user login and loads accounts on demand.
   * @param {object} info 
