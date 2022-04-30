@@ -154,14 +154,26 @@ class Tools {
         return `${("0" + date.getHours()).substr(-2)}-${("0" + date.getMinutes()).substr(-2)}-${("0" + date.getSeconds()).substr(-2)}`;
     }
 
-    /** Generate Unique ID used in the server by using uuid-v4
+    /** Generate Unique ID used in the server by using uuid-v4 or date if old method
      * @param {string} prefix 
      * @returns Unique ID as string
      */
-    static generateUniqueId = (prefix = "") => {
-        return `${prefix}${uuidv4()}`;
+    static generateUniqueId = (prefix = "", useOld = false) => {
+        let getTime = new Date();
+        let retVal = ""
+        if(useOld){
+            retVal = prefix
+            retVal += getTime.getMonth().toString();
+            retVal += getTime.getDate().toString();
+            retVal += getTime.getHours().toString();
+            retVal += (parseInt(getTime.getMinutes()) + parseInt(getTime.getSeconds())).toString();
+            retVal += this.getRandomInt(1000000, 9999999).toString();
+            retVal += this.makeSign(24 - retVal.length).toString();
+        } else {
+            retVal = `${prefix}-${uuidv4()}`
+        }
+        return retVal;
     }
-
     /**
      * 
      * @param {Array} array 
