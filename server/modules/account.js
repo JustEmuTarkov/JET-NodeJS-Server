@@ -209,7 +209,7 @@ class Account {
     const accounts = this.getList();
     for (const account in accounts) {
       if (account == sessionID) {
-        if (!fileIO.fileExist("./user/profiles/" + sessionID + "/character.json")) {
+        if (!fileIO.fileExist("/user/profiles/" + sessionID + "/character.json")) {
           logger.logSuccess(`[CLUSTER] New account ${sessionID} logged in!`);
         }
         return true
