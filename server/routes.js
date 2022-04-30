@@ -2,6 +2,7 @@ const language = require("./modules/language.js");
 const database = require("../server/database.js");
 const account = require("./modules/account.js");
 const dialogue = require("./modules/dialogue.js");
+const { fileExist } = require("../core/utils/fileIO.js");
 
 
 class Routes {
@@ -10,6 +11,17 @@ class Routes {
      * @param {fastify} fastify - fastify server
      */
     static initializeRoutes(fastify) {
+
+        fastify.addHook('onRequest', (request, reply, done) => {
+            request.body = request.body !== typeof "undefined" && request.body !== null && request.body !== "" ? request.body.toString() : "{}";
+            if (typeof request.body != "object") {
+                /* parse body */
+                if (request.body !== "") {
+                    request.body = JSON.parse(request.body);
+                }
+            } else {console.log(request.body);}
+            done()
+        })
 
         fastify.get("/launcher/server/connect", (request, reply) => {
             const data = account.getEditions();
@@ -21,22 +33,23 @@ class Routes {
                 name: serverConfig.name,
                 editions: data,
             }
+
             reply.type('application/json').compress(finalData);
         });
 
         fastify.post("/launcher/profile/login", async function (request, reply) {
-            let output = await account.loginAccount(request.body);
+            let output = account.loginAccount(request.body);
             reply.type('text/plain').send(output === "" ? "FAILED" : "OK");
         });
 
         fastify.post("/launcher/profile/register", async function (request, reply) {
-            let output = await account.register(request.body);
+            let output = account.register(request.body);
             reply.type('text/plain').send(output !== "" ? "FAILED" : "OK");
         });
 
         fastify.post("/launcher/profile/get", async function (request, reply) {
             const serverConfig = database.core.serverConfig;
-            const accountID = await account.reloadAccountByLogin(request.body)
+            const accountID = account.reloadAccountByLogin(request.body)
             let output = account.find(accountID);
             output['server'] = serverConfig.name
             reply.send(JSON.stringify(output));
@@ -70,13 +83,12 @@ class Routes {
             reply.send(reply.resNoBody(database.core.serverConfig.PatchNodes));
         });
 
-        fastify.get("/client/game/start", async function (request, reply) {
-            const mockAccountId = "AID0194876887698uxRXETLq";
-            const data = account.clientHasAccount(mockAccountId)
-            if (data) {
-                reply.send(reply.resBSG({ utc_time: Date.now() / 1000 }, 0, null));
+        fastify.post("/client/game/start", async function (request, reply) {
+            console.log(request)
+            if (account.clientHasAccount(request.body)) {
+                reply.type('application/json').compress(reply.resBSG({ utc_time: Date.now() / 1000 }, 0, null, true))
             }
-            else { reply.send(reply.resBSG({ utc_time: Date.now() / 1000 }, 999, "Profile not found")); }
+            reply.type('application/json').compress(reply.resBSG({ utc_time: Date.now() / 1000 }, 999, "Profile not found", true))
         });
 
         fastify.get("/client/languages", async function (request, reply) {
