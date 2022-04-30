@@ -51,7 +51,7 @@ class Account {
         const account = fileIO.readParsed(`/user/profiles/${profileIDs[id]}/account.json`);
         if (info.email === account.email && info.password === account.password) {
           // Read the file age for this users account file.
-          const stats = fs.statSync(`/user/profiles/${profileIDs[id]}/account.json`);
+          const stats = fs.statSync(`./user/profiles/${profileIDs[id]}/account.json`);
 
           // Save the account to memory and set the accountFileAge variable.
           this.accounts[profileIDs[id]] = account
@@ -345,8 +345,8 @@ class Account {
    * @param {object} loginInfos - username and password combo
    * @returns accountID or false
    */
-  loginAccount(accounts, loginInfos) {
-    for (const [accountID, accountInfos] of Object.entries(accounts)) {
+  loginAccount(loginInfos) {
+    for (const [accountID, accountInfos] of Object.entries(this.accounts)) {
       if (accountInfos.login == loginInfos.login && accountInfos.password == loginInfos.password) {
         return accountID;
       }

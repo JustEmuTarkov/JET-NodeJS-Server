@@ -25,8 +25,8 @@ class Routes {
         });
 
         fastify.post("/launcher/profile/login", async function (request, reply) {
-            let output = await account.login(request.body);
-            reply.type('text/plain').send(output === "" ? "FAILED" : output);
+            let output = await account.loginAccount(request.body);
+            reply.type('text/plain').send(output === "" ? "FAILED" : "OK");
         });
 
         fastify.post("/launcher/profile/register", async function (request, reply) {
@@ -70,7 +70,6 @@ class Routes {
             reply.send(reply.resNoBody(database.core.serverConfig.PatchNodes));
         });
 
-
         fastify.get("/client/game/start", async function (request, reply) {
             const mockAccountId = "AID0194876887698uxRXETLq";
             const data = account.clientHasAccount(mockAccountId)
@@ -80,12 +79,10 @@ class Routes {
             else { reply.send(reply.resBSG({ utc_time: Date.now() / 1000 }, 999, "Profile not found")); }
         });
 
-
         fastify.get("/client/languages", async function (request, reply) {
             const data = await language.getLanguages();
             reply.send(JSON.stringify(reply.resBSG(data)));
         });
-
 
         fastify.get(`/client/mail/dialog/getAllAttachments`, async function (request, reply) {
             const data = await dialogue.getAllAttachments(info.dialogId, sessionID);
