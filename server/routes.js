@@ -24,13 +24,13 @@ class Routes {
             reply.type('application/json').compress(finalData);
         });
 
-        fastify.get("/launcher/profile/login", async function (request, reply) {
-            let output = await account.reloadAccountByLogin(info);
-            reply.send(output === "" ? "FAILED" : output);
+        fastify.post("/launcher/profile/login", async function (request, reply) {
+            let output = await account.reloadAccountByLogin(request.body);
+            reply.type('text/plain').send(output === "" ? "FAILED" : output);
         });
 
         fastify.post("/launcher/profile/register", async function (request, reply) {
-            let output =  account.register(request.body);
+            let output = await account.register(request.body);
             reply.type('text/plain').send(output !== "" ? "FAILED" : "OK");
         });
 
