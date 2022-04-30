@@ -41,7 +41,7 @@ class Account {
     /**
      * Read account files from disk for accounts that are not cached already.
      */
-    const profileIDs = fileIO.getFilesFrom("/user/profiles");
+    const profileIDs = fileIO.getDirectoriesFrom("/user/profiles/");
     for (const id in profileIDs) {
       if (!fileIO.fileExist(`/user/profiles/${profileIDs[id]}/account.json`)) {
         logger.logWarning(`[CLUSTER] Account file for account ${profileIDs[id]} does not exist.`);
@@ -64,7 +64,7 @@ class Account {
     }
 
     // If the account does not exist, this will allow the launcher to display an error message.
-    return "";
+    return false;
   }
 
   /**
@@ -86,8 +86,6 @@ class Account {
       } else {
         // Check if the file was modified by another cluster member using the file age.
         const stats = fs.statSync(`./user/profiles/${sessionID}/account.json`);
-        let test = stats.mtimeMs
-        console.log()
         if (stats.mtimeMs != this.accountFileAge[sessionID]) {
           logger.logWarning(`[CLUSTER] Account file for account ${sessionID} was modified, reloading.`);
 
