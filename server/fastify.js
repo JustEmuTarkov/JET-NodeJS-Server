@@ -1,6 +1,7 @@
 const certificateGenerator = require('./certificategenerator.js');
 const routes = require("./routes.js");
 const fastify = require('fastify')
+const decorators = require("./decorators/decorators.js");
 
 class FastifyServer {
     constructor(){
@@ -40,11 +41,11 @@ class FastifyServer {
     }
 
     async defaultDecorators(){
-        this.addRequestDecorator('reqBody2Json', require("./decorators/Request_BodyToJson.js"));
-        this.addRequestDecorator('reqDecompress', require("./decorators/Request_Decompress.js"));
-        this.addResponseDecorator('responseHeader', require("./decorators/Response_Header.js"));
-        this.addResponseDecorator('resBSG', require("./decorators/Response_BSG.js"));
-        this.addResponseDecorator('resNoBody', require("./decorators/Response_NoBody.js"));
+        this.addRequestDecorator('reqBody2Json', decorators.bodyToJson);
+        this.addRequestDecorator('reqDecompress', decorators.fastifyDecompress);
+        this.addResponseDecorator('responseHeader', decorators.headerFormat);
+        this.addResponseDecorator('resBSG', decorators.bsgFormat);
+        this.addResponseDecorator('resNoBody', decorators.noBodyFormat);
     }
 
     async startServer(){
