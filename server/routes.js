@@ -30,9 +30,8 @@ class Routes {
         });
 
         fastify.post("/launcher/profile/register", async function (request, reply) {
-            console.log(request)
             let output =  account.register(request.body);
-            reply.type('text/plain').compress(output !== "" ? "FAILED" : "OK")
+            reply.type('text/plain').send(output !== "" ? "FAILED" : "OK");
         });
 
         fastify.get("/launcher/profile/get", async function (request, reply) {
