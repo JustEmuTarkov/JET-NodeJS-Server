@@ -25,7 +25,7 @@ class Routes {
         });
 
         fastify.post("/launcher/profile/login", async function (request, reply) {
-            let output = await account.reloadAccountByLogin(request.body);
+            let output = await account.login(request.body);
             reply.type('text/plain').send(output === "" ? "FAILED" : output);
         });
 
@@ -34,10 +34,11 @@ class Routes {
             reply.type('text/plain').send(output !== "" ? "FAILED" : "OK");
         });
 
-        fastify.get("/launcher/profile/get", async function (request, reply) {
-            const accountID = await account.reloadAccountByLogin(info)
-            let output = await account.find(accountID);
-            output['server'] = server.name
+        fastify.post("/launcher/profile/get", async function (request, reply) {
+            const serverConfig = database.core.serverConfig;
+            const accountID = await account.reloadAccountByLogin(request.body)
+            let output = account.find(accountID);
+            output['server'] = serverConfig.name
             reply.send(JSON.stringify(output));
         });
 
