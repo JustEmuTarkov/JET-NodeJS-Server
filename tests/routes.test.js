@@ -58,6 +58,15 @@ t.test('routes', async (t) => {
     t.equal(response.statusCode, 200, '"/client/game/start" route returns a status code of 200');
   })
 
+  t.test('test "/client/menu/locale" routes', async t => {
+    const response = await fastify.server.inject({
+      method: 'GET',
+      url: '/client/menu/locale'
+    });
+    
+    t.equal(response.statusCode, 200, '"/client/menu/locale" route returns a status code of 200');
+  })
+
   t.test('test "/client/languages" routes', async t => {
     //await language.initialize(database.locales);
     const response = await fastify.server.inject({

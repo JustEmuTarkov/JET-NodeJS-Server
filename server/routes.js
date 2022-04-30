@@ -25,7 +25,7 @@ class Routes {
         });
 
         fastify.post("/launcher/profile/login", async function (request, reply) {
-            let output = await account.login(request.body);
+            let output = await account.reloadAccountByLogin(request.body);
             reply.type('text/plain').send(output === "" ? "FAILED" : output);
         });
 
@@ -80,6 +80,17 @@ class Routes {
             else { reply.send(reply.resBSG({ utc_time: Date.now() / 1000 }, 999, "Profile not found")); }
         });
 
+        fastify.get("/client/menu/locale", async function (request, reply) {
+            const mockAccountId = "AID0194876887698uxRXETLq";
+            const data = await account.getAccountLang(mockAccountId);
+            reply.send(JSON.stringify(reply.resBSG(data)));
+        });
+
+        fastify.get("/client/game/profile/list", async function (request, reply) {
+            const mockAccountId = "AID0194876887698uxRXETLq";
+            const data = await account.clientHasAccount(mockAccountId);
+            reply.send(JSON.stringify(reply.resBSG(data)));
+        });
 
         fastify.get("/client/languages", async function (request, reply) {
             const data = await language.getLanguages();

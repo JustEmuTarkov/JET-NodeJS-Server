@@ -136,7 +136,7 @@ class Account {
       }
     } else {
 
-      if (!fileIO.fileExist(`/user/profiles/${sessionID}`)){
+      if (!fileIO.fileExist(`/user/profiles/${sessionID}`)) {
         fileIO.createDirectory(`/user/profiles/${sessionID}`);
       }
       // Does the account file exist? (Required for new accounts)
@@ -237,6 +237,27 @@ class Account {
     return this.accounts;
   }
 
+  /**
+  * Searches for account and tries to retrive the account language
+  * @param {*} sessionID 
+  * @returns string - Account language (en, ru...)
+  */
+  getAccountLang(sessionID) {
+    // This needs to be at the top to check for changed accounts.
+    this.reloadAccountBySessionID(sessionID);
+    let account = this.find(sessionID);
+    if (tools.isUndefined(account.lang)) {
+      account.lang = "en";
+      this.saveToDisk(sessionID);
+    }
+    return account.lang;
+  }
+
+  /**
+   * Find an account by session ID
+   * @param {*} sessionID 
+   * @returns 
+   */
   find(sessionID) {
     // This needs to be at the top to check for changed accounts.
     this.reloadAccountBySessionID(sessionID);
@@ -359,9 +380,9 @@ class Account {
    * Retrieve all existing editions in server/db/profiles
    * @returns {Array} list of existing editions
    */
-  getEditions(){
+  getEditions() {
     return Object.keys(global.JET.database.profiles);
-  } 
+  }
 
 }
 
@@ -373,10 +394,10 @@ class AccountUtils {
    * @returns {boolean} exists or not
    */
   static checkIfExists(accounts, newAccount) {
-    if (accounts){
+    if (accounts) {
       for (const accountID of Object.keys(accounts)) {
         const account = accounts[accountID];
-        if(account.email === newAccount.email){
+        if (account.email === newAccount.email) {
           return true;
         }
       }
