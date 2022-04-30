@@ -1,4 +1,4 @@
-class Math {
+class MathUtils {
 
     /** Clamp value between min and max
      * @param {number} value (number)
@@ -76,4 +76,4 @@ class Math {
         array[this.getRandomInt(0, array.length-1)];
     }
 }
-module.exports = Math;
+module.exports = MathUtils;
