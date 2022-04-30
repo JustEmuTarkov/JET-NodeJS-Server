@@ -86,6 +86,8 @@ class Account {
       } else {
         // Check if the file was modified by another cluster member using the file age.
         const stats = fs.statSync(`./user/profiles/${sessionID}/account.json`);
+        let test = stats.mtimeMs
+        console.log()
         if (stats.mtimeMs != this.accountFileAge[sessionID]) {
           logger.logWarning(`[CLUSTER] Account file for account ${sessionID} was modified, reloading.`);
 
@@ -185,7 +187,7 @@ class Account {
       return accountID
     }
 
-    accountID = tools.generateUniqueId();
+    accountID = tools.generateUniqueId("AID", true);
 
     this.accounts[accountID] = {
       id: accountID,
@@ -239,9 +241,9 @@ class Account {
 
   find(sessionID) {
     // This needs to be at the top to check for changed accounts.
-    const accounts = this.reloadAccountBySessionID(sessionID);
-    for (const accountID in accounts) {
-      const account = accounts[accountID];
+    this.reloadAccountBySessionID(sessionID);
+    for (const accountID in this.accounts) {
+      const account = this.accounts[accountID];
 
       if (account.id === sessionID) {
         return account;
