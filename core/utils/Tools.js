@@ -1,5 +1,6 @@
 
 const util = require("util");
+const math = require("./Math.js");
 const process = require("process");
 const { v4: uuidv4 } = require('uuid');
 
@@ -154,6 +155,18 @@ class Tools {
         return `${("0" + date.getHours()).substr(-2)}-${("0" + date.getMinutes()).substr(-2)}-${("0" + date.getSeconds()).substr(-2)}`;
     }
 
+    static makeSign = (Length) => {
+        let result = '';
+        let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let charactersLength = characters.length;
+    
+        for (let i = 0; i < Length; i++) {
+            result += characters.charAt(~~(Math.random() * charactersLength));
+        }
+    
+        return result;
+    }
+
     /** Generate Unique ID used in the server by using uuid-v4 or date if old method
      * @param {string} prefix 
      * @returns Unique ID as string
@@ -167,8 +180,8 @@ class Tools {
             retVal += getTime.getDate().toString();
             retVal += getTime.getHours().toString();
             retVal += (parseInt(getTime.getMinutes()) + parseInt(getTime.getSeconds())).toString();
-            retVal += this.getRandomInt(1000000, 9999999).toString();
-            retVal += this.makeSign(24 - retVal.length).toString();
+            retVal += math.getRandomInt(1000000, 9999999).toString();
+            retVal += Tools.makeSign(24 - retVal.length).toString();
         } else {
             retVal = `${prefix}-${uuidv4()}`
         }
