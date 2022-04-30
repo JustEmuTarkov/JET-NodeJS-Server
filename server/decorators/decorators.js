@@ -43,14 +43,15 @@ function fastifyDecompress(response) {
  * @param {null} res_err
  * @returns {object}
  */
-function bsgFormat(res_data, res_err, res_errmsg) {
+function bsgFormat(res_data, res_err, res_errmsg, oneline=false) {
     if (res_err == undefined) res_err = 0;
     if (res_errmsg == undefined) res_errmsg = "";
-    return {
+    const data = {
         err: res_err,
         errmsg: res_errmsg,
         data: res_data
-    };
+    }
+    return (oneline) ? JSON.stringify(data) : JSON.stringify(data, null, "\t");
 }
 
 /**
