@@ -51,7 +51,7 @@ class Account {
         const account = fileIO.readParsed(`/user/profiles/${profileIDs[id]}/account.json`);
         if (info.email === account.email && info.password === account.password) {
           // Read the file age for this users account file.
-          const stats = fs.statSync(`/user/profiles/${profileIDs[id]}/account.json`);
+          const stats = fs.statSync(`./user/profiles/${profileIDs[id]}/account.json`);
 
           // Save the account to memory and set the accountFileAge variable.
           this.accounts[profileIDs[id]] = account
@@ -136,7 +136,7 @@ class Account {
       }
     } else {
 
-      if (!fileIO.fileExist(`/user/profiles/${sessionID}`)) {
+      if (!fileIO.fileExist(`/user/profiles/${sessionID}`)){
         fileIO.createDirectory(`/user/profiles/${sessionID}`);
       }
       // Does the account file exist? (Required for new accounts)
@@ -209,7 +209,7 @@ class Account {
     const accounts = this.getList();
     for (const account in accounts) {
       if (account == sessionID) {
-        if (!fileIO.fileExist("./user/profiles/" + sessionID + "/character.json")) {
+        if (!fileIO.fileExist("/user/profiles/" + sessionID + "/character.json")) {
           logger.logSuccess(`[CLUSTER] New account ${sessionID} logged in!`);
         }
         return true
@@ -237,27 +237,6 @@ class Account {
     return this.accounts;
   }
 
-  /**
-  * Searches for account and tries to retrive the account language
-  * @param {*} sessionID 
-  * @returns string - Account language (en, ru...)
-  */
-  getAccountLang(sessionID) {
-    // This needs to be at the top to check for changed accounts.
-    this.reloadAccountBySessionID(sessionID);
-    let account = this.find(sessionID);
-    if (tools.isUndefined(account.lang)) {
-      account.lang = "en";
-      this.saveToDisk(sessionID);
-    }
-    return account.lang;
-  }
-
-  /**
-   * Find an account by session ID
-   * @param {*} sessionID 
-   * @returns 
-   */
   find(sessionID) {
     // This needs to be at the top to check for changed accounts.
     this.reloadAccountBySessionID(sessionID);
@@ -366,8 +345,8 @@ class Account {
    * @param {object} loginInfos - username and password combo
    * @returns accountID or false
    */
-  loginAccount(accounts, loginInfos) {
-    for (const [accountID, accountInfos] of Object.entries(accounts)) {
+  loginAccount(loginInfos) {
+    for (const [accountID, accountInfos] of Object.entries(this.accounts)) {
       if (accountInfos.login == loginInfos.login && accountInfos.password == loginInfos.password) {
         return accountID;
       }
@@ -380,9 +359,9 @@ class Account {
    * Retrieve all existing editions in server/db/profiles
    * @returns {Array} list of existing editions
    */
-  getEditions() {
+  getEditions(){
     return Object.keys(global.JET.database.profiles);
-  }
+  } 
 
 }
 
@@ -394,10 +373,10 @@ class AccountUtils {
    * @returns {boolean} exists or not
    */
   static checkIfExists(accounts, newAccount) {
-    if (accounts) {
+    if (accounts){
       for (const accountID of Object.keys(accounts)) {
         const account = accounts[accountID];
-        if (account.email === newAccount.email) {
+        if(account.email === newAccount.email){
           return true;
         }
       }
