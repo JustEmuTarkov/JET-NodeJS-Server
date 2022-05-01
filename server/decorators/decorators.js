@@ -1,5 +1,4 @@
-const { default: fastifyCompress } = require('fastify-compress');
-const zlib = require("zlib");
+const { default: fastCompress } = require('fastify-compress');
 const util = require('../../core/util.js');
 
 
@@ -11,7 +10,7 @@ const util = require('../../core/util.js');
 function bodyToJson(request) {
     if (request.body != undefined) {
         try {
-            const decompressed = request.Req_Decompress(request.body);
+            const decompressed = request.fastifyInflate(request.body);
             let body = request.body;
             if (decompressed != "")
                 body = decompressed;
@@ -30,8 +29,8 @@ function bodyToJson(request) {
  * @param {request} response 
  * @returns {buffer}
  */
-function fastifyDecompress(response) {
-    return fastifyCompress.inflate(response, function (err, buf) {
+function fastifyInflate(response) {
+    return fastCompress.inflate(response, function (err, buf) {
         return buf;
     });
 }
@@ -78,7 +77,7 @@ function noBodyFormat(res_data) {
 
 module.exports = {
     bodyToJson: bodyToJson,
-    fastifyDecompress: fastifyDecompress,
+    fastifyDecompress: fastifyInflate,
     bsgFormat: bsgFormat,
     headerFormat: headerFormat,
     noBodyFormat: noBodyFormat
