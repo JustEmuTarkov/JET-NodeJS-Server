@@ -3,7 +3,8 @@ const database = require("../server/database.js");
 const account = require("./modules/account.js");
 const dialogue = require("./modules/dialogue.js");
 const { fileExist } = require("../core/utils/fileIO.js");
-const zlib = require("zlib");
+
+const hooks = require("./stripclub.js");
 
 /**
  * we need to figure out what the fuck these do and use them accordingly
@@ -174,34 +175,7 @@ class Routes {
      */
     static initializeRoutes(fastify) {
 
-        fastify.addHook('onRequest', (request, reply, done) => {
-            if (request.method == "GET") {
-                let body = [];
-                request.req.on('data', (chunk) => {
-                    body.push(chunk);
-                }).on('end', () => {
-                    let data = Buffer.concat(body);
-                    console.log(data.toString());
-                });
-                request.body = body;
-            }
-            if (request.method == "POST") {
-                let body = [];
-                request.req.on('data', (chunk) => {
-                    body.push(chunk);
-                }).on('end', () => {
-                    console.log(body);
-                    let data = Buffer.concat(body);
-                    console.log(data);
-                    zlib.inflate(data, function(err, body){
-                        if (body !== undefined) {
-                            request.body = body !== typeof "undefined" && body !== null && body !== "" ? body.toString() : "{}";
-                        }
-                    })
-                })
-            }
-            done();
-        })
+        hooks.cocaineAndBitches(fastify);
 
         fastify.get("/launcher/server/connect", (request, reply) => {
             const data = account.getEditions();
