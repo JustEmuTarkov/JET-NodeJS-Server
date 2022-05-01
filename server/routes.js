@@ -3,6 +3,7 @@ const database = require("../server/database.js");
 const account = require("./modules/account.js");
 const dialogue = require("./modules/dialogue.js");
 const { fileExist } = require("../core/utils/fileIO.js");
+const zlib = require("zlib");
 
 /**
  * we need to figure out what the fuck these do and use them accordingly
@@ -73,10 +74,7 @@ class Router {
                         body.push(chunk);
                     }).on('end', () => {
                         let data = Buffer.concat(body);
-                        // at this point, `body` has the entire request body stored in it as a string
-                        // });
 
-                        // req.on("data", function (data) {
                         if (request.url == "/" || request.url.includes("/server/config")) {
                             let _Data = data.toString();
                             _Data = _Data.split("&");
@@ -177,14 +175,22 @@ class Routes {
     static initializeRoutes(fastify) {
 
         fastify.addHook('onRequest', (request, reply, done) => {
-            request.body = request.body !== typeof "undefined" && request.body !== null && request.body !== "" ? request.body.toString() : "{}";
-            if (typeof request.body != "object") {
-                /* parse body */
-                if (request.body !== "") {
-                    request.body = JSON.parse(request.body);
-                }
-            } else { console.log(request.body); }
-            done()
+            if (request.method == "POST"){
+                let body = [];
+                request.raw.on('data', (chunk) => {
+                    body.push(chunk);
+                }).on('end', () => {
+                    console.log(body);
+                    let data = Buffer.concat(body);
+                    console.log(data);
+                    zlib.inflate(data, function(err, body){
+                        if (body !== undefined) {
+                            request.body = body !== typeof "undefined" && body !== null && body !== "" ? body.toString() : "{}";
+                        }
+                    })
+                })
+            }
+            done();
         })
 
         fastify.get("/launcher/server/connect", (request, reply) => {
