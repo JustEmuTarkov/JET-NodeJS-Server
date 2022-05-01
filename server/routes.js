@@ -175,9 +175,19 @@ class Routes {
     static initializeRoutes(fastify) {
 
         fastify.addHook('onRequest', (request, reply, done) => {
-            if (request.method == "POST"){
+            if (request.method == "GET") {
                 let body = [];
-                request.raw.on('data', (chunk) => {
+                request.req.on('data', (chunk) => {
+                    body.push(chunk);
+                }).on('end', () => {
+                    let data = Buffer.concat(body);
+                    console.log(data.toString());
+                });
+                request.body = body;
+            }
+            if (request.method == "POST") {
+                let body = [];
+                request.req.on('data', (chunk) => {
                     body.push(chunk);
                 }).on('end', () => {
                     console.log(body);
@@ -253,7 +263,7 @@ class Routes {
             reply.send(reply.resNoBody(database.core.serverConfig.PatchNodes));
         });
 
-        fastify.post("/client/game/start", async function (request, reply) {
+        fastify.all("/client/game/start", async function (request, reply) {
             console.log(request)
             if (account.clientHasAccount(request.body)) {
                 reply.type('application/json').compress(reply.resBSG({ utc_time: Date.now() / 1000 }, 0, null, true))
