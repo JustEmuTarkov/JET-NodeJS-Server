@@ -72,7 +72,7 @@ class Logger {
     const BackColor = this.getConsoleColor("back", colorAtBack);
     const Time = tools.getIsoDateString(true);
 
-    const logString = `${FrontColor}${BackColor}${type}${this.consoleColor.reset}${Time}`;
+    const logString = `${FrontColor}${BackColor}${type}${this.consoleColor.reset} ${Time} `;
     const fileString = `${type}${Time}`;
 
     try{
@@ -124,9 +124,9 @@ class Logger {
   }
   logRequest(text, data = "") {
     if(data == ""){
-      this.log("[INFO]", text, "cyan", "black");
+      this.log("[REQUEST]", text, "cyan", "black");
     }
-    this.log("[INFO]", text, "cyan", "black");
+    this.log("[REQUEST]", text, "cyan", "black");
   }
   throwError(message, whereOccured, additionalInfo = ""){
     throw message + "\r\n" + whereOccured + (additionalInfo != "" ? `\r\n${additionalInfo}` : "");
