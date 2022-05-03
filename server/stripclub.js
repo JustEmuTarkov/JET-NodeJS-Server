@@ -16,16 +16,36 @@ class Hooker {
             if (request.method == "POST") {
                 let body = [];
                 request.raw.on('data', (chunk) => {
+                    if(request.url.indexOf("launcher") == -1 && request.url.indexOf("mode") == -1){
+                        // default game requests
+                        zlib.inflate(chunk, function(err, data){
+                            console.log(data);
+                            if (data !== undefined) {
+                                request.body = data !== typeof "undefined" && data !== null && data !== "" ? data.toString() : "{}";
+                            }
+                            const bodyLength = request.body ? request.body.length : "empty";
+                            JET.util.logger.logRequest(`|[${request.method}]> ${request.url} [Body Length:${bodyLength}]`);
+                            JET.util.logger.logDebug(request.body);
+                        })
+                        return;
+                    }
                     body.push(chunk);
                 }).on('end', () => {
-                    zlib.inflate(Buffer.concat(body), function(err, data){
+                    if(request.url.indexOf("launcher") == -1 && request.url.indexOf("mode") == -1){
+                        return;
+                    }
+                    // launcher and other requests that chunk data !!!
+                    if(body.length > 0 && typeof body[0] == "string"){ console.log(body); body = Buffer.from(body, "utf-8"); }
+                    console.log("[body2]", typeof body, body)
+                    if(typeof body[0] != "string" && typeof body == "object") body = Buffer.concat(body);
+                    console.log("[body3]", typeof body, body)
+                    zlib.inflate(body, function(err, data){
                         if (data !== undefined) {
                             request.body = data !== typeof "undefined" && data !== null && data !== "" ? data.toString() : "{}";
                         }
                         const bodyLength = request.body ? request.body.length : "empty";
                         JET.util.logger.logRequest(`|[${request.method}]> ${request.url} [Body Length:${bodyLength}]`);
                         JET.util.logger.logDebug(request.body);
-                        
                     })
                 })
             }

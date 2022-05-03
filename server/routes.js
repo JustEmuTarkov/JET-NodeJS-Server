@@ -77,7 +77,8 @@ class Routes {
         });
 
         fastify.all("/client/game/start", async function (request, reply) {
-            console.log(request)
+            //console.log(request)
+            // you need to get phpsessid here not request body ...
             if (account.clientHasAccount(request.body)) {
                 reply.type('application/json').compress(reply.resBSG({ utc_time: Date.now() / 1000 }, 0, null, true))
             }
