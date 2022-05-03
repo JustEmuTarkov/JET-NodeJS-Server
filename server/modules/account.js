@@ -10,14 +10,16 @@ class Account {
   }
 
   /**
-  * reloadAccountByLogin functions checks for changes in profile account data on user login and loads accounts on demand.
+  * reloadAccountByLogin functions checks for changes in 
+  * profile account data on user login and loads accounts on demand.
   * @param {object} info 
   * @returns user account ID
   */
   reloadAccountByLogin(info) {
     /**
      * Read account files from cache that were already loaded by the second part of this function.
-     * If the file was changed (for example, by another cluster member), the account file gets reloaded from disk.
+     * If the file was changed (for example, by another cluster member), 
+     * the account file gets reloaded from disk.
      */
     for (const accountID in this.accounts) {
       const account = this.accounts[accountID];
@@ -68,7 +70,8 @@ class Account {
   }
 
   /**
-  * Reloads the account stored in memory for a specific session (aka. accountID), if the file was modified elsewhere.
+  * Reloads the account stored in memory for a specific session (aka. accountID), 
+  * if the file was modified elsewhere.
   * @param {*} sessionID 
   */
   reloadAccountBySessionID(sessionID) {
@@ -99,8 +102,10 @@ class Account {
   }
 
   /**
-  * If the sessionID is specified, this function will save the specified account file to disk,
-  * if the file wasn't modified elsewhere and the current memory content differs from the content on disk.
+  * If the sessionID is specified, this function will 
+  * save the specified account file to disk,
+  * if the file wasn't modified elsewhere and the current memory 
+  * content differs from the content on disk.
   * @param {*} sessionID 
   */
   saveToDisk(sessionID = 0) {
@@ -200,7 +205,9 @@ class Account {
   }
 
   /**
-  * Check if the client has an account. This function will be used by the response "/client/game/start" and determine, if a new account will be created.
+  * Check if the client has an account. 
+  * This function will be used by the response "/client/game/start" and determine, 
+  * if a new account will be created.
   * @param {*} sessionID 
   * @returns If the account exists.
   */

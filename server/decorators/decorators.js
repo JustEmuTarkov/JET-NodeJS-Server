@@ -93,8 +93,59 @@ function getSessionID(request) {
             }
         }
     }
-
     return "";
+}
+
+/**
+ * Send static, whatever that means
+ * @param {*} request 
+ * @param {*} reply 
+ * @returns 
+ */
+function sendStaticFile(request, reply) {
+    if (request.url == "/favicon.ico") {
+        this.file(reply, "res/icon.ico");
+        return true;
+    }
+    if (request.url.includes(".css")) {
+        this.file(reply, "res/style.css");
+        return true;
+    }
+    if (request.url.includes("bender.light.otf")) {
+        this.file(reply, "res/bender.light.otf");
+        return true;
+    }
+
+    if (request.url.includes("/server/config")) {
+        //make a different response for static html pages
+        // load html page represented by home_f
+        //output = router.getResponse(req, body, sessionID);
+        //this.tarkovSend.html(resp, output, "");
+        return true;
+    }
+    if (request.url == "/") {
+        //home_f.processSaveData(body);
+        // its hard to create a file `.js` in folder in windows cause it looks cancerous so we gonna write this code here
+        this.html(reply, home_f.RenderHomePage(), "");
+        return true;
+    }
+    return false;
+}
+
+function getReceiveCallbacks() {
+    return {
+        "insurance": this.receiveInsurance,
+        "SAVE": this.receiveSave
+    };
+}
+
+function getRespondCallbacks() {
+    return {
+        "BUNDLE": this.respondBundle,
+        "IMAGE": this.respondImage,
+        "NOTIFY": this.respondNotify,
+        "DONE": this.respondKillResponse
+    };
 }
 
 
@@ -104,5 +155,6 @@ module.exports = {
     bsgFormat: bsgFormat,
     headerFormat: headerFormat,
     noBodyFormat: noBodyFormat,
-    getSessionID: getSessionID
+    getSessionID: getSessionID,
+    sendStaticFile: sendStaticFile
 }

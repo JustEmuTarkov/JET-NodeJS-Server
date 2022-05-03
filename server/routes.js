@@ -5,6 +5,7 @@ const dialogue = require("./modules/dialogue.js");
 const { fileExist } = require("../core/utils/fileIO.js");
 
 const hooks = require("./stripclub.js");
+const { getSessionID } = require("./decorators/decorators.js");
 
 
 class Routes {
@@ -77,23 +78,22 @@ class Routes {
         });
 
         fastify.all("/client/game/start", async function (request, reply) {
-            //console.log(request)
-            // you need to get phpsessid here not request body ...
-            if (account.clientHasAccount(request.body)) {
+            const sessionID = getSessionID(request);
+            if (account.clientHasAccount(sessionID)) {
                 reply.type('application/json').compress(reply.resBSG({ utc_time: Date.now() / 1000 }, 0, null, true))
             }
             reply.type('application/json').compress(reply.resBSG({ utc_time: Date.now() / 1000 }, 999, "Profile not found", true))
         });
 
         fastify.get("/client/menu/locale", async function (request, reply) {
-            const mockAccountId = "AID0194876887698uxRXETLq";
-            const data = await account.getAccountLang(mockAccountId);
+            const sessionID = getSessionID(request);
+            const data = await account.getAccountLang(sessionID);
             reply.send(JSON.stringify(reply.resBSG(data)));
         });
 
         fastify.get("/client/game/profile/list", async function (request, reply) {
-            const mockAccountId = "AID0194876887698uxRXETLq";
-            const data = await account.clientHasAccount(mockAccountId);
+            const sessionID = getSessionID(request);
+            const data = await account.clientHasAccount(sessionID);
             reply.send(JSON.stringify(reply.resBSG(data)));
         });
 
