@@ -42,7 +42,7 @@ function fastifyInflate(response) {
  * @param {null} res_err
  * @returns {object}
  */
-function bsgFormat(res_data, res_err, res_errmsg, oneline=false) {
+function bsgFormat(res_data, res_err, res_errmsg, oneline = false) {
     if (res_err == undefined) res_err = 0;
     if (res_errmsg == undefined) res_errmsg = "";
     const data = {
@@ -75,10 +75,35 @@ function noBodyFormat(res_data) {
     return util.tools.clearString(JSON.stringify(res_data));
 }
 
+/**
+ * Get the session id from the request
+ * @param {*} request 
+ * @returns 
+ */
+function getSessionID(request) {
+    const header = request.headers;
+    if (header != undefined) {
+        if (header.sessionid != undefined) {
+            return header.sessionid;
+        } else {
+            if (header.cookie != undefined) {
+                const cookies = header.cookie;
+                for (let cookie of cookies.split(";")) {
+                    let crumb = cookie.split("=");
+                    return crumb.shift().trim() = decodeURI(crumb.join("="));
+                }
+            }
+        }
+    }
+    return "";
+}
+
+
 module.exports = {
     bodyToJson: bodyToJson,
     fastifyDecompress: fastifyInflate,
     bsgFormat: bsgFormat,
     headerFormat: headerFormat,
-    noBodyFormat: noBodyFormat
+    noBodyFormat: noBodyFormat,
+    getSessionID: getSessionID
 }
