@@ -82,19 +82,18 @@ function noBodyFormat(res_data) {
  */
 function getSessionID(request) {
     const header = request.headers;
-    if (header != undefined) {
-        if (header.sessionid != undefined) {
-            return header.sessionid;
-        } else {
-            if (header.cookie != undefined) {
-                const cookies = header.cookie;
-                for (let cookie of cookies.split(";")) {
-                    let crumb = cookie.split("=");
-                    return crumb.shift().trim() = decodeURI(crumb.join("="));
-                }
+    if (header.sessionid != undefined) {
+        return header.sessionid;
+    } else {
+        if (header.cookie != undefined) {
+            const cookies = header.cookie;
+            for (let cookie of cookies.split(";")) {
+                let crumb = cookie.split("=");
+                return crumb.shift().trim() = decodeURI(crumb.join("="));
             }
         }
     }
+
     return "";
 }
 
