@@ -18,6 +18,14 @@ class Language {
     static getLanguages() {
         return global.JET.database.locales.languages
     }
+
+    static getMenu(lang, languageDB) {
+        console.log(lang)
+        if (languageDB[lang]) {
+            return languageDB[lang].locale.menu
+        }
+        return languageDB.en.locale.menu
+    }
 }
 
 module.exports = Language;

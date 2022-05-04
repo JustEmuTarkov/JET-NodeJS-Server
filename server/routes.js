@@ -85,20 +85,17 @@ class Routes {
             reply.type('application/json').compress(reply.resBSG({ utc_time: Date.now() / 1000 }, 999, "Profile not found", true))
         });
 
-        fastify.all("/client/menu/locale", async function (request, reply) {
-            const mockAccountId = "AID0194876887698uxRXETLq";
-            const data = await account.getAccountLang(mockAccountId);
-            reply.send(JSON.stringify(reply.resBSG(data)));
+        fastify.all("/client/menu/locale/:lang", async function (request, reply) {
+            reply.send(JSON.stringify(reply.resBSG(account.getMenu(request.params.lang))));
         });
 
         fastify.all("/client/game/profile/list", async function (request, reply) {
-            const mockAccountId = "AID0194876887698uxRXETLq";
-            const data = await account.clientHasAccount(mockAccountId);
+            const data = account.clientHasAccount(request.cookies.PHPSESSID);
             reply.send(JSON.stringify(reply.resBSG(data)));
         });
 
         fastify.all("/client/languages", async function (request, reply) {
-            const data = await language.getLanguages();
+            const data = language.getLanguages();
             reply.send(JSON.stringify(reply.resBSG(data)));
         });
 
