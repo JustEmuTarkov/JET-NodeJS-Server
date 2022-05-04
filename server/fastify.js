@@ -25,6 +25,10 @@ class FastifyServer {
                 global: true,
                 threshold: 0,
             });
+        this.server.register(require('@fastify/cookie'), {
+            secret: "my-secret", // for cookies signature
+            parseOptions: {}     // options for parsing cookies
+        });
         routes.initializeRoutes(this.server);
     }
     
