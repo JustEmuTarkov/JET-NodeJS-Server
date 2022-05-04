@@ -3,10 +3,8 @@ const database = require("../server/database.js");
 const account = require("./modules/account.js");
 const dialogue = require("./modules/dialogue.js");
 const { fileExist } = require("../core/utils/fileIO.js");
-
 const hooks = require("./stripclub.js");
 const { getSessionID } = require("./decorators/decorators.js");
-
 
 class Routes {
     /**
@@ -33,7 +31,7 @@ class Routes {
 
         fastify.all("/launcher/profile/login", async function (request, reply) {
             let output = account.reloadAccountByLogin(request.body);
-            reply.setCookie("sessionID", output)
+            reply.setCookie("PHPSESSID", output)
 
             reply.type('text/plain').send(output === "" ? "FAILED" : output);
         });
