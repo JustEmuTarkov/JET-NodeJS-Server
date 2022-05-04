@@ -5,6 +5,7 @@ const dialogue = require("./modules/dialogue.js");
 const { fileExist } = require("../core/utils/fileIO.js");
 
 const hooks = require("./stripclub.js");
+const { getSessionID } = require("./decorators/decorators.js");
 
 
 class Routes {
