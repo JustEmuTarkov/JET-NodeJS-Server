@@ -86,7 +86,7 @@ class Routes {
         });
 
         fastify.all("/client/menu/locale/:lang", async function (request, reply) {
-            reply.send(JSON.stringify(reply.resBSG(account.getMenu(request.params.lang))));
+            reply.send(JSON.stringify(reply.resBSG(language.getMenu(request.params.lang, database.locales))));
         });
 
         fastify.all("/client/game/profile/list", async function (request, reply) {

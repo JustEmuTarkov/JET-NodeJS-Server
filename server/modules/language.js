@@ -22,9 +22,9 @@ class Language {
     static getMenu(lang, languageDB) {
         console.log(lang)
         if (languageDB[lang]) {
-            return languageDB[lang].locale.menu
+            return languageDB[lang].menu
         }
-        return languageDB.en.locale.menu
+        return languageDB.en.menu
     }
 }
 
