@@ -16,7 +16,7 @@ class Hooker {
             if (request.method == "POST") {
                 request.raw.on('data', function (data) {
                     zlib.inflate(data, function (err, body) {
-                        done(request.body = body !== undefined && body !== null && body !== "" ? body.toString() : "{}");
+                        request.body = body !== undefined && body !== null && body !== "" ? body.toString() : "{}";
                     })
                 })
             }
