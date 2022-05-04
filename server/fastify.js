@@ -6,7 +6,7 @@ const decorators = require("./decorators/decorators.js");
 class FastifyServer {
     constructor(){
         this.server = fastify({
-            logger: false,
+            logger: true,
             http2: true,
             prettyPrint: true,
             https: {
