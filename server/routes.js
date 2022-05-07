@@ -81,6 +81,7 @@ class Routes {
             // you need to get phpsessid here not request body ...
             if (account.clientHasAccount(request.cookies.PHPSESSID)) {
                 reply.type('application/json').compress(reply.resBSG({ utc_time: Date.now() / 1000 }, 0, null, true))
+                return 
             }
             reply.type('application/json').compress(reply.resBSG({ utc_time: Date.now() / 1000 }, 999, "Profile not found", true))
         });
