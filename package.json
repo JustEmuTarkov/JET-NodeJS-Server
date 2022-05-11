@@ -6,16 +6,16 @@
   },
   "version": "0.0.0",
   "dependencies": {
+    "@fastify/compress": "^6.0.0",
     "@fastify/cookie": "^6.0.0",
-    "fastify": "^3.29.0",
-    "fastify-compress": "^4.1.0",
+    "fastify": "^4.0.0-rc.2",
     "fastify-static": "^4.7.0",
     "selfsigned": "^2.0.1",
     "uuid": "^8.3.2",
-    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.9.0"
+    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.10.0"
   },
   "devDependencies": {
     "pino-pretty": "^7.6.1",
-    "tap": "^16.1.0"
+    "tap": "^16.2.0"
   }
 }

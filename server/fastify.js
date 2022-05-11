@@ -32,11 +32,9 @@ class FastifyServer {
             }
         })
 
-        //this.server.register(uWebSocket);
-        //this.setWebSocketServer();
         this.defaultDecorators();
         this.server.register(
-            require('fastify-compress'),
+            require('@fastify/compress'),
             {
                 encodings: ['deflate'],
                 global: true,
@@ -54,7 +52,7 @@ class FastifyServer {
         this.server.decorateRequest(FunctionName, Function);
     }
 
-    async addResponseDecorator(FunctionName, Function) {
+    async addReplyDecorator(FunctionName, Function) {
         this.server.decorateReply(FunctionName, Function);
     }
 
@@ -64,10 +62,10 @@ class FastifyServer {
 
     async defaultDecorators() {
         this.addRequestDecorator('reqBody2Json', decorators.bodyToJson);
-        this.addRequestDecorator('reqDecompress', decorators.fastifyDecompress);
-        this.addResponseDecorator('responseHeader', decorators.headerFormat);
-        this.addResponseDecorator('resBSG', decorators.bsgFormat);
-        this.addResponseDecorator('resNoBody', decorators.noBodyFormat);
+        this.addRequestDecorator('reqInflate', decorators.fastInflate);
+        this.addReplyDecorator('responseHeader', decorators.headerFormat);
+        this.addReplyDecorator('resBSG', decorators.bsgFormat);
+        this.addReplyDecorator('resNoBody', decorators.noBodyFormat);
     }
 
     async startServer() {

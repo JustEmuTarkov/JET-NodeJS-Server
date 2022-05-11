@@ -1,4 +1,4 @@
-const { default: fastCompress } = require('fastify-compress');
+const { default: fastCompress } = require('@fastify/compress');
 const util = require('../../core/util.js');
 
 
@@ -29,7 +29,7 @@ function bodyToJson(request) {
  * @param {request} response 
  * @returns {buffer}
  */
-function fastifyInflate(response) {
+function fastInflate(response) {
     return fastCompress.inflate(response, function (err, buf) {
         return buf;
     });
@@ -54,19 +54,6 @@ function bsgFormat(res_data, res_err, res_errmsg, oneline = false) {
 }
 
 /**
- * Set the header to the reply
- * @param {Reply} reply 
- * @param {string} sessionID 
- */
-function headerFormat(reply, sessionID) {
-    reply.statusCode = 200;
-    reply.headers({
-        'Content-Type': 'application/json',
-        'Set-Cookie': "PHPSESSID=" + sessionID
-    })
-}
-
-/**
  * Clear the string (?) no sabemos
  * @param {object} res_data 
  * @returns {string}
@@ -75,86 +62,10 @@ function noBodyFormat(res_data) {
     return util.tools.clearString(JSON.stringify(res_data));
 }
 
-/**
- * Get the session id from the request
- * @param {*} request 
- * @returns 
- */
-function getSessionID(request) {
-    const header = request.headers;
-    if (header.sessionid != undefined) {
-        return header.sessionid;
-    } else {
-        if (header.cookie != undefined) {
-            const cookies = header.cookie;
-            for (let cookie of cookies.split(";")) {
-                let crumb = cookie.split("=");
-                return crumb.shift().trim() = decodeURI(crumb.join("="));
-            }
-        }
-    }
-    return "";
-}
-
-/**
- * Send static, whatever that means
- * @param {*} request 
- * @param {*} reply 
- * @returns 
- */
-function sendStaticFile(request, reply) {
-    if (request.url == "/favicon.ico") {
-        this.file(reply, "res/icon.ico");
-        return true;
-    }
-    if (request.url.includes(".css")) {
-        this.file(reply, "res/style.css");
-        return true;
-    }
-    if (request.url.includes("bender.light.otf")) {
-        this.file(reply, "res/bender.light.otf");
-        return true;
-    }
-
-    if (request.url.includes("/server/config")) {
-        //make a different response for static html pages
-        // load html page represented by home_f
-        //output = router.getResponse(req, body, sessionID);
-        //this.tarkovSend.html(resp, output, "");
-        return true;
-    }
-    if (request.url == "/") {
-        //home_f.processSaveData(body);
-        // its hard to create a file `.js` in folder in windows cause it looks cancerous so we gonna write this code here
-        this.html(reply, home_f.RenderHomePage(), "");
-        return true;
-    }
-    return false;
-}
-
-function getReceiveCallbacks() {
-    return {
-        "insurance": this.receiveInsurance,
-        "SAVE": this.receiveSave
-    };
-}
-
-function getRespondCallbacks() {
-    return {
-        "BUNDLE": this.respondBundle,
-        "IMAGE": this.respondImage,
-        "NOTIFY": this.respondNotify,
-        "DONE": this.respondKillResponse
-    };
-}
-
 
 module.exports = {
     bodyToJson: bodyToJson,
-    fastifyDecompress: fastifyInflate,
+    fastInflate: fastInflate,
     bsgFormat: bsgFormat,
-    headerFormat: headerFormat,
-    noBodyFormat: noBodyFormat,
-    getSessionID: getSessionID,
-    sendStaticFile: sendStaticFile
+    noBodyFormat: noBodyFormat
 }
